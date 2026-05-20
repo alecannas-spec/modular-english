@@ -1376,22 +1376,11 @@ function grantCoachAccess(role){
   chatEl.style.display='flex';
   document.getElementById('coach-role-badge').textContent=role;
   const isAdmin = role.includes('Admin');
-  // Show API key setup for admin if not set
-  if(isAdmin && !ANTHROPIC_KEY){
-    const keyBanner = document.createElement('div');
-    keyBanner.style.cssText='background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:10px;padding:12px 16px;margin:12px 16px 0;font-size:.82rem;';
-    keyBanner.innerHTML=`<b>⚙️ Setup API Key</b><br>Inserisci la tua Anthropic API key per attivare Coach Alex:
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <input id="api-key-input" type="password" placeholder="sk-ant-..." style="flex:1;border:1px solid #E2E8F0;border-radius:6px;padding:6px 10px;font-size:.82rem;">
-        <button onclick="saveApiKey()" style="background:var(--navy);color:white;border:none;border-radius:6px;padding:6px 14px;font-size:.82rem;cursor:pointer;">Salva</button>
-      </div>`;
-    chatEl.insertBefore(keyBanner, chatEl.querySelector('.chat-messages'));
-  }
   const msgs=document.getElementById('chat-messages');
   if(!msgs.children.length){
     const greeting = isAdmin
       ? "Welcome Admin! 👑 I'm Coach Alex. I can help you test features, review content or simulate student sessions. How can I help?"
-      : "Hello! I'm Coach Alex 🎙️ your personal English tutor. I can correct your mistakes, explain grammar, and simulate real conversations. Write in English or use the microphone!";
+      : "Hello! I'm Coach Alex 🎙️ your personal English tutor. Write to me in English or Italian — I'll correct your grammar, explain rules and have real conversations with you!";
     appendMsg('alex', greeting);
     setTimeout(()=>speakText(greeting), 400);
   }
