@@ -1022,8 +1022,6 @@ async function judgeRepeat(target, said, uid){
     <div style="font-size:.78rem"><b>You said:</b> ${saidHtml}</div>
     <div style="font-size:.76rem;color:#64748B;margin-top:6px">🟢 correct &nbsp; 🔴 wrong/missing</div>`;
 
-  // Speak the target sentence so student hears the correct version
-  setTimeout(()=>speakText(target), 500);
 }
 
 // ── Mode 3: Write — dictate then check ─────────────────────────────────────
@@ -1039,7 +1037,6 @@ function lineWrite(uid, btn){
     // Speak sentence first so student writes what they heard
     const eng=btn.closest('.line-card').querySelector('.line-en').textContent;
     window.speechSynthesis.cancel();
-    setTimeout(()=>speakText(eng), 200);
     setTimeout(()=>ta.focus(), 800);
   }
 }
@@ -1101,7 +1098,6 @@ async function lineWriteCheck(target, uid){
     <div style="font-size:.78rem"><b>You wrote:</b> ${writtenHtml}</div>
     <div style="font-size:.76rem;color:#64748B;margin-top:6px">🟢 correct &nbsp; 🔴 wrong/missing</div>`;
 
-  if(isGood) speakText("Perfect! Well done.");
 }
 
 // ── Mode 4: Translate toggle ────────────────────────────────────────────────
@@ -1382,7 +1378,6 @@ function grantCoachAccess(role){
       ? "Welcome Admin! 👑 I'm Coach Alex. I can help you test features, review content or simulate student sessions. How can I help?"
       : "Hello! I'm Coach Alex 🎙️ your personal English tutor. Write to me in English or Italian — I'll correct your grammar, explain rules and have real conversations with you!";
     appendMsg('alex', greeting);
-    setTimeout(()=>speakText(greeting), 400);
   }
 }
 
@@ -1406,13 +1401,7 @@ function appendMsg(role, text){
   div.className='msg '+role+(isFirstAlex?' welcome':'');
   if(role==='alex'){
     const plain=text.replace(/<[^>]+>/g,'');
-    div.innerHTML=`
-      <div class="msg-label">🎙️ COACH ALEX
-        <button onclick="speakText(${JSON.stringify(plain)})" 
-          style="background:none;border:none;cursor:pointer;font-size:.85rem;margin-left:6px;opacity:.7;" 
-          title="Replay">🔊</button>
-      </div>
-      <div class="msg-text">${text}</div>`;
+    div.innerHTML=`<div class="msg-label">🎙️ COACH ALEX</div><div class="msg-text">${text}</div>`;
   } else {
     div.textContent=text;
   }
@@ -1452,7 +1441,6 @@ async function sendMsg(){
       document.getElementById('typing')?.remove();
       appendMsg('alex',reply);
       chatHistory.push({role:'assistant',content:reply});
-      speakText(reply);
       return;
     }catch(e){}
   }
@@ -1463,7 +1451,6 @@ async function sendMsg(){
     const reply = coachReply(text);
     appendMsg('alex', reply);
     chatHistory.push({role:'assistant',content:reply});
-    speakText(reply);
   }, 600);
 }
 
