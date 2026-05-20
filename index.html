@@ -23,7 +23,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--navy);mi
 h1,h2,h3{font-family:'Playfair Display',serif}
 
 /* ── NAV ── */
-nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(10,20,60,.3);position:fixed;top:0;left:0;right:0;}
+nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:fixed;top:0;left:0;right:0;z-index:1000;box-shadow:0 2px 20px rgba(10,20,60,.3);ixed;top:0;left:0;right:0;}
 .nav-brand{color:var(--gold);font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;letter-spacing:-0.5px;cursor:pointer}
 .nav-brand span{color:var(--white);font-weight:300}
 .nav-links{display:flex;gap:4px}
@@ -301,8 +301,8 @@ nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justif
 
 
 /* ── SPA VIEW SYSTEM ── */
-#app{position:relative;min-height:100vh}
-.view{display:none;width:100%;min-height:calc(100vh - 56px);padding-bottom:80px;animation:fadeIn .2s ease}
+#app{position:relative;min-height:100vh;padding-top:60px}
+.view{display:none;width:100%;min-height:calc(100vh - 60px);padding-bottom:80px;animation:fadeIn .2s ease}
 .view.active{display:block}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
@@ -604,9 +604,15 @@ function showView(name){
 }
 
 function scrollToTop(){
-  window.scrollTo({top:0, behavior:'instant'});
+  // Try all possible scroll containers
+  window.scrollTo(0,0);
   document.documentElement.scrollTop=0;
   document.body.scrollTop=0;
+  const app=document.getElementById('app');
+  if(app) app.scrollTop=0;
+  // Also scroll active view to top
+  const active=document.querySelector('.view.active');
+  if(active) active.scrollTop=0;
 }
 
 // ── HOME ───────────────────────────────────────────────────────────────────
@@ -985,9 +991,9 @@ async function judgeRepeat(target, said, uid){
       headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:200,
-        system:'You are Coach Alex, an English tutor for Italian speakers. Judge pronunciation/grammar attempts. Be brief (2-3 sentences), warm and encouraging. Reply in Italian.',
-        messages:[{role:'user',content:`Target sentence: "${target}"\nStudent said: "${said}"\nJudge accuracy and give brief encouragement or correction in Italian.`}]
+        max_tokens:350,
+        system:'You are Coach Alex, a professional English pronunciation and grammar coach for Italian speakers. A student just tried to repeat a sentence. Your job:\n1. Compare what they said to the target sentence word by word\n2. Point out specific words they mispronounced or got wrong (e.g. "You said \'goood\' — the word is \'good\', short vowel sound")\n3. Explain HOW to fix it (mouth position, stress, rhythm)\n4. If grammar was wrong, correct it with a brief explanation\n5. End with one encouraging sentence\nBe specific, practical and direct. Max 4 sentences. Always reply in English.',
+        messages:[{role:'user',content:`Target sentence: "${target}"\nStudent said: "${said}"\n\nAnalyse the differences. Give specific pronunciation and grammar feedback with corrections.`}]
       })
     });
     const data=await resp.json();
@@ -1048,9 +1054,9 @@ async function lineWriteCheck(target, uid){
       headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:200,
-        system:'You are Coach Alex, an English tutor for Italian speakers. Correct written sentences. Be brief and encouraging. Reply in Italian.',
-        messages:[{role:'user',content:`Target sentence: "${target}"\nStudent wrote: "${written}"\nCorrect spelling/grammar mistakes briefly in Italian. If perfect, say so!`}]
+        max_tokens:350,
+        system:'You are Coach Alex, a professional English grammar coach for Italian speakers. A student tried to write a sentence from memory after hearing it. Your job:\n1. Compare their version to the target sentence exactly\n2. Highlight every spelling, grammar or word-order mistake specifically (e.g. "You wrote \'I am go\' — it should be \'I am going\', present continuous needs -ing")\n3. Explain WHY each mistake is wrong using a simple rule\n4. Show the correct sentence in full\n5. End with brief encouragement\nBe specific and educational. Max 5 sentences. Always reply in English.',
+        messages:[{role:'user',content:`Target sentence: "${target}"\nStudent wrote: "${written}"\n\nIdentify every mistake and explain the correct grammar rule for each one.`}]
       })
     });
     const data=await resp.json();
