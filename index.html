@@ -860,52 +860,62 @@ function lineRepeat(target, uid, btn){
   // If already recording → stop
   if(btn.classList.contains('recording')){
     if(window._lineRec){ try{window._lineRec.stop();}catch(e){} }
+    if(window._lineStream){ window._lineStream.getTracks().forEach(t=>t.stop()); window._lineStream=null; }
     return;
   }
 
   window.speechSynthesis.cancel();
   const rf=document.getElementById(uid+'-rf');
-
-  // Start directly — NO getUserMedia pre-check, NO setTimeout
-  // Must be called synchronously from click event
-  const rec=new SRec();
-  window._lineRec=rec;
-  rec.lang='en-US'; rec.interimResults=false; rec.continuous=false; rec.maxAlternatives=1;
-
   btn.classList.add('recording'); btn.textContent='⏹ Stop';
   rf.className='repeat-feedback loading show';
-  rf.textContent='🎤 Parla ora — poi premi ⏹ Stop';
+  rf.textContent='🎤 Apertura microfono...';
 
-  let gotResult=false;
-  rec.onresult=(e)=>{
-    gotResult=true;
-    const said=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim();
-    judgeRepeat(target, said, uid);
-  };
-  rec.onerror=(e)=>{
-    btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-    rf.className='repeat-feedback bad show';
-    if(e.error==='not-allowed'){
-      rf.innerHTML='❌ Microfono non autorizzato.<br>Clicca 🔒 nella barra indirizzi → Consenti Microfono';
-    } else if(e.error==='service-not-allowed'){
-      rf.innerHTML='❌ Servizio non disponibile.<br>Assicurati di usare HTTPS e riprova.';
-    } else {
-      rf.innerHTML='❌ Errore: '+e.error+'. Riprova.';
-    }
-  };
-  rec.onend=()=>{
-    btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-    if(!gotResult){
+  // Safari fix: open getUserMedia FIRST and keep stream alive during recognition
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    window._lineStream=stream;
+    rf.textContent='🎤 Parla ora — poi premi ⏹ Stop';
+
+    const rec=new SRec();
+    window._lineRec=rec;
+    rec.lang='en-US'; rec.interimResults=false; rec.continuous=false; rec.maxAlternatives=1;
+
+    let gotResult=false;
+    rec.onresult=(e)=>{
+      gotResult=true;
+      const said=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim();
+      stream.getTracks().forEach(t=>t.stop()); window._lineStream=null;
+      judgeRepeat(target, said, uid);
+    };
+    rec.onerror=(e)=>{
+      stream.getTracks().forEach(t=>t.stop()); window._lineStream=null;
+      btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
       rf.className='repeat-feedback bad show';
-      rf.textContent='⚠️ Nessun audio rilevato. Parla più forte e riprova.';
+      if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+        rf.innerHTML='❌ Vai su Preferenze di Sistema → Privacy → Microfono → abilita Safari';
+      } else {
+        rf.innerHTML='❌ Errore: '+e.error+'. Riprova.';
+      }
+    };
+    rec.onend=()=>{
+      stream.getTracks().forEach(t=>t.stop()); window._lineStream=null;
+      btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
+      if(!gotResult){
+        rf.className='repeat-feedback bad show';
+        rf.textContent='⚠️ Nessun audio rilevato. Parla più forte e riprova.';
+      }
+    };
+    try{ rec.start(); }
+    catch(ex){
+      stream.getTracks().forEach(t=>t.stop());
+      btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
+      rf.className='repeat-feedback bad show';
+      rf.textContent='Errore: '+ex.message;
     }
-  };
-  try{ rec.start(); }
-  catch(ex){
+  }).catch(err=>{
     btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
     rf.className='repeat-feedback bad show';
-    rf.textContent='Errore: '+ex.message;
-  }
+    rf.innerHTML='❌ Microfono non autorizzato.<br>Preferenze di Sistema → Privacy → Microfono → Safari ✓';
+  });
 }
 
 // Request mic permission explicitly first (required for iOS Safari over HTTPS)
@@ -1414,40 +1424,39 @@ function toggleMic(){
 function startMic(){
   const SRec=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SRec){ showToast('⚠️ Microfono non disponibile'); return; }
-  recognition=new SRec();
-  recognition.lang='en-US'; recognition.interimResults=true; recognition.continuous=false;
 
-  recognition.onstart=()=>{
-    micActive=true;
-    const btn=document.getElementById('mic-btn');
-    btn.classList.add('listening'); btn.textContent='⏹';
-    btn.title='Clicca per fermare';
-    showToast('🎤 Ascoltando... parla in inglese');
-  };
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    recognition=new SRec();
+    recognition.lang='en-US'; recognition.interimResults=true; recognition.continuous=false;
 
-  recognition.onresult=(e)=>{
-    const transcript=Array.from(e.results).map(r=>r[0].transcript).join('');
-    const input=document.getElementById('chat-input');
-    input.value=transcript;
-    if(e.results[0].isFinal){ setTimeout(()=>sendMsg(), 300); }
-  };
-
-  recognition.onerror=(e)=>{
-    micActive=false;
-    const btn=document.getElementById('mic-btn');
-    btn.classList.remove('listening'); btn.textContent='🎤';
-    const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
-    if(e.error==='not-allowed'||e.error==='service-not-allowed'){
-      showToast(isIOS?'🎤 Impostazioni iPhone → Safari → Microfono → Consenti':'🎤 Clicca 🔒 → Consenti Microfono', 6000);
-    } else {
+    recognition.onstart=()=>{
+      micActive=true;
+      const btn=document.getElementById('mic-btn');
+      btn.classList.add('listening'); btn.textContent='⏹';
+      showToast('🎤 Ascoltando... parla in inglese');
+    };
+    recognition.onresult=(e)=>{
+      const transcript=Array.from(e.results).map(r=>r[0].transcript).join('');
+      const input=document.getElementById('chat-input');
+      input.value=transcript;
+      if(e.results[0].isFinal){ setTimeout(()=>sendMsg(),300); }
+    };
+    recognition.onerror=(e)=>{
+      micActive=false;
+      stream.getTracks().forEach(t=>t.stop());
+      const btn=document.getElementById('mic-btn');
+      btn.classList.remove('listening'); btn.textContent='🎤';
       showToast('⚠️ Errore microfono: '+e.error);
-    }
-  };
-
-  recognition.onend=()=>{ stopMic(); };
-
-  try{ recognition.start(); }
-  catch(e){ showToast('Errore avvio microfono: '+e.message); }
+    };
+    recognition.onend=()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      stopMic();
+    };
+    try{ recognition.start(); }
+    catch(e){ stream.getTracks().forEach(t=>t.stop()); showToast('Errore: '+e.message); }
+  }).catch(()=>{
+    showToast('❌ Microfono non autorizzato. Preferenze di Sistema → Privacy → Microfono → Safari ✓');
+  });
 }
 
 function stopMic(){
