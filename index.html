@@ -436,14 +436,13 @@ nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justif
       <div class="coach-avatar">🎙️</div>
       <div class="coach-info">
         <h3>Coach Alex <span id="coach-role-badge" style="font-size:.7rem;background:var(--gold);color:var(--navy);border-radius:6px;padding:2px 8px;margin-left:6px;font-weight:700;vertical-align:middle;"></span></h3>
-        <p>Il tuo tutor AI per l'inglese. Corregge errori, spiega grammatica, simula conversazioni reali.</p>
+        <p>Your personal AI English tutor. Write in English or Italian — Alex corrects your grammar, explains rules and has real conversations with you.</p>
       </div>
     </div>
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input-area">
-      <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Parla con Coach Alex">🎤</button>
-      <input class="chat-input" id="chat-input" type="text" placeholder="Scrivi o parla con Coach Alex..." onkeydown="if(event.key==='Enter')sendMsg()">
-      <button class="send-btn" onclick="sendMsg()">Invia</button>
+      <input class="chat-input" id="chat-input" type="text" placeholder="Write to Coach Alex..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="send-btn" onclick="sendMsg()">Send</button>
     </div>
   </div>
 </div>
