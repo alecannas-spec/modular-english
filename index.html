@@ -1454,72 +1454,803 @@ async function sendMsg(){
   }, 600);
 }
 
+// ── COACH ALEX KNOWLEDGE BASE — English Vocabulary in Use (Cambridge, 100 Units) ──
+
+// ── ENGLISH GRAMMAR IN USE — Raymond Murphy (136 Units) ────────────────────
+
+const GRAMMAR_KB = {
+
+// UNITS 1-4: PRESENT TENSES
+'present continuous|present progressive|am doing|is doing|are doing': `Present Continuous (Unit 1) — Structure: am/is/are + verb+ING. Uses:
+1) Action happening NOW: 'Please be quiet — I am trying to concentrate.'
+2) Temporary situation: 'She is living with her parents until she finds a flat.'
+3) Changing/developing: 'The situation is getting worse.'
+4) Fixed future arrangements: 'I am meeting Tom tonight.'
+NOT for stative verbs: know, like, want, understand, believe, remember, belong, seem, contain.
+Wrong: 'I am knowing him.' ✅ Correct: 'I know him.'`,
+
+'present simple|simple present|he works|she goes': `Present Simple (Unit 2) — Structure: I/you/we/they + base verb; he/she/it + verb+S.
+Uses: 1) Permanent facts: 'Water boils at 100°C.' 2) Habits/routines: 'I get up at 7 every day.'
+3) With always/never/often/usually: 'She always arrives on time.'
+Question: Do/Does + subject + base verb? 'Does she work?'
+Negative: don't/doesn't + base verb.
+Italian mistake: adding S for ALL persons — only he/she/it takes S!
+Compare: 'I work (habit) vs I am working (now).'`,
+
+'present continuous.*present simple|present simple.*present continuous|difference.*present': `Present Continuous vs Simple (Units 3-4):
+Always/usually → Present Simple: 'She always drinks coffee.'
+Now/at the moment → Present Continuous: 'She is drinking tea right now.'
+Stative verbs NEVER use Continuous: know, want, believe, love, hate, understand, own, seem, contain, belong, remember, mean, need, prefer, consist.
+'I think it's a good idea.' (opinion = Simple)
+'I'm thinking about it.' (active thought = Continuous)
+'He has a car.' (possession = Simple) vs 'He is having dinner.' (activity = Continuous)`,
+
+// UNITS 5-6: PAST TENSES
+'past simple|simple past|past tense': `Past Simple (Unit 5) — Structure: verb+ED (regular) or irregular form.
+Regular: work→worked, play→played, stop→stopped (double consonant).
+Irregular (must memorise): go→went, have→had, see→saw, come→came, buy→bought, make→made, take→took, give→gave, say→said, know→knew, think→thought, get→got, put→put, leave→left.
+Question: Did + subject + base verb? 'Did you go?'
+Negative: didn't + base verb. 'I didn't go.'
+Use for: finished actions at specific past time. Time markers: yesterday, last week, in 2020, two days ago, in the morning.`,
+
+'past continuous|was doing|were doing': `Past Continuous (Unit 6) — Structure: was/were + verb+ING.
+Uses:
+1) Action IN PROGRESS at a specific past moment: 'At 8pm, I was watching TV.'
+2) Interrupted by Past Simple: 'I was cooking when she arrived.' (cooking = in progress, arrived = interruption)
+3) Parallel actions with WHILE: 'While he was reading, she was cooking.'
+4) Background to a story: 'The sun was shining. Birds were singing. Then the bomb exploded.'
+Compare: 'I was walking home when it started to rain.' (continuous interrupted by simple)`,
+
+// UNITS 7-16: PERFECT TENSES
+'present perfect|have been|has gone|have done': `Present Perfect (Units 7-8) — Structure: have/has + past participle.
+CONNECTING PAST TO NOW:
+1) Experience (ever/never): 'Have you ever been to Japan? I have never seen snow.'
+2) Recent past with present result: 'I've lost my keys.' (I don't have them now)
+3) With just/already/yet: 'I've just arrived.' 'She's already left.' 'Have you finished yet?'
+4) With HOW LONG/FOR/SINCE: 'I have lived here for 5 years / since 2019.'
+KEY RULE: Use PAST SIMPLE for specific finished times. ✅ 'I visited London in 2019.' ❌ NOT 'I have visited London in 2019.'`,
+
+'present perfect continuous|have been doing|has been raining': `Present Perfect Continuous (Unit 9-10) — Structure: have/has + been + ING.
+Use to emphasise DURATION or RECENT ACTIVITY:
+'I have been studying for 3 hours.' (I started 3 hours ago, still doing it or just stopped)
+'She's been running — she's out of breath.' (explains present state)
+Compare: 'I've read 50 pages.' (focus on completion) vs 'I've been reading.' (focus on activity/duration)
+How long: ALWAYS use Perfect Continuous for duration to now: 'How long have you been learning English?'`,
+
+'for.*since|since.*for|how long': `FOR vs SINCE (Unit 12) — 
+FOR = period of time (how long): 'for 3 years', 'for ages', 'for a long time', 'for two days'.
+SINCE = point in time (starting point): 'since 2019', 'since Monday', 'since I was a child', 'since we met'.
+Both used with Present Perfect: 'I have lived here FOR 5 years / SINCE 2019.'
+Italian mistake: 'I live here since 3 years' ❌ → 'I have lived here for 3 years' ✅`,
+
+'past perfect|had done|had been|pluperfect': `Past Perfect (Unit 15) — Structure: had + past participle.
+Use for the EARLIER of two past actions:
+'When I arrived, the film had already started.' (film started BEFORE I arrived)
+'She was happy because she had passed her exam.'
+Often with: already, just, never, after, before, when, by the time.
+'By the time we got to the station, the train had left.'
+Compare: 'When I arrived, she left.' (she left at the moment I arrived) vs 'When I arrived, she had left.' (she left before I arrived)`,
+
+// UNITS 17-18: HAVE/USED TO
+'have got|has got|do you have': `Have and Have Got (Unit 17) —
+Both mean possession. Have got is more British English.
+'I have a car.' / 'I've got a car.' (same meaning)
+Question: 'Do you have...?' OR 'Have you got...?'
+Negative: 'I don't have...' OR 'I haven't got...'
+IMPORTANT: For activities, use HAVE (not have got):
+'I have breakfast at 7.' / 'She has a shower every morning.' / 'We're having a meeting.'`,
+
+'used to|used to do|past habit': `Used To (Unit 18) — Structure: used to + base verb.
+Meaning: something was TRUE in the past but is NOT TRUE now (habits or states).
+'I used to smoke.' (I smoked regularly in the past — I don't now)
+'She used to live in Rome.' (she lived there before — she doesn't now)
+'There used to be a cinema here.' (it existed before — it doesn't now)
+Question: 'Did you use to...?' Negative: 'I didn't use to...'
+NOT used for single past events: 'I went to Paris in 2019.' (NOT 'I used to go to Paris in 2019' — unless it was a habit)`,
+
+// UNITS 19-25: FUTURE
+'future|will|going to|present.*future': `Future forms (Units 19-25) —
+1) WILL (Unit 21-22): spontaneous decisions, predictions, offers, promises.
+'I'll help you.' (decision now) 'It will rain tomorrow.' (prediction)
+2) GOING TO (Unit 20): plans made before, evidence-based predictions.
+'I'm going to visit Rome next week.' (planned) 'Look at those clouds — it's going to rain!' (evidence)
+3) PRESENT CONTINUOUS (Unit 19): fixed arrangements with another person.
+'I'm meeting Anna at 3pm.' (arranged)
+4) PRESENT SIMPLE (Unit 19): timetables/schedules.
+'The train leaves at 7.' 'The film starts at 8.'
+Key rule: NEVER use will after IF/WHEN: 'If it rains, I will stay.' ✅ NOT 'If it will rain...' ❌`,
+
+'will be doing|will have done|future continuous|future perfect': `Future Continuous and Perfect (Unit 24) —
+WILL BE DOING = action in progress at a future moment:
+'This time tomorrow, I will be sitting on a beach.'
+'I'll be working late tonight, so don't wait for me.'
+WILL HAVE DONE = action completed before a future moment:
+'By the time you arrive, I will have finished cooking.'
+'She will have left by 9.'
+Also used to make polite guesses about the present:
+'You'll be tired after the journey.'`,
+
+// UNITS 26-36: MODALS
+'can could ability|be able to': `Can, Could, Be Able To (Unit 26) —
+CAN: present ability: 'I can swim.' General possibility: 'It can get very cold here in winter.'
+COULD: past ability: 'When I was young, I could run fast.'
+BE ABLE TO: needed for all tenses (can has no infinitive or past participle):
+'I have never been able to understand him.'
+'I would like to be able to play piano.'
+For a SPECIFIC past achievement, use WAS ABLE TO (not could):
+'Although it was difficult, I was able to pass the exam.' ✅
+'I could pass the exam.' ❌ (implies general ability)`,
+
+'must mustn\'t|must can\'t|deduction|certainty': `Must and Can't for Deduction (Unit 28) —
+MUST = strong deduction (I'm almost certain it's true):
+'You've been travelling all day. You must be tired.'
+'She passed all her exams. She must be very clever.'
+CAN'T = strong deduction (I'm almost certain it's NOT true):
+'He can't be hungry — he just ate a huge meal.'
+'That can't be right — it doesn't make sense.'
+Compare: MUST HAVE DONE (past deduction): 'They aren't here. They must have left already.'`,
+
+'may might|possibility|perhaps': `May and Might (Units 29-30) —
+Both express present/future POSSIBILITY (about 50% chance):
+'I may/might go to the party.' (I'm not sure)
+'She may/might not come.' (perhaps she won't)
+MAY/MIGHT HAVE DONE = past possibility:
+'She's late. She may have missed the bus.' (perhaps she missed it)
+'Where's my pen? I might have left it in the office.'
+MAY is also used for permission (formal): 'May I sit here?'
+Compare: WILL (certain), SHOULD (probable), MAY/MIGHT (possible), CAN'T (impossible)`,
+
+'must have to|obligation|must mustn\'t needn\'t': `Must, Have To, Mustn't, Needn't (Units 31-32) —
+MUST = personal obligation (speaker's feeling): 'I must phone my mother.' 'You must see this film!'
+HAVE TO = external obligation (rules/law): 'I have to wear a uniform at work.'
+MUST has NO past form → use HAD TO: 'I had to work late yesterday.'
+MUSTN'T = prohibition (you are NOT ALLOWED): 'You mustn't smoke here.'
+NEEDN'T / DON'T NEED TO = no obligation (not necessary): 'You needn't come if you don't want to.'
+Key difference: MUSTN'T (forbidden) ≠ NEEDN'T (not necessary)
+'You mustn't tell anyone.' (it's forbidden) vs 'You needn't tell anyone.' (it's not necessary, but you can)`,
+
+'should advice|ought to': `Should (Units 33-34) —
+SHOULD = advice, recommendation, the right thing to do:
+'You should see a doctor.' 'We should leave early.'
+'The book is very good — you should read it.'
+SHOULD HAVE DONE = past regret (the right thing wasn't done):
+'I should have studied harder.' (I didn't — I regret it)
+'You shouldn't have said that.' (it was wrong to say it)
+IT IS SAID THAT / IS SUPPOSED TO = general belief:
+'The restaurant is supposed to be excellent.' (people say so)
+'You were supposed to be here at 8.' (it was expected/arranged)`,
+
+// UNITS 37-40: CONDITIONALS
+'first conditional|if i do|real conditional|type 1': `First Conditional (Unit 37 - If I do...) —
+Real/possible future situation: IF + present simple, WILL + base verb.
+'If it rains, I will stay at home.'
+'If you study hard, you will pass the exam.'
+'If she arrives late, we will start without her.'
+Note: can also use MIGHT/MAY: 'If it rains, we might cancel the match.'
+WHEN vs IF: Use WHEN for things that WILL definitely happen:
+'When I get home, I'll phone you.' (I will definitely get home)
+'If I get the job, I'll phone you.' (I might not get it)`,
+
+'second conditional|if i knew|if i did|unreal present|hypothetical': `Second Conditional (Unit 37-38 - If I did...) —
+Unreal/hypothetical PRESENT situation: IF + past simple, WOULD + base verb.
+'If I had more money, I would buy a car.' (I don't have much money)
+'If I were you, I would accept the job offer.' (advice — note: WERE not WAS after if)
+'What would you do if you lost your job?'
+Use to talk about unlikely or imaginary situations.
+Compare: 'If I win the lottery, I will...' (real possibility) vs 'If I won the lottery, I would...' (imaginary)`,
+
+'third conditional|if i had known|past conditional|regret': `Third Conditional (Unit 39 - If I had known...) —
+Unreal PAST situation (didn't happen): IF + past perfect, WOULD HAVE + past participle.
+'If I had known you were coming, I would have baked a cake.' (I didn't know — no cake)
+'If she had studied harder, she would have passed.' (she didn't study — she failed)
+'If it hadn't rained, we would have gone to the beach.'
+For regrets about the past: 'I wish I had worked harder.' (= If I had worked harder...)
+Mixed conditionals: past condition, present result:
+'If I had studied medicine, I would be a doctor now.'`,
+
+'wish|i wish|if only': `Wish (Units 38-40) —
+WISH + Past Simple = wish about PRESENT (unreal):
+'I wish I knew the answer.' (I don't know it)
+'I wish I lived in a bigger house.' (I don't)
+WISH + Past Perfect = wish about PAST (regret):
+'I wish I had studied harder.' (I didn't — I regret it)
+'I wish I hadn't said that.'
+WISH + WOULD = wish for a change in behaviour (often frustration):
+'I wish it would stop raining.' 'I wish you would listen to me.'
+If only = more emphatic than wish:
+'If only I had more time!' 'If only she hadn't told him!'`,
+
+// UNITS 41-45: PASSIVE
+'passive|be done|is made|was built|passive voice': `Passive Voice (Units 41-43) — Structure: be (correct tense) + past participle.
+Present: 'English is spoken here.' / 'The windows are cleaned every week.'
+Past: 'The house was built in 1900.' / 'I was told the news yesterday.'
+Future: 'The report will be sent tomorrow.'
+Present Perfect: 'The letter has been sent.'
+Modal: 'The problem can be solved.' / 'It must be done.'
+Use passive when: the agent (doer) is unknown, unimportant, or obvious.
+By + agent (optional): 'The Mona Lisa was painted by Leonardo da Vinci.'
+IT IS SAID/BELIEVED/KNOWN THAT (Unit 44): 'It is said that he is very rich.' / 'He is said to be very rich.'`,
+
+'have something done|get something done|have my hair cut': `Have Something Done (Unit 45) — Structure: have + object + past participle.
+Meaning: you ARRANGE for someone else to do it for you (you don't do it yourself).
+'I had my hair cut.' (a hairdresser cut it for me)
+'She's having her car repaired.' (a mechanic is repairing it)
+'We're going to have the house painted.' (decorators will paint it)
+'I need to have my eyes tested.'
+GET something done = same meaning, more informal:
+'I got my hair cut yesterday.'`,
+
+// UNITS 46-51: REPORTED SPEECH & QUESTIONS
+'reported speech|indirect speech|she said that|he told me': `Reported Speech (Units 46-47) — Tenses shift back:
+'I am tired.' → She said she WAS tired.
+'I work in London.' → He said he WORKED in London.
+'I will help you.' → She said she WOULD help me.
+'I can swim.' → He said he COULD swim.
+'I have finished.' → She said she HAD finished.
+'I went to Paris.' → He said he HAD GONE to Paris.
+SAY vs TELL: say + (that) — no person after say: 'He said he was tired.'
+TELL + person: 'He told me he was tired.' 'She told us to wait.'
+Time changes: now→then, today→that day, tomorrow→the next day, yesterday→the previous day.`,
+
+'question tag|isn\'t it|aren\'t they|didn\'t she': `Question Tags (Unit 51) — 
+Rule: positive statement → NEGATIVE tag. Negative statement → POSITIVE tag.
+'You're coming, aren't you?' 'She can speak French, can't she?'
+'They haven't left, have they?' 'You don't like jazz, do you?'
+Special cases:
+I am → aren't I: 'I'm right, aren't I?'
+Let's → shall we: 'Let's go, shall we?'
+Don't/Doesn't → did: 'She went home, didn't she?'
+Nothing/nobody → they: 'Nobody called, did they?'
+Used to: 'You used to live here, didn't you?'`,
+
+// UNITS 52-67: VERBS + ING/TO
+'verb ing|enjoy doing|avoid doing|keep doing|gerund': `Verb + ING (Unit 52) — These verbs are ALWAYS followed by ING:
+enjoy, avoid, suggest, keep (on), mind, finish, stop, consider, imagine, practise, risk, miss, deny, admit, involve, recommend, delay, postpone, fancy, can't help, can't stand, give up.
+'I enjoy swimming.' 'She keeps forgetting things.' 'I avoid going there.'
+'He denied stealing the money.' 'She admitted making a mistake.'
+'I can't help laughing.' 'He gave up smoking.'
+Preposition + ING: always ING after prepositions:
+'I'm good at cooking.' 'After eating, we went out.' 'Instead of taking the bus, I walked.'`,
+
+'verb to|want to do|decide to|verb infinitive': `Verb + To (Infinitive) (Unit 53) — These verbs are followed by TO + base verb:
+want, decide, manage, refuse, hope, plan, expect, agree, offer, promise, need, seem, appear, tend, fail, learn, choose, prepare, afford, arrange, pretend.
+'I want to go.' 'She decided to stay.' 'He managed to open the door.'
+'They refused to help.' 'I can't afford to buy it.'
+'She seems to know what she's doing.'
+Verb + object + TO: want someone to, ask someone to, tell someone to, expect someone to, allow someone to, encourage someone to, advise someone to, remind someone to.
+'She asked me to help.' 'I want you to come.'`,
+
+'prefer would rather|i would rather|i prefer': `Prefer and Would Rather (Unit 58) —
+PREFER + ING (in general): 'I prefer driving to flying.' 'She prefers tea to coffee.'
+PREFER + TO: 'I prefer to drive rather than fly.'
+WOULD PREFER + TO (specific situation): 'I would prefer to stay at home tonight.'
+WOULD RATHER + base verb (no TO): 'I'd rather stay at home.' 'I'd rather not go.'
+WOULD RATHER + subject + Past Simple (for someone else):
+'I'd rather you didn't tell anyone.' (I want you NOT to tell)
+'I'd rather she came tomorrow.' (I want her to come tomorrow)`,
+
+'stop remember forget try ing or to': `Verb + ING or TO (different meanings) (Units 55-57) —
+STOP: 'He stopped smoking.' (gave up, quit) vs 'He stopped to smoke.' (paused in order to smoke)
+REMEMBER: 'Remember to lock the door.' (don't forget to do it) vs 'I remember locking the door.' (I recall doing it in the past)
+FORGET: 'I forgot to phone.' (didn't phone because I forgot) vs 'I'll never forget meeting her.' (a memory)
+TRY: 'I tried to open the window.' (attempted, maybe failed) vs 'I tried opening the window.' (as an experiment to see if it helped)
+REGRET: 'I regret to tell you...' (formal, about what I'm saying now) vs 'I regret telling him.' (I'm sorry I did it)
+MEAN: 'I didn't mean to hurt you.' (intend) vs 'This means working harder.' (involves)`,
+
+// UNITS 68-80: NOUNS & ARTICLES
+'countable uncountable|a or some|how much how many': `Countable and Uncountable Nouns (Units 68-70) —
+COUNTABLE: have singular and plural: a book/books, a car/cars, a child/children.
+Use A/AN with singular countable: 'a book', 'an apple'.
+UNCOUNTABLE: no plural, no A/AN: information, advice, furniture, luggage, news, weather, traffic, money, bread, rice, water, music, homework, knowledge, research, progress.
+Use SOME/ANY/MUCH/A LITTLE with uncountable.
+WRONG: 'an information' / 'advices' / 'a furniture' / 'a news'
+Partitives (to count uncountable): a piece of advice/information/news/paper/furniture; a loaf of bread; a bar of chocolate; a drop of water.
+Both C and U with different meanings: 'a glass of wine' (C=vessel) / 'glass is transparent' (U=material)`,
+
+'article|the|a an|when to use the': `Articles: A, AN, THE (Units 71-77) —
+A/AN (indefinite): first mention, non-specific, or one of many.
+A before consonant SOUNDS: a book, a university ('u' sounds like 'you'), a European.
+AN before vowel SOUNDS: an apple, an hour ('h' silent), an honest person.
+THE (definite): when both speaker and listener know which specific thing.
+'I saw A film last night. THE film was brilliant.' (first = a, second = the)
+'Can you close THE door?' (the door of this room = specific)
+NO ARTICLE for: general plural/uncountable: 'I like music.' 'Cats are independent.'
+Countries, languages, most cities: 'Italy', 'French', 'Rome'.
+BUT: 'the USA', 'the UK', 'the Netherlands' (plural/abbreviation), 'the Nile', 'the Alps' (rivers/mountain ranges).`,
+
+'some any|some or any': `Some and Any (Units 83-85) —
+SOME: positive sentences, offers, requests where you expect yes.
+'I have some money.' 'Would you like some coffee?' 'Can I have some water?'
+ANY: questions and negative sentences.
+'Do you have any money?' 'I don't have any money.'
+ANY in positive = it doesn't matter which: 'Take any seat you like.' 'Any doctor would tell you the same.'
+NO = not any (with positive verb): 'There is no milk.' = 'There isn't any milk.'
+NONE (without noun): 'How much money do you have? None.'
+SOMEBODY/ANYONE/NOBODY: same logic. 'Someone called.' 'Did anyone call?' 'Nobody called.'`,
+
+'much many little few a lot': `Much, Many, Little, Few (Unit 86) —
+MUCH + uncountable (questions/negatives): 'How much milk? I don't have much time.'
+MANY + countable (questions/negatives): 'How many people? Not many students came.'
+A LOT OF / LOTS OF: used in positive sentences, both C and U: 'There are a lot of cars.' 'She drinks a lot of coffee.'
+LITTLE = not much (negative idea): 'I have little money.' (not enough)
+A LITTLE = some (positive idea): 'I have a little money.' (enough for now)
+FEW = not many (negative idea): 'Few people know the answer.' (hardly anyone)
+A FEW = some (positive idea): 'I have a few friends.' (some, not many)`,
+
+'both neither either|both of|neither of': `Both, Neither, Either (Unit 88) —
+BOTH: two things, both true. 'Both windows are open.' 'I like both of them.'
+NEITHER: two things, both NOT true. 'Neither answer is correct.' (= not this one and not that one)
+EITHER: one of two. 'You can take either road.' (this one or that one, doesn't matter)
+With OF: both of us, neither of them, either of you.
+BOTH...AND: 'She speaks both French and Italian.'
+NEITHER...NOR: 'He speaks neither French nor Italian.' (verb singular or plural depending on subject)
+EITHER...OR: 'You can have either tea or coffee.'`,
+
+// UNITS 91-96: RELATIVE CLAUSES
+'relative clause|who|which|that|whose|whom|defining non-defining': `Relative Clauses (Units 91-95) —
+DEFINING relative clauses (no commas): essential information.
+WHO for people: 'The man who called you is my brother.'
+WHICH for things: 'The car which I bought is red.'
+THAT for both (more informal): 'The book that I'm reading is great.'
+WHOSE for possession: 'The woman whose car was stolen is very upset.'
+You CAN OMIT THAT/WHICH when it's the OBJECT: 'The book (that) I'm reading...' 'The man (who) I met...'
+NON-DEFINING relative clauses (WITH COMMAS): extra information, cannot use THAT.
+'My sister, who lives in Rome, is a doctor.' (I have one sister — extra info)
+WHAT = 'the thing which': 'I didn't understand what she said.' (NOT 'the thing that she said')`,
+
+// UNITS 97-103: ADJECTIVES & ADVERBS
+'adjective -ing -ed|boring bored|interesting interested': `Adjectives ending in -ING and -ED (Unit 97) —
+-ED adjectives = how a PERSON FEELS: bored, tired, excited, surprised, interested, frightened, annoyed, disappointed.
+-ING adjectives = what a THING/SITUATION IS LIKE: boring, tiring, exciting, surprising, interesting, frightening, annoying, disappointing.
+'The film was boring.' (the film = thing) vs 'I was bored.' (I = person feeling)
+'The news was surprising.' vs 'She was surprised.'
+WRONG: 'I am very boring.' (unless you ARE a boring person!)
+CORRECT: 'I am very bored.' (you feel bored right now)`,
+
+'adjective order|order of adjectives': `Adjective Order (Unit 98) — When using multiple adjectives, the order is:
+Opinion → Size → Age → Shape → Colour → Origin → Material → Purpose + NOUN
+'a lovely small old round black French silver ring'
+'a beautiful long new straight black Japanese silk dress'
+In practice, 2-3 adjectives maximum. Commas between opinion adjectives.
+Adjectives after linking verbs (be, seem, look, feel, taste, smell, sound, become):
+'The food smells wonderful.' 'She looks tired.' 'It tastes delicious.'`,
+
+'so such|so tired|such a good|such an interesting': `So and Such (Unit 101) —
+SO + adjective/adverb: 'The film was so boring.' 'She runs so fast.'
+SUCH + (a/an) + (adjective) + noun: 'It was such a boring film.' 'She's such an interesting person.' 'They're such good friends.'
+SO/SUCH...THAT (result): 'It was so hot that I couldn't sleep.' 'It was such good weather that we went to the beach.'
+SO MUCH/MANY: 'There was so much food.' 'There were so many people.'
+SUCH A LOT OF: 'There was such a lot of traffic.'`,
+
+'enough too|too big|not enough|enough money': `Enough and Too (Unit 102) —
+TOO = more than necessary/wanted (negative idea): 'It's too hot.' 'The coffee is too sweet for me.'
+TOO + adjective + TO + infinitive: 'She's too young to drive.' 'It's too heavy to lift.'
+ENOUGH = sufficient (positive idea). ADJECTIVE/ADVERB + ENOUGH: 'She isn't old enough.' 'I didn't work hard enough.'
+NOUN + ENOUGH or ENOUGH + NOUN: 'We have enough time.' / 'We have time enough.' (both possible)
+ENOUGH + TO: 'She's old enough to drive.' 'We have enough money to pay the bill.'
+NOT ENOUGH = insufficient: 'There aren't enough chairs.' 'I don't have enough time.'`,
+
+'comparison|comparative|more than|as as|er than': `Comparison (Units 104-106) —
+Short adjectives: + ER: tall→taller, big→bigger (double last consonant), happy→happier (-y→ier)
+Long adjectives: MORE + adjective: more interesting, more expensive, more beautiful.
+THAN: 'She is taller than me.' 'This is more expensive than that.'
+Irregular: good→better, bad→worse, far→farther/further, little→less, much/many→more.
+AS...AS (equal): 'He is as tall as his brother.' 'It's not as cold as yesterday.'
+LESS THAN: 'This book is less interesting than that one.'
+MUCH/FAR + comparative: 'She is much taller.' 'It's far more expensive.'`,
+
+'superlative|the best|the most|the tallest': `Superlatives (Unit 107) —
+Short adjectives: THE + EST: the tallest, the biggest, the happiest.
+Long adjectives: THE MOST + adjective: the most interesting, the most expensive.
+Irregular: good→the best, bad→the worst, far→the farthest/furthest, little→the least.
+In + group: 'She's the tallest in the class.' 'It's the best restaurant in Rome.'
+EVER (with present perfect): 'It's the best film I've ever seen.'
+ONE OF THE + superlative + plural: 'She's one of the best students I've ever taught.'`,
+
+// UNITS 108-117: LINKING WORDS
+'still yet already anymore|already yet still': `Still, Yet, Already, Any more (Unit 110) —
+STILL = continuing (usually in the middle of sentence): 'She still lives in Rome.' 'Are you still working?'
+YET = expected action not done yet (end of sentence, questions/negatives): 'Have you finished yet?' 'I haven't started yet.'
+ALREADY = sooner than expected (before the verb, or end): 'I've already seen that film.' 'Have you eaten already?'
+ANY MORE / ANY LONGER / NO LONGER = action that has stopped: 'She doesn't live here any more.' 'He no longer works here.' (more formal)
+Confusion: 'I still haven't finished.' (expected + not done) vs 'I haven't finished yet.' (same meaning)`,
+
+'although despite in spite of|contrast|even though': `Although, Despite, In Spite Of (Unit 111) —
+ALTHOUGH / EVEN THOUGH / THOUGH + clause (subject + verb):
+'Although it was raining, we went out.'
+'I went out even though it was raining.'
+DESPITE / IN SPITE OF + noun or ING (no verb):
+'Despite the rain, we went out.'
+'In spite of feeling tired, she went to work.'
+'Despite working hard, he failed.'
+Position: can go at the beginning or middle.
+HOWEVER = contrast between two sentences: 'It was raining. However, we went out.' (not joining clauses with however)`,
+
+'for during while|time prepositions': `For, During, While (Unit 116) —
+FOR = period of time (how long something lasts): 'I waited for 20 minutes.' 'He studied for 3 hours.'
+DURING = throughout a period (when it happens): 'I fell asleep during the film.' 'She visited us during the summer.'
+WHILE + clause (subject + verb, usually with continuous): 'While I was waiting, I read a book.' 'While she was cooking, he set the table.'
+Key: FOR answers 'how long?', DURING answers 'when?' (within a period), WHILE shows two simultaneous actions.
+'I worked for 3 hours during the afternoon while listening to music.'`,
+
+'by until|by the time': `By and Until (Unit 117) —
+BY = not later than (deadline): 'The report must be finished by Friday.' 'I'll be home by 8.'
+UNTIL = continuing up to a point: 'I waited until 8 o'clock.' 'She studied until midnight.'
+BY THE TIME + present simple (future): 'By the time you arrive, I will have cooked dinner.'
+BY THE TIME + past simple: 'By the time we arrived, the film had already started.'
+Compare: 'You must finish the work BY Friday.' (deadline = finish before Friday)
+'I'll be working here UNTIL Friday.' (continuing up to Friday, then stopping)`,
+
+// UNITS 118-131: PREPOSITIONS
+'at on in time|time prepositions|in january|on monday|at 5': `Prepositions of Time: At, On, In (Unit 118) —
+AT: specific times: at 6 o'clock, at noon/midnight, at sunrise/sunset; holidays: at Christmas, at Easter; at the weekend (British English).
+ON: days and dates: on Monday, on 25 March, on Christmas Day, on my birthday, on New Year's Eve.
+IN: months/years/seasons/parts of day: in January, in 2024, in summer, in the morning/afternoon/evening.
+NO PREPOSITION with: this/last/next/every: 'I'll see you this Monday.' 'I go every week.'
+'at night' but 'in the morning/afternoon/evening'.`,
+
+'in at on position|prepositions of place': `Prepositions of Place: In, At, On (Units 119-120) —
+IN: enclosed space, inside: in the box, in a room, in the garden, in London, in Italy, in a car (enclosed).
+AT: specific point/location: at the bus stop, at the door, at the station, at school, at work, at home, at the top.
+ON: surface, touching: on the table, on the wall, on the floor, on the left/right, on the bus/train/plane (public transport).
+IN vs AT for buildings: AT the cinema (going there), IN the cinema (inside, watching).
+'He's in the hospital.' (he's a patient) vs 'He works at the hospital.' (he works there)`,
+
+'verb preposition|listen to|wait for|depend on|look at': `Verb + Preposition (Units 127-131) — Common patterns:
+Listen TO: 'I'm listening to music.' Look AT: 'Look at this photo.'
+Wait FOR: 'I'm waiting for the bus.' Talk TO/WITH: 'I talked to him.'
+Depend ON: 'It depends on the weather.' Believe IN: 'Do you believe in ghosts?'
+Apologise FOR: 'She apologised for being late.' Apply FOR: 'He applied for the job.'
+Belong TO: 'This book belongs to me.' Care FOR: 'She cares for her elderly mother.'
+Insist ON: 'He insisted on paying.' Concentrate ON: 'Concentrate on your work.'
+Crash INTO: 'The car crashed into a wall.' Throw AT: 'He threw the ball at me.'
+Throw TO: 'He threw the ball to me.' (so I can catch it)`,
+
+'adjective preposition|good at|interested in|afraid of': `Adjective + Preposition (Units 125-126) — Common patterns:
+Afraid OF, Aware OF, Capable OF, Fond OF, Frightened OF, Guilty OF, Proud OF, Scared OF, Tired OF.
+Good AT, Bad AT, Clever AT, Brilliant AT, Hopeless AT.
+Interested IN, Absorbed IN, Involved IN.
+Different FROM: 'This is different from what I expected.'
+Keen ON, Dependent ON, Keen ON.
+Famous FOR, Responsible FOR, Sorry FOR, Grateful FOR, Known FOR.
+Angry ABOUT/WITH: angry ABOUT a situation, angry WITH a person.
+Similar TO, Married TO, Devoted TO.
+Excited ABOUT, Worried ABOUT, Pleased ABOUT.`,
+
+// UNITS 132-136: PHRASAL VERBS
+'phrasal verb|turn off|put on|take off|break down|set up': `Phrasal Verbs (Units 132-136) — Verb + particle with new meaning.
+SEPARABLE (object between verb and particle):
+Turn OFF: 'Turn off the light.' / 'Turn it off.' ✅ NOT 'Turn off it.' ❌
+Put ON: 'Put on your coat.' / 'Put it on.'
+Take OFF (clothes/plane): 'Take off your shoes.' / 'The plane took off.'
+Give UP: 'She gave up smoking.'
+Turn DOWN (refuse/volume): 'They turned down my offer.'
+INSEPARABLE (object ALWAYS after the particle):
+Look AFTER: 'She looks after her children.' (NOT 'looks her children after')
+Come ACROSS (find by chance): 'I came across an old photo.'
+Run INTO (meet by chance): 'I ran into my teacher.'
+Look FORWARD TO: 'I'm looking forward to the holiday.' (+ ING: looking forward to GOING)`,
+
+};
+
 function coachReply(text){
+
+  // Search Grammar in Use KB (136 units — Murphy)
+  for(const [keys, answer] of Object.entries(GRAMMAR_KB)){
+    const keyList = keys.split('|');
+    if(keyList.some(k => {
+      const pattern = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\ /g, '\\s+');
+      try{ return new RegExp(pattern,'i').test(t); }catch(e){ return t.includes(k); }
+    })){ return answer; }
+  }
   const t = text.toLowerCase().trim();
 
-  // Greetings
-  if(/^(hi|hello|ciao|hey|good morning|good evening|buongiorno|buonasera)\b/.test(t))
-    return "Hello! Great to see you! Let's practise your English. You can write anything — I'll correct your grammar, answer questions, or have a conversation with you. What would you like to do today?";
+  // Greeting
+  if(/^(hi|hello|hey|good morning|good afternoon|good evening|ciao|buongiorno|buonasera)\b/.test(t))
+    return "Hello! I'm Coach Alex — English grammar and vocabulary expert, based on Cambridge English Vocabulary in Use (100 units). Ask me about vocabulary, grammar, phrasal verbs, idioms, collocations, word formation, or any language topic. What would you like to learn?";
 
-  // How are you
-  if(/how are you|come stai|come va/.test(t))
-    return "I'm doing great, thank you for asking — and well done for using a question! A tip: in English we often say 'How are you doing?' or 'How's it going?' as alternatives. How are YOU doing today?";
+  // ── UNIT 1-4: LEARNING & GRAMMAR TERMS ────────────────────────────────────
+  if(/learning vocabulary|how to learn|vocabulary tips|study english/.test(t))
+    return "How to learn vocabulary effectively: 1) Write new words in a notebook with meaning, example sentence, pronunciation and word family. 2) Group words by topic. 3) Review after 1 day, 1 week, 1 month (spaced repetition). 4) Use the word in a sentence true for you. 5) Don't try to learn more than 5-10 new words per session. 6) Use flashcards (Anki app is excellent). 7) Read, listen and watch in English to see words in context.";
 
-  // Grammar questions
-  if(/what is|what's|what are/.test(t) && /present|past|future|tense|grammar|verb|article|plural|singular/.test(t))
-    return coachGrammar(t);
+  if(/vocabulary notebook|word notebook/.test(t))
+    return "Your vocabulary notebook should contain: the word + phonemic transcription (e.g. beautiful /ˈbjuːtɪfl/), part of speech, definition or translation, example sentence, collocations (words that go with it), opposite or related words. Organise by topic or word family. Review daily for 5 minutes — cover the English, try to remember from the translation, then reverse it.";
 
-  // Italian input
-  if(/[àèìòùé]/.test(text) || /\b(sono|ho|hai|è|che|per|con|non|ma|si)\b/.test(t))
-    return "Good effort writing to me! I noticed some Italian there. Try to write it in English and I'll help you correct it. For example, instead of writing in Italian, try your best English version — mistakes are fine!";
+  if(/dictionary|how to use a dictionary/.test(t))
+    return "A dictionary entry shows: pronunciation (phonemic script), part of speech (n, v, adj, adv), definition, example sentences, collocations, irregular forms, register (formal/informal). Types: bilingual (English→your language, good for quick translation), monolingual learner's dictionary (English→English, better for understanding usage), collocations dictionary (shows which words go together). Key symbols: /ˈ/ = primary stress, (C) = countable noun, (U) = uncountable noun.";
 
-  // Common mistakes - verb to be
-  if(/\bi are\b|\bhe are\b|\bshe are\b|\bwe is\b|\bthey is\b/.test(t)){
-    const fix = text.replace(/\bi are\b/gi,'I am').replace(/\bhe are\b/gi,'he is').replace(/\bshe are\b/gi,'she is').replace(/\bwe is\b/gi,'we are').replace(/\bthey is\b/gi,'they are');
-    return `I noticed a verb "to be" mistake! The correct version is: "${fix}". Remember: I am / you are / he-she-it IS / we-they are. Try saying it again!`;
-  }
+  if(/parts of speech|grammatical terms|noun|verb|adjective|adverb|preposition|conjunction|pronoun/.test(t))
+    return "Parts of speech: NOUN (person/place/thing/idea: chair, London, happiness), VERB (action/state: run, think, be), ADJECTIVE (describes noun: tall, interesting, cold), ADVERB (modifies verb/adjective: quickly, very, well), PREPOSITION (shows relationship: in, on, at, under), CONJUNCTION (connects: and, but, because, although), PRONOUN (replaces noun: he, she, it, they). Also: SYNONYM (same meaning: big/large), ANTONYM (opposite: hot↔cold), COLLOCATION (words that go together: make a mistake), IDIOM (non-literal: kick the bucket = die).";
 
-  // Common mistakes - missing -ing
-  if(/\bi am \w+ (to|the|a|an)\b/.test(t) && !/\bi am (going|trying|learning|studying|working|doing|feeling)\b/.test(t))
-    return "Good sentence! Remember with 'I am + verb', you usually need -ing: 'I am going', 'I am learning', 'I am trying'. What were you trying to say? Write it again!";
+  // ── UNITS 5-11: PEOPLE ─────────────────────────────────────────────────────
+  if(/describ.* appearance|appearance|how.*look|height|build/.test(t))
+    return "Describing appearance — Height/build: tall, short, medium height, slim, thin, skinny, overweight, well-built, muscular. Hair: long/short, straight, curly, wavy, spiky, bald; dark, fair/blonde, brown, red/ginger, grey. Face: round/oval/square face, high cheekbones, a strong jaw; freckles, dimples, a beard, a moustache, stubble. General: good-looking, attractive, pretty (women), handsome (men), smart, well-dressed, scruffy. Phrases: 'She looks like her mother.' 'He looks about 30.'";
 
-  // Questions about words
-  if(/what does .+ mean|how do you say|how to say|how do i say/.test(t)){
-    const match = t.match(/what does (.+) mean/) || t.match(/how do you say (.+)/);
-    if(match) return `Great question! I'd love to help with "${match[1]}". Unfortunately I can't look up translations without internet, but try typing the word into Google Translate and then come back and use it in a sentence — I'll check it for you!`;
-  }
+  if(/character|personality|positive.*adjective|negative.*adjective/.test(t))
+    return "Character adjectives — Positive: kind, generous, caring, warm, friendly, cheerful, patient, honest, reliable, hard-working, creative, confident, ambitious, sensible, easy-going. Negative: selfish, mean, rude, impatient, dishonest, unreliable, lazy, arrogant, stubborn, jealous, moody, bossy. Neutral: quiet, reserved, shy, serious, sensitive, competitive. Noun forms: kind→kindness, patient→patience, honest→honesty, generous→generosity. In sentences: 'She's very kind — she always helps people.' 'He can be a bit stubborn sometimes.'";
 
-  // Practice request
-  if(/can we practise|let's practise|practice|let's talk|conversation/.test(t))
-    return "Absolutely! Let's have a conversation. I'll start: What do you do for work? Answer in English, don't worry about mistakes — just try!";
+  if(/relationship|family|friend|romantic/.test(t))
+    return "Relationships — Family: parents, siblings, grandparents, aunt/uncle, cousin, niece/nephew, stepfather/stepmother, half-brother/half-sister, in-laws. Romantic: boyfriend/girlfriend/partner, fiancé(e), husband/wife/spouse; go out with, get engaged, get married, split up, divorce. Friendship: close friend, best friend, acquaintance, colleague; make friends with, keep in touch with, lose touch with, fall out with. Phrases: 'get on well with', 'have a lot in common with', 'look up to' (admire). 'They've been together for 5 years.'";
 
-  // Asking for help
-  if(/help|aiuto|non capisco|don't understand|i don't know/.test(t))
-    return "No problem, I'm here to help! Tell me specifically what you're struggling with — is it grammar, vocabulary, pronunciation, or understanding English? The more specific you are, the better I can help you!";
+  if(/feelings|emotions|happy|sad|angry|afraid|worried/.test(t))
+    return "Feelings — Positive: happy, pleased, delighted, thrilled, excited, proud, relieved, grateful, content, enthusiastic. Negative: sad, miserable, depressed, upset, disappointed, frustrated, furious, annoyed, irritated, embarrassed, anxious, nervous, terrified, jealous, bored, fed up. Expressing: 'I'm really excited about the trip.' 'She was absolutely furious.' 'I'm a bit worried about the exam.' Adjective + preposition: afraid OF, angry WITH/ABOUT, excited ABOUT, proud OF, worried ABOUT, disappointed WITH, grateful FOR.";
 
-  // Compliments/thanks
-  if(/thank|grazie|thanks|great|amazing|good/.test(t))
-    return "You're very welcome! Keep up the great work. Remember, the key to learning English is practice every day — even just 10 minutes! Is there anything else you'd like to practise?";
+  if(/body|human body|body part/.test(t))
+    return "Human body — Head/face: forehead, temple, cheek, chin, jaw, neck; eyebrow, eyelid, eyelash; nostril, lip, tongue, teeth, gum; ear, earlobe. Upper body: shoulder, arm, elbow, wrist, hand, finger, thumb, fingernail; chest, back, spine, waist, hip. Lower body: leg, thigh, knee, calf, ankle, foot/feet, toe, heel, sole. Useful verbs: bend your knee, stretch your arms, clench your fist, nod your head, shrug your shoulders, fold your arms, cross your legs.";
 
-  // Default — correct grammar and encourage
-  const corrections = checkGrammar(text);
-  if(corrections)
-    return corrections;
+  if(/health|illness|sick|doctor|medicine|symptom/.test(t))
+    return "Health and illness — Common symptoms: cold, flu, cough, sore throat, headache, stomachache, fever/temperature, rash, bruise, feel sick/dizzy/nauseous. Serious: asthma, diabetes, high blood pressure, depression, anxiety, allergy. Treatment: go to the doctor, make an appointment, take medicine/tablets/pills, have an injection, have an operation, recover from, get better, be discharged. Phrases: 'I'm not feeling well.' 'I've had a headache all day.' 'She's been off work with a bad back.' 'He's allergic to penicillin.'";
 
-  return `Good effort! Your message was: "${text}". Keep practising — try to write a full sentence about your day, your work, or something you did recently. I'll check your grammar!`;
-}
+  if(/clothes|clothing|fashion|material|fabric/.test(t))
+    return "Clothes — Items: shirt, blouse, T-shirt, jumper/sweater, jacket, coat, suit; trousers, jeans, shorts, skirt, dress; socks, underwear; shoes, boots, trainers, sandals; hat, scarf, gloves, belt, tie. Describing: casual, smart, formal, elegant, tight, loose, baggy, plain, patterned, striped, checked, floral. Materials: cotton, wool, silk, leather, denim, polyester, linen. Verbs: wear (general), put on (action of dressing), take off, try on, get dressed. SUIT = look good on: 'That colour suits you.' FIT = right size: 'These trousers don't fit.'";
 
-function coachGrammar(t){
+  // ── UNITS 12-18: DAILY LIFE ────────────────────────────────────────────────
+  if(/food|drink|fruit|vegetable|cooking|recipe/.test(t))
+    return "Food vocabulary — Fruit: apple, banana, orange, grape, strawberry, mango, pear, cherry, melon. Vegetables: carrot, potato, onion, garlic, tomato, cucumber, lettuce, spinach, broccoli, pepper, mushroom. Meat: beef, pork, lamb, chicken, bacon, sausage. Fish/seafood: salmon, tuna, cod, shrimp/prawn, crab. Dairy: milk, cheese, butter, yoghurt, cream, eggs. Cooking methods: boil, fry, grill, roast, bake, steam, stir-fry, simmer, poach. Taste: sweet, sour, bitter, salty, spicy, bland, rich, creamy, crunchy, tender.";
+
+  if(/kitchen|cooking equipment|utensil/.test(t))
+    return "Kitchen vocabulary — Equipment: fridge, freezer, oven, microwave, dishwasher, hob/stove. Cookware: pan, pot, frying pan, wok, baking tray, colander, mixing bowl. Utensils: knife, fork, spoon, spatula, whisk, grater, peeler. Crockery: plate, bowl, cup, mug, glass, jug. Cooking verbs: chop, slice, dice, peel, grate, mix, stir, pour, drain, season, taste, heat up, defrost, marinate. Describing food: delicious, tasty, mouth-watering, disgusting; sweet, sour, bitter, salty, spicy, bland, rich, crunchy, tender, fresh, stale.";
+
+  if(/house|home|room|furniture|flat|apartment/.test(t))
+    return "House vocabulary — Rooms: living room/lounge, dining room, kitchen, bedroom, bathroom, hallway, landing, study, cellar/basement, attic, garage. Furniture: sofa, armchair, coffee table, bookcase, fireplace (living room); bed, wardrobe, chest of drawers, duvet, pillow (bedroom); sink, worktop, cupboard (kitchen); bath, shower, toilet (bathroom). Outside: garden, lawn, path, gate, fence, hedge, driveway, patio, balcony. Verbs: decorate, paint, renovate, extend, move in/out, rent, own.";
+
+  if(/home activities|household|cleaning|chores/.test(t))
+    return "Home activities — Daily tasks: make the bed, do the washing-up, do the laundry, vacuum/hoover, dust, mop the floor, iron, tidy up, take out the rubbish. Household problems: 'The tap is dripping.' 'The pipe has burst.' 'The boiler has broken down.' 'The drain is blocked.' 'The light bulb has blown.' Appliances: TV, remote control, lamp, fan, heater, air conditioning, smoke alarm, doorbell. Prepositions of place: on the left/right, in the corner, next to, opposite, above, below, between, in front of, behind.";
+
+  if(/shopping|buy|sell|shop|store|purchase/.test(t))
+    return "Shopping vocabulary — Types of shop: bakery, butcher's, fishmonger's, greengrocer's, pharmacy/chemist, newsagent's, hardware store, jeweller's, florist's, sports shop, charity shop. Supermarket/department store/shopping centre. Verbs: buy, sell, pay for, spend, cost, charge, afford, browse, queue, get a refund, exchange. Phrases: 'on sale/offer', 'reduced', 'discount', 'half price', 'bargain', 'good value for money', 'a bit overpriced', 'sold out', 'in stock'. 'Can I try this on?' 'Have you got this in size 12?'";
+
+  if(/transport|travel by|bus|train|plane|car|drive/.test(t))
+    return "Transport vocabulary — Types: car, bus, coach, train, tram, underground/tube/metro, taxi, bicycle, motorbike, lorry/truck, van, plane, ferry, ship. Using: get ON/OFF (bus/train/plane), get IN/OUT OF (car/taxi); drive, ride, fly, sail, cycle; catch/miss a bus or train. Roads: motorway, roundabout, junction, crossroads, traffic lights, pedestrian crossing, speed limit, traffic jam. Phrases: 'How long does it take?' 'The train is delayed by 10 minutes.' 'I commute to work by train.'";
+
+  if(/direction|how to get|find.*way|map/.test(t))
+    return "Asking and giving directions — Asking: 'Excuse me, how do I get to...?' 'Could you tell me the way to...?' 'Is it far from here?' Giving: 'Go straight on/ahead.' 'Turn left/right.' 'Take the first/second turning on the left/right.' 'Go past the bank.' 'It's on the left/right.' 'It's about 5 minutes' walk.' 'It's opposite the park.' Prepositions: at the end of, at the corner of, next to, beside, opposite, in front of, behind, between, on the left/right-hand side.";
+
+  // ── UNITS 19-30: WORLD AROUND US ──────────────────────────────────────────
+  if(/nature|landscape|natural world|geography/.test(t))
+    return "Natural world — Landscape: mountain, hill, valley, plain, cliff, cave, waterfall, river, lake, pond, stream, sea, ocean, bay, coast, beach, island, peninsula, desert, forest, jungle, meadow, marsh. Animals: wild (lion, tiger, elephant, giraffe, bear, wolf, eagle, shark, whale, dolphin), farm (cow, horse, pig, sheep, chicken), pets (dog, cat, rabbit, parrot), insects (bee, butterfly, ant, mosquito, spider). Plants: tree, bush/shrub, flower, grass, root, branch, leaf, bark, trunk, seed. Natural disasters: earthquake, volcano, tsunami, hurricane, tornado, flood, drought, avalanche.";
+
+  if(/weather|climate|forecast/.test(t))
+    return "Weather vocabulary — Conditions: sunny, cloudy, overcast, foggy, misty, windy, stormy, rainy, snowy, icy, frosty, humid, dry. Nouns: sunshine, cloud, fog, mist, wind, breeze, gale, storm, rain, drizzle, shower, hail, snow, frost, ice, thunder, lightning, rainbow, heatwave, drought. Temperature: hot, warm, mild, cool, cold, freezing, boiling; 'below zero', 'minus 5°C'. Phrases: 'What's the weather like?' 'The forecast says it will rain.' 'It cleared up in the afternoon.' 'We had a terrible storm.'";
+
+  if(/environment|pollution|conservation|wildlife|habitat/.test(t))
+    return "Environment vocabulary — Habitats: rainforest, savannah, arctic, coral reef, wetland, woodland. Animal behaviour: hunt, migrate, hibernate, breed, graze; predator, prey, endangered, extinct, protected. Problems: deforestation, habitat destruction, air/water/soil pollution, climate change, global warming, oil spills, plastic waste, overfishing, poaching. Conservation: wildlife reserve, national park, recycling, renewable energy, sustainable farming, reforestation; protect, preserve, conserve, ban.";
+
+  if(/climate change|global warming|greenhouse|carbon|fossil fuel/.test(t))
+    return "Climate change — Causes: greenhouse gases (CO₂, methane), carbon emissions, burning fossil fuels (coal, oil, gas), deforestation, industrial pollution, agriculture. The greenhouse effect: gases trap heat in the atmosphere. Effects: global warming, rising sea levels, melting glaciers, extreme weather (heatwaves, droughts, floods, wildfires), loss of biodiversity, species extinction, food and water shortages. Solutions: renewable energy (solar, wind, hydroelectric), electric vehicles, recycling, carbon offsetting, reforestation. Agreements: Paris Agreement, COP summits.";
+
+  if(/nationality|country|language|where.*from/.test(t))
+    return "Countries and nationalities — Patterns: Italy→Italian, France→French, Germany→German, Spain→Spanish, Portugal→Portuguese, China→Chinese, Japan→Japanese, Brazil→Brazilian, the USA→American, the UK→British, Australia→Australian, Egypt→Egyptian. Continents: Europe, Asia, Africa, North/South America, Australasia, the Middle East. Languages: Mandarin, Spanish, English, Hindi, Arabic, French, Portuguese, Russian, Japanese, German. Phrases: 'Where are you from?' 'I'm from Italy. I'm Italian.' 'What language do they speak in Brazil? Portuguese.'";
+
+  if(/town|city centre|high street|urban/.test(t))
+    return "Town vocabulary — Places: town/city centre, high street, shopping area, residential area, industrial area, outskirts, suburbs; square, park, market, car park, bus/train station, airport; bank, post office, police/fire station, hospital, library, museum, cinema, theatre; supermarket, pharmacy, bakery, restaurant, café, pub. Describing: busy, crowded, lively, vibrant, quiet, peaceful, safe, dangerous, modern, historic, attractive. Infrastructure: road, street, avenue, lane, pavement/sidewalk, cycle lane, bridge, tunnel.";
+
+  if(/countryside|rural|farming|farm|nature walk/.test(t))
+    return "Countryside vocabulary — Features: field, meadow, hill, valley, wood, forest, stream, river, lake, pond, path, footpath, gate, fence, hedge, barn, farmhouse, cottage. Farming: farmer, crops, harvest, livestock, cattle, sheep, pigs, chickens; plough, sow seeds, grow crops, pick fruit, milk cows; organic farming, free-range, pesticides, fertiliser. Activities: hiking, walking, cycling, horse riding, fishing, camping, bird watching. Comparing: peaceful vs busy; clean air vs pollution; community vs anonymity.";
+
+  if(/airport|flight|air travel|check in/.test(t))
+    return "Air travel — Before flight: check in (at desk or online), drop off luggage, get boarding pass, passport control, security check, departure lounge, duty-free shop, gate. On the plane: window/aisle/middle seat, overhead locker, seat belt, tray table, cabin crew, flight attendant, pilot, take off, land, turbulence. Arriving: disembark, arrivals hall, baggage reclaim, customs, immigration, nothing to declare. Problems: flight delay/cancellation, lost luggage, missed connection. Phrases: 'My flight has been cancelled.' 'Could I have a window seat please?'";
+
+  if(/money|bank|finance|salary|income|afford/.test(t))
+    return "Money vocabulary — Currency: coin, note/bill, cash, change, wallet, purse. Banking: bank account, current/savings account, overdraft, balance, ATM, PIN, credit/debit card, contactless payment. Transactions: earn, spend, save, invest, borrow, lend, owe, deposit, withdraw, transfer, pay back, afford. Describing: rich, wealthy, well-off, comfortable, hard up, broke, in debt, bankrupt; expensive, cheap, affordable, overpriced, good value. Phrases: 'I can't afford it.' 'I'm saving up for a holiday.' 'He's overdrawn.' 'How much do you earn?'";
+
+  if(/number|fraction|percentage|measurement|size/.test(t))
+    return "Numbers and measurement — Fractions: a half (1/2), a third (1/3), a quarter (1/4), three quarters (3/4). Percentages: 25% = twenty-five percent; 0.5 = nought point five. Maths: add (plus), subtract (minus), multiply (times), divide (by); 5² = 25, √25 = 5. Length: mm, cm, metre, km; inch, foot, mile. Weight: gram, kg; ounce, pound. Volume: ml, litre; pint, gallon. Temperature: degrees Celsius, degrees Fahrenheit. Approximate: about, around, approximately, roughly, nearly, just over, just under, at least, up to, dozens of, hundreds of.";
+
+  // ── UNITS 31-34: EDUCATION ─────────────────────────────────────────────────
+  if(/classroom|classroom language|teacher|instruction/.test(t))
+    return "Classroom language — Teacher instructions: 'Open your books at page 10.' 'Work in pairs/groups.' 'Write down the answer.' 'Hand in your homework.' 'Pay attention.' Student questions: 'Could you repeat that, please?' 'What does... mean?' 'How do you spell...?' 'How do you pronounce this word?' 'I don't understand.' Classroom objects: whiteboard, interactive whiteboard, projector, textbook, workbook, handout, worksheet; ruler, pencil, pen, rubber/eraser, highlighter. Activities: take notes, underline, highlight, look up a word, check your answers.";
+
+  if(/school|secondary school|primary school|education system/.test(t))
+    return "School education — Types: nursery (age 3-4), primary (5-11), secondary (11-16/18), grammar, comprehensive, boarding, private/independent, state school. People: headteacher/principal, deputy head, teacher, form tutor, librarian, school nurse. Subjects: English, Maths, Science (Physics/Chemistry/Biology), History, Geography, PE, Art, Music, Drama, ICT, Modern Languages. School life: attend school, sit an exam, pass/fail, get good grades, do homework, revise, play truant. School term, half term, timetable, school uniform, school trip.";
+
+  if(/exam|examination|ielts|toefl|cambridge|fce|cae/.test(t))
+    return "Exams and English qualifications — Cambridge exams by level: KET/A2, PET/B1, FCE/B2 (First), CAE/C1 (Advanced), CPE/C2 (Proficiency). Also: IELTS, TOEFL, TOEIC. Exam types: multiple choice, true/false, gap-fill, matching, short answer, essay, oral exam, listening test. Studying: revise, review, practise, memorise, make a mind map, do past papers, cram. In the exam: read instructions carefully, manage your time, check your work, don't leave blanks. Results: pass, fail, distinction/merit/pass, resit, appeal.";
+
+  if(/university|degree|bachelor|master|phd|postgraduate/.test(t))
+    return "University vocabulary — Degrees: undergraduate (Bachelor's: BA, BSc), postgraduate (Master's: MA, MSc, Doctorate/PhD); full-time, part-time, distance learning. People: student, undergraduate, postgraduate, lecturer, professor, tutor, supervisor, dean. Activities: attend lectures/seminars/tutorials, take notes, do research, write essays/dissertations, submit work, meet deadlines, sit exams, graduate. Phrases: 'apply to university', 'get an offer', 'enrol on a course', 'drop out', 'graduate with a first-class degree', 'I'm doing my dissertation on climate change.'";
+
+  // ── UNITS 35-40: WORK ──────────────────────────────────────────────────────
+  if(/job|profession|career|work|employment/.test(t))
+    return "Jobs vocabulary — Professional: doctor, nurse, surgeon, lawyer/solicitor, accountant, architect, engineer, scientist, teacher, journalist, graphic designer, web developer, manager, director, CEO. Skilled trades: plumber, electrician, carpenter, builder, mechanic, technician. Service: waiter/waitress, chef, shop assistant, receptionist, cleaner, driver, security guard. Phrases: 'What do you do (for a living)?' 'I'm a teacher.' 'I work as a nurse.' 'I work for a large company.' 'I'm self-employed.' 'I run my own business.' 'I'm in charge of the marketing department.'";
+
+  if(/office|workplace|meeting|deadline/.test(t))
+    return "Office vocabulary — Equipment: desk, computer, laptop, keyboard, mouse, printer, photocopier, scanner, shredder, filing cabinet, notice board, stationery. Activities: attend a meeting, chair a meeting, take minutes, give a presentation, make a phone call, file documents, arrange a meeting. Documents: memo, agenda, minutes, report, proposal, invoice, spreadsheet. Phrases: 'I have a meeting at 10.' 'I'll copy you in on the email.' 'Could you send me the file?' 'The printer has jammed again.' 'I work long hours.' 'I have a good work-life balance.'";
+
+  if(/making a career|cv|resume|interview|promotion|redundant/.test(t))
+    return "Career vocabulary — Getting a job: look for/apply for a job, send CV/résumé and cover letter, be called for interview, be offered a job, accept/decline offer. Career progression: start a new job, be promoted, get a pay rise, change jobs, be headhunted. Leaving: resign/quit, hand in your notice, be made redundant (company restructuring), be sacked/fired (poor performance), retire. Unemployment: be unemployed/out of work, claim benefits, be between jobs. Phrases: 'climbing the career ladder', 'She was headhunted by a rival company.', 'I handed in my notice last week.'";
+
+  // ── UNITS 41-51: LEISURE & TOURISM ────────────────────────────────────────
+  if(/sport|leisure|hobby|gym|fitness/.test(t))
+    return "Sport and leisure — Collocations: PLAY: football, tennis, golf, basketball, volleyball, cricket, rugby. GO: swimming, running, cycling, skiing, surfing, hiking, fishing, horse riding. DO: yoga, gymnastics, martial arts, athletics, aerobics, pilates. Facilities: stadium, pitch, court, track, pool, gym, sports centre, golf course. Equipment: ball, racket, bat, club, net, goal, helmet. Hobbies: photography, bird watching, cooking, baking, DIY, stamp collecting, astronomy. Phrases: 'I'm into football.' 'I'm a keen cyclist.' 'She's training for a marathon.' 'He took up golf last year.'";
+
+  if(/competitive sport|competition|tournament|match|record/.test(t))
+    return "Competitive sport — Competitions: match, game, tournament, championship, league, cup, race; the World Cup, the Olympics, the Grand Prix, Wimbledon. People: player, athlete, competitor, team, captain, coach, referee, umpire, spectator, fan. Results: win, lose, draw/tie, beat, defeat, score, equalise, break a record; first place, runner-up, medal (gold/silver/bronze), be knocked out, be eliminated. Phrases: 'The score is 2-1.' 'It ended in a draw.' 'She won by 3 seconds.' 'He broke the world record.' 'They were knocked out in the semi-finals.'";
+
+  if(/book|film|movie|genre|reading|cinema/.test(t))
+    return "Books and films — Book genres: novel, biography, autobiography, memoir, thriller, mystery, romance, science fiction, fantasy, horror, historical fiction, graphic novel, poetry. Film genres: action, comedy, drama, horror, sci-fi, documentary, romantic comedy, thriller, animated, musical. Talking about them: plot, storyline, character, setting, theme, ending, twist; directed by, starring, based on, adapted from; bestseller, blockbuster, box office hit, flop. Opinions: 'I thought it was brilliant/gripping/moving/boring/predictable.' 'I couldn't put it down.' 'The ending was unexpected.'";
+
+  if(/music|instrument|concert|band|genre/.test(t))
+    return "Music vocabulary — Genres: classical, opera, jazz, blues, soul, R&B, pop, rock, heavy metal, hip-hop, folk, country, electronic, dance, reggae. Instruments: Strings (violin, cello, guitar, harp), Woodwind (flute, clarinet, saxophone), Brass (trumpet, trombone, French horn), Percussion (drums, xylophone). People: singer, musician, composer, conductor, band, orchestra, choir, DJ. Events: concert, gig, recital, festival, tour. Verbs: compose, perform, conduct, play, sing, record, release, tour, rehearse, practise.";
+
+  if(/holiday|tourism|sightseeing|hotel|restaurant|travel plan/.test(t))
+    return "Travel and tourism — Planning: book/reserve/confirm/cancel, travel agent, package holiday, all-inclusive, self-catering, B&B; passport, visa, travel insurance, itinerary. Hotels: reception, concierge, room service, check in/out, single/double/twin room, suite. Restaurants: waiter, menu, à la carte, set menu, starter, main course, dessert, bill/check, tip, service charge. Phrases: 'I'd like to book a room for two nights.' 'Is breakfast included?' 'What do you recommend?' 'Could we have the bill?' 'Is service included?'";
+
+  if(/beach|sea|seaside|surf|holiday resort/.test(t))
+    return "Seaside holidays — At the beach: sand, pebbles, rocks, cliff, sea, waves, tide (high/low); sunbathe, swim, paddle, surf, snorkel, dive, build sandcastles. Activities: go surfing/snorkelling/sailing/windsurfing/kayaking; play beach volleyball; collect shells. Equipment: sunscreen, sun hat, sunglasses, beach towel, swimsuit, trunks, bikini. Places: pier, promenade, harbour, marina, lighthouse, cliff path, rock pool; seafood restaurant, ice cream parlour. Phrases: 'The sea is rough today.' 'I got a tan.' 'Be careful of the strong current.'";
+
+  // ── UNITS 52-55: COMMUNICATION & TECHNOLOGY ───────────────────────────────
+  if(/newspaper|media|television|tv|broadcast/.test(t))
+    return "Media vocabulary — Newspapers: broadsheet (serious: The Times), tabloid (popular: The Sun); headline, article, editorial, column, feature, review; journalist, reporter, editor, correspondent. Television: channel, programme, broadcast, live, streaming; news bulletin, documentary, soap opera, sitcom, chat show, game show, reality show, sports coverage; presenter, newsreader, host. Media phrases: 'breaking news', 'exclusive', 'scoop', 'press conference', 'fake news', 'media bias', 'freedom of the press'. Online: blog, podcast, vlog, social media, stream, subscribe.";
+
+  if(/phone|call|text|message|mobile/.test(t))
+    return "Phone and messaging — Calls: call, ring, phone, dial, answer, pick up, hang up, put on hold, transfer a call, leave a voicemail, call back. Phrases: 'Hello, this is...' 'Could I speak to...?' 'I'm afraid she's not available.' 'Can I take a message?' 'The line is busy/engaged.' 'I'll call you back.' 'Sorry, you're breaking up.' 'Could you speak up?' Texting abbreviations: LOL (laughing out loud), BTW (by the way), ASAP (as soon as possible), FYI (for your information), IMO (in my opinion), TBH (to be honest), OMG, BRB (be right back).";
+
+  if(/computer|hardware|software|technology/.test(t))
+    return "Computers — Hardware: desktop, laptop, tablet, smartphone; keyboard, mouse, touchpad, screen/monitor, webcam, microphone, speakers, hard drive, RAM, processor, USB port, router, modem, charger. Software: operating system (Windows/macOS), application/app, browser, word processor, spreadsheet. Actions: log in/out, click, double-click, drag and drop, copy, paste, cut, delete, save, print, scroll, zoom in/out; crash, freeze, reboot/restart, back up data, run a virus scan. Files: document, image, video, PDF, zip file; save to the cloud, USB drive.";
+
+  if(/email|internet|website|social media|online/.test(t))
+    return "Email and Internet — Email: send, receive, reply, reply all, forward, CC, BCC; subject line, attachment, inbox, spam/junk mail, draft, signature, email address, username, password. Internet: website, webpage, URL, browser, search engine (Google/Bing), link/hyperlink, bookmark, download, upload, stream; social media (Facebook, Instagram, Twitter/X, TikTok, LinkedIn); blog, podcast, vlog, forum, online shopping. Safety: encryption, firewall, antivirus, phishing, identity theft, cyberbullying, privacy settings, two-factor authentication.";
+
+  // ── UNITS 56-59: SOCIAL ISSUES ────────────────────────────────────────────
+  if(/crime|criminal|theft|robbery|law/.test(t))
+    return "Crime vocabulary — Types: theft (stealing), robbery (with force/threat), burglary (breaking in), mugging (attacking to steal), pickpocketing, shoplifting, fraud (financial deception), forgery, murder, manslaughter, assault, kidnapping, blackmail, drug trafficking, vandalism, arson (setting fire). People: criminal/offender, suspect, defendant, victim, witness, police officer, detective, prosecutor, defence lawyer, judge, jury. Legal process: commit a crime, report, investigate, arrest, charge with, appear in court; trial, verdict (guilty/not guilty), sentence, fine, prison sentence, appeal, acquit, parole.";
+
+  if(/politics|government|election|democracy|vote/.test(t))
+    return "Politics vocabulary — Systems: democracy, republic, monarchy, constitutional monarchy, dictatorship, totalitarianism, communism, socialism, capitalism. Government: parliament, congress, senate, coalition; prime minister, president, minister, MP, senator, mayor; policy, law, legislation, bill, act, constitution, referendum. Process: vote, elect, campaign, debate, govern, pass a law, veto, resign; general election, ballot, polling station, manifesto; left-wing, right-wing, centre, liberal, conservative, nationalist. International: diplomacy, ambassador, treaty, alliance, sanctions.";
+
+  if(/war|conflict|military|peace|refugee/.test(t))
+    return "War and conflict — Types: war, civil war, revolution, coup d'état, insurgency, terrorism, proxy war, ethnic/religious conflict. Military: army, navy, air force; soldier, sailor, pilot, officer, general; weapon, gun, bomb, missile, drone. Actions: invade, attack, defend, retreat, surrender, ceasefire, peace talks. Consequences: casualties (killed and wounded), civilian deaths, destruction, displacement; refugee, asylum seeker, internally displaced person. Resolution: negotiate, mediate, sign a treaty, peacekeeping forces (UN), humanitarian aid, reconstruction.";
+
+  // ── UNITS 60-64: CONCEPTS ─────────────────────────────────────────────────
+  if(/time expression|preposition of time|on monday|in january|at noon/.test(t))
+    return "Prepositions of time — AT: at 6 o'clock, at noon, at midnight, at Christmas, at the weekend. ON: on Monday, on 5 March, on my birthday. IN: in the morning/afternoon/evening, in January, in 2024, in the 20th century, in summer. Time phrases: on time (punctual), in time (before deadline), ahead/behind schedule, in advance, at the last minute, sooner or later, from time to time, once in a while. Duration: for (how long: for 3 years), since (from when: since 2020), ago (3 years ago), in (in 3 years). Verbs: waste/save/spend/run out of/take/kill time.";
+
+  if(/shape|material|colour|color|object|texture/.test(t))
+    return "Objects, shapes and materials — Shapes 2D: circle, square, rectangle, triangle, oval, diamond, pentagon, hexagon. 3D: sphere, cube, cylinder, cone, pyramid. Describing: round, flat, pointed, curved, straight, angular. Materials: wood (wooden), metal (metallic), glass, plastic, rubber, stone, brick, concrete, fabric/cloth, leather, paper, cardboard, ceramic. Colours/shades: light blue, dark green, bright red, pale yellow, deep purple, navy blue, cream, turquoise, crimson, emerald. Textures: rough/smooth, hard/soft, heavy/light, solid/hollow, transparent/opaque, shiny/dull, flexible/rigid.";
+
+  if(/container|quantity|a piece of|a bottle of/.test(t))
+    return "Containers and quantities — Containers: bottle (of wine/water), jar (of jam/honey), tin/can (of soup/beans), box (of chocolates), packet (of crisps), bag (of flour), carton (of milk/juice), tube (of toothpaste), bowl (of soup), jug (of water), mug (of tea), glass (of wine). Quantities with uncountable nouns: a piece of cake/bread/advice/furniture; a slice of bread/cake/pizza; a loaf of bread, a bar of chocolate/soap, a drop of water, a pinch of salt; a bunch of flowers/grapes/keys; a sheet of paper, a lump of sugar. Phrases: 'We've run out of milk.' 'Can I have a glass of water?'";
+
+  // ── UNITS 65-69: FUNCTIONAL LANGUAGE ──────────────────────────────────────
+  if(/apologise|apology|sorry|excuse|thank/.test(t))
+    return "Apologies and thanks — Apologies: 'I'm sorry.' 'I'm really/so sorry.' 'I do apologise.' 'I'm sorry for being late.' 'Please accept my sincere apologies.' Excuses: 'Something came up.' 'I got stuck in traffic.' 'I completely forgot.' 'I was held up.' Accepting apologies: 'Don't worry about it.' 'No problem.' 'Never mind.' 'These things happen.' Thanks: 'Thank you so much.' 'I really appreciate it.' 'That's very kind of you.' 'I'm very grateful.' Responding to thanks: 'You're welcome.' 'Not at all.' 'Don't mention it.' 'My pleasure.'";
+
+  if(/request|permission|suggestion|could you|would you mind/.test(t))
+    return "Requests, permission and suggestions — Requests: 'Can you...?' 'Could you...?' 'Would you mind...?' 'Would you be able to...?' 'I was wondering if you could...' 'Could you possibly...?' Permission: 'Can I...?' 'Could I...?' 'May I...?' 'Is it OK if I...?' 'Do you mind if I...?' Giving permission: 'Yes, of course.' 'Sure, go ahead.' 'Feel free.' Refusing: 'I'm afraid not.' 'I'd rather you didn't.' Suggestions: 'Why don't we...?' 'How about...?' 'Shall we...?' 'What if we...?' 'I suggest...' 'We could always...' 'It might be a good idea to...'";
+
+  if(/opinion|agree|disagree|i think|in my opinion/.test(t))
+    return "Opinions and agreeing/disagreeing — Opinions: 'I think...' 'I believe...' 'In my opinion...' 'As far as I'm concerned...' 'Personally, I feel...' 'From my point of view...' 'It seems to me that...' Agreeing: 'I agree.' 'Absolutely.' 'Exactly.' 'I couldn't agree more.' 'That's a good point.' 'Precisely.' Disagreeing: 'I disagree.' 'I'm not sure about that.' 'I see your point, but...' 'I beg to differ.' 'That's not quite right.' 'Actually, I think...' Hedging: 'I'm not sure, but...' 'It depends.' 'I suppose...' 'Maybe...'";
+
+  if(/like|dislike|prefer|enjoy|hate|keen on|can.t stand/.test(t))
+    return "Likes, dislikes and preferences — Likes: 'I like/love/enjoy...' 'I'm fond of...' 'I'm keen on...' 'I'm really into...' 'I'm a big fan of...' 'I'm crazy about...' Dislikes: 'I don't like...' 'I'm not keen on...' 'I can't stand...' 'I hate/can't bear...' 'It's not really my thing.' Preferences: 'I prefer... to...' 'I'd rather... than...' 'I like... better than...' 'Given the choice, I'd...' Indifference: 'I don't mind.' 'I don't care.' 'It doesn't matter to me.' 'Either way is fine.' 'I'm easy.'";
+
+  if(/greeting|farewell|goodbye|special expression|happy birthday/.test(t))
+    return "Greetings and farewells — Greetings: 'Hello/Hi/Hey!' 'Good morning/afternoon/evening.' 'How are you?' 'How are things? / How's it going?' 'Nice to meet you. / Pleased to meet you.' 'Long time no see! / I haven't seen you for ages!' Farewells: 'Goodbye. / Bye! / See you later/soon.' 'Take care. / Look after yourself.' 'Have a good day/evening/weekend.' 'Give my regards to...' 'Safe journey!' Special: 'Happy Birthday! / Many happy returns!' 'Merry Christmas! / Happy New Year!' 'Congratulations! / Well done! / Good luck!' 'Get well soon!'";
+
+  // ── UNITS 70-73: WORD FORMATION ────────────────────────────────────────────
+  if(/prefix|un-|dis-|re-|over-|mis-|pre-|inter-/.test(t))
+    return "Prefixes — Negative: UN- (unhappy, unfair, uncomfortable, undo, unpack), DIS- (disagree, dishonest, disappear, disconnect), IN-/IM-/IL-/IR- (incorrect, impossible, illegal, irregular, impatient), NON- (non-smoking, non-fiction). Others: RE- (again: rewrite, rebuild, recycle, redo, replace), OVER- (too much: overwork, overeat, overcharge, overestimate), UNDER- (too little: underpay, undercooked, underfunded), MIS- (wrongly: misunderstand, mislead, misspell), PRE- (before: preview, prehistoric), POST- (after: postgraduate, postpone), INTER- (between: international, interact), ANTI- (against: antibiotic, anti-social), AUTO- (self: autobiography, automatic), CO- (together: co-operate, co-author).";
+
+  if(/suffix|noun suffix|-tion|-ness|-ment|-er|-ist|-ity/.test(t))
+    return "Noun suffixes — -TION/-SION (action/process): educate→education, inform→information, decide→decision, communicate→communication, pollute→pollution. -NESS (state/quality): happy→happiness, kind→kindness, fit→fitness, aware→awareness. -MENT (action/result): govern→government, employ→employment, improve→improvement, achieve→achievement. -ER/-OR (person who does): teach→teacher, act→actor, direct→director, invent→inventor. -IST (person with skill): journal→journalist, science→scientist, tour→tourist, art→artist. -ITY/-TY (state/quality): possible→possibility, create→creativity, national→nationality. -ANCE/-ENCE: perform→performance, appear→appearance, differ→difference.";
+
+  if(/adjective suffix|-ful|-less|-ous|-al|-ive|-able/.test(t))
+    return "Adjective suffixes — -FUL (full of): help→helpful, care→careful, success→successful, power→powerful, beauty→beautiful, wonder→wonderful. -LESS (without): care→careless, use→useless, home→homeless, speech→speechless, hope→hopeless, harm→harmless. -OUS (having quality of): danger→dangerous, fame→famous, nerve→nervous, ambition→ambitious, humour→humorous, luxury→luxurious. -AL (relating to): nation→national, tradition→traditional, music→musical, nature→natural. -IVE: create→creative, attract→attractive, effect→effective, compete→competitive. -ABLE/-IBLE: comfort→comfortable, rely→reliable, response→responsible, flex→flexible.";
+
+  if(/compound noun|compound word/.test(t))
+    return "Compound nouns — Two or more words combined to make a new meaning. Written as: one word (sunglasses, toothbrush, bedroom, football, airport, bookshop), two words (bus stop, car park, credit card, traffic jam, living room), hyphenated (mother-in-law, well-being, part-time, check-in). Common patterns: Noun+Noun (swimming pool, fire station, post office), Adjective+Noun (blackboard, greenhouse, fast food, high street), Verb+Noun (driving licence, waiting room, washing machine). Stress falls on the FIRST element: SUNglasses, CAR park, BUS stop. Topic examples — Home: doorbell, staircase, dustbin. Work: workload, deadline, payslip. Transport: motorway, roundabout, bus stop.";
+
+  // ── UNITS 74-80: PHRASE BUILDING ───────────────────────────────────────────
+  if(/collocation|word partner|heavy rain|strong coffee/.test(t))
+    return "Collocations (words that go together) — MAKE: make a decision, make a mistake, make a suggestion, make progress, make an effort, make a noise, make a profit, make a phone call, make friends, make a difference, make sure, make the most of. DO: do homework, do the shopping, do research, do someone a favour, do your best, do damage, do the laundry. HAVE: have a meeting, have a conversation, have a rest, have a shower, have fun, have an argument. TAKE: take a photo, take a break, take a risk, take part in, take notes, take turns, take an exam. Adjective: heavy (traffic/rain/smoker), strong (coffee/wind/opinion/accent), high (price/quality/speed), deep (sleep/water/breath).";
+
+  if(/fixed phrase|idiom|on the whole|in the end|by the way/.test(t))
+    return "Fixed phrases and idioms — Common: 'on the whole' (generally), 'in the end' (finally), 'by the way' (new topic), 'at the moment' (now), 'in fact' (actually), 'as a result' (consequently), 'on the other hand' (contrasting), 'to be honest' (frankly), 'in other words' (rephrasing), 'sooner or later' (eventually). Mind/temper: 'make up your mind' (decide), 'change your mind', 'keep in mind', 'lose your temper', 'keep your temper', 'take your time', 'waste/save/kill time'. More: 'at first', 'in the end', 'by accident', 'on purpose', 'in a hurry', 'out of order', 'in charge of', 'on behalf of', 'by heart', 'in common', 'in advance'.";
+
+  if(/verb preposition|adjective preposition|agree with|afraid of|good at/.test(t))
+    return "Verb + preposition — agree WITH, apologise FOR, apply FOR, believe IN, consist OF, deal WITH, depend ON, insist ON, rely ON, suffer FROM, belong TO, concentrate ON, care FOR. Adjective + preposition — afraid OF, good AT, interested IN, keen ON, proud OF, responsible FOR, similar TO, tired OF, excited ABOUT, worried ABOUT, married TO, famous FOR, disappointed WITH. Examples: 'I agree with you.' 'She apologised for being late.' 'He applied for the position.' 'She's afraid of spiders.' 'I'm interested in history.' 'They're proud of their son.' 'She's excited about the trip.'";
+
+  if(/phrasal verb|give up|turn down|look after|get over|find out/.test(t))
+    return "Phrasal verbs — Separable (object can go between): turn DOWN (refuse), turn UP (increase/arrive), put OFF (postpone), put ON (wear/start), take OFF (remove/plane leaves), give UP (stop), bring UP (raise/mention), find OUT (discover). Inseparable (object after): look AFTER (care for), come ACROSS (find by chance), get OVER (recover from), run INTO (meet by chance), look INTO (investigate). More: carry ON (continue), go ON (continue/happen), set UP (establish), set OFF (start journey), break DOWN (stop working/emotional), break UP (end relationship), make UP (invent/reconcile), get ON WITH (good relationship), get AWAY WITH (escape punishment), look FORWARD TO (anticipate), come UP WITH (think of), go THROUGH (experience/check).";
+
+  // ── UNITS 81-85: KEY VERBS ─────────────────────────────────────────────────
+  if(/make do take|make a decision|do homework|take a photo/.test(t))
+    return "MAKE, DO and TAKE — MAKE = create/produce: make a decision, make a mistake, make a suggestion, make progress, make an effort, make a noise, make a profit, make a speech, make a promise, make friends, make sense, make sure, make the most of. DO = perform/activity: do homework, do the shopping, do research, do someone a favour, do well/badly, do your best, do the washing-up, do exercise, do a course, do business with. TAKE = receive/use/need: take a photo, take a break, take a risk, take part in, take care of, take notes, take turns, take an exam, take a taxi, take place (happen). Confusions: make a decision ✅ (NOT do), do homework ✅ (NOT make), take a photo ✅ (NOT make).";
+
+  if(/\bgive\b|\bkeep\b|\bmiss\b|\bpay\b/.test(t))
+    return "Give, keep, miss and pay — GIVE: give a speech/talk/presentation, give advice, give permission, give someone a hand (help); give up (stop), give in (surrender), give back (return), give away (donate); give a call/lift/hug. KEEP: keep a secret, keep in touch, keep calm, keep a diary, keep your word/promise; keep fit, keep quiet, keep going, keep an eye on (watch); keep up with, keep out of. MISS: miss a bus/train/flight/meeting, miss someone (feel sad they're absent), miss the point (not understand), near miss. PAY: pay attention, pay a compliment, pay a visit, pay the bill; pay back (repay), pay off (repay completely/be worth it).";
+
+  if(/\bget\b|get angry|get better|get ready/.test(t))
+    return "GET has many meanings — Receive: 'I got a letter.' Obtain/buy: 'I need to get some milk.' Become: 'It's getting dark. She got angry/tired/ready/married/divorced.' Arrive: 'What time did you get home?' Understand: 'I don't get it.' Fetch: 'Can you get me a glass of water?' Get + adjective (become): get tired/hungry/bored/lost/better/worse/used to/excited/confused. Phrasal verbs: get ON (board/progress/relationship), get OFF (leave transport), get UP (rise from bed), get OVER (recover), get AWAY (escape/holiday), get RID OF (remove), get ALONG WITH (good relationship), get ON WITH (continue), get OUT OF (avoid doing).";
+
+  if(/\bgo\b|go shopping|go wrong|go off/.test(t))
+    return "GO — Core meanings: Movement: go to work, go home, go abroad, go for a walk. Activities (go + ING): go shopping, go swimming, go running, go cycling, go skiing, go fishing, go camping, go sightseeing. Become (negative change): go wrong, go mad, go blind, go bald, go bankrupt. Phrasal verbs: go ON (continue/happen: 'What's going on?'), go OFF (explode/ring alarm/food spoil/stop liking: 'The milk has gone off'), go OUT (leave home/extinguish/stop working: 'The lights went out'), go THROUGH (experience/check: 'He went through a tough time'), go AHEAD (proceed), go OVER (review: 'Let's go over the main points'), go BACK (return), go UP/DOWN (increase/decrease).";
+
+  if(/senses|see|look|watch|hear|listen|smell|taste|touch/.test(t))
+    return "The senses — SEE (involuntary): 'I can see a bird.' LOOK AT (deliberate, static): 'Look at that painting!' WATCH (deliberate, following movement): 'Watch the film.' NOTICE (become aware): 'Did you notice anything?' SPOT (see something specific): 'I spotted a mistake.' STARE AT (look a long time). GLANCE AT (look briefly). HEAR (involuntary): 'I can hear music.' LISTEN TO (deliberate): 'I'm listening to the radio.' OVERHEAR (accidentally). Touch: touch, feel, stroke (gently), grip (firmly), squeeze, pat, tap, scratch, rub. Smell: 'It smells of garlic / smells wonderful/terrible.' Taste: 'It tastes of lemon / tastes sweet/bitter/salty/sour/spicy.'";
+
+  // ── UNITS 86-91: WORDS & GRAMMAR ──────────────────────────────────────────
+  if(/uncountable|uncountable noun|some advice|some information/.test(t))
+    return "Uncountable nouns — Cannot be counted, no plural, take singular verbs. Common examples: information, advice, news, knowledge, research, evidence, progress, feedback; furniture, luggage/baggage, equipment, clothing, money, cash; bread, rice, pasta, meat, fish, cheese, butter, milk, water; weather, traffic, music, work, homework; happiness, sadness, love, fear. Rules: use some/any (NOT a/an), use much/a little (NOT many/a few); partitives: 'a piece of advice', 'a bit of information', 'an item of news', 'a loaf of bread'. WRONG: 'an information', 'advices', 'a furniture'. Some nouns are both: paper (U=material) / a paper (C=newspaper); experience (U=general) / an experience (C=specific event).";
+
+  if(/verb.*infinitive|verb.*ing|gerund|enjoy.*ing|want.*to/.test(t))
+    return "Verb + infinitive or -ing — INFINITIVE (to + verb) after: want, decide, manage, refuse, hope, plan, expect, agree, offer, promise, need, seem, tend, fail, learn, choose. 'I decided to leave.' GERUND (-ING) after: enjoy, avoid, suggest, keep, mind, finish, consider, imagine, practise, risk, miss, deny, admit, recommend, delay, postpone. 'I enjoy swimming.' BOTH with different meaning: STOP — 'stop smoking' (quit) vs 'stop to smoke' (pause). REMEMBER — 'remember to call' (don't forget) vs 'remember calling' (recall past). TRY — 'try to do' (attempt) vs 'try doing' (experiment). FORGET — 'forget to do' (not do) vs 'forget doing' (not recall).";
+
+  if(/adjective order|order of adjective/.test(t))
+    return "Order of adjectives before a noun: Opinion → Size → Age → Shape → Colour → Origin → Material → Purpose + Noun. Example: 'a lovely small old round blue French silver ring.' 'a beautiful long new straight black Japanese silk dress.' Gradable adjectives (use very/quite/rather): hot, cold, big, happy, tired. Non-gradable/extreme (use absolutely/completely/utterly): boiling, freezing, enormous, tiny, delighted, exhausted, furious, terrified — 'very hot' ✅ BUT 'absolutely boiling' ✅ NOT 'very boiling' ❌. Intensifiers: very/really/extremely (strong), quite/fairly/rather/pretty (moderate), a bit/slightly/barely (small degree), absolutely/completely/utterly (with non-gradable).";
+
+  if(/preposition.*place|preposition.*movement|into|through|across/.test(t))
+    return "Prepositions of place and movement — PLACE: AT (specific point: at the bus stop, at the top, at the end), IN (enclosed space: in the box, in the city, in bed, in hospital), ON (surface: on the table, on the wall, on the floor, on the left); above/below, in front of/behind, next to/beside, between, opposite, near/close to. MOVEMENT: to (destination: go to school), into/out of (entering/leaving: go into the room), through (passing: walk through the park), across (surface: swim across the river), along (path: walk along the street), past (go past the shop), over/under (jump over the fence), towards/away from, up/down (go up the stairs).";
+
+  if(/adverb|quickly|carefully|always|often|fortunately/.test(t))
+    return "Adverbs — Manner (how): quickly, slowly, carefully, well, badly, hard, fast, loudly, quietly; form: adjective + -ly; irregular: good→well, hard→hard, fast→fast. Degree: very/really/extremely/incredibly (strong), quite/fairly/rather/pretty/somewhat (moderate), a bit/slightly/barely/hardly/scarcely (small), completely/totally/absolutely (complete). Frequency: always (100%), usually/generally (80%), often/frequently (60%), sometimes/occasionally (40%), rarely/seldom (20%), never (0%); position: before main verb, after 'be': 'I usually walk. She is always late.' Sentence adverbs: fortunately, unfortunately, luckily, surprisingly, obviously, apparently, frankly, personally.";
+
+  // ── UNITS 92-100: CONNECTING & STYLE ──────────────────────────────────────
+  if(/linking word|connector|discourse marker|sequence|however|therefore/.test(t))
+    return "Linking words — Sequence: first/firstly, to begin with, then, next, after that, subsequently, finally, lastly, in the end, eventually. Time: while/as (simultaneous), before/after/as soon as/once/until. Addition: and, also, too, in addition, furthermore, moreover, what's more, not only...but also. Contrast: but, however, on the other hand, whereas, while, although/even though, despite/in spite of, nevertheless. Reason: because, since, as, due to, owing to, because of. Purpose: to/in order to/so as to + infinitive, so that/in order that. Result: so, therefore, thus, consequently, as a result. Condition: if, unless, provided (that), as long as, in case.";
+
+  if(/formal.*informal|register|formal english|informal english/.test(t))
+    return "Formal vs informal English — Formal (informal equivalent): commence=start, obtain=get, assist=help, enquire=ask, sufficient=enough, purchase=buy, require=need, inform=tell, request=ask for, approximately=about, prior to=before, regarding=about, with reference to=about. Informal features: contractions (I'm, you're, don't), phrasal verbs (put off, find out, give up), colloquial words (loads of, kids, stuff, get=understand), ellipsis ('Coming?'='Are you coming?'). Register contexts: Formal (business letters, academic essays, legal documents), Semi-formal (professional emails), Informal (text messages, conversations with friends).";
+
+  if(/idiom|under the weather|once in a blue moon|hit the nail/.test(t))
+    return "Common English idioms — under the weather (feeling ill): 'I'm a bit under the weather.' once in a blue moon (very rarely): 'We see them once in a blue moon.' hit the nail on the head (be exactly right). break the ice (start a conversation): 'He told a joke to break the ice.' bite the bullet (endure something painful). burn the midnight oil (work late). cost an arm and a leg (be very expensive). get cold feet (become nervous/hesitant). let the cat out of the bag (reveal a secret). on the fence (undecided). like a fish out of water (uncomfortable). sleep like a log (sleep deeply). eat like a horse (eat a lot). work like a dog (work very hard).";
+
+  if(/simile|metaphor|like a|as.*as/.test(t))
+    return "Similes and metaphors — Similes (using LIKE or AS): as busy as a bee, as cold as ice, as white as snow, as quiet as a mouse, as strong as an ox, as light as a feather; like a fish out of water (uncomfortable), like a bull in a china shop (clumsy), sleep like a log (deeply), eat like a horse (a lot), work like a dog (hard). Metaphors (direct comparison): Life is a journey. Time is money. The world is a stage. He's a lion in battle. She's a ray of sunshine. Common metaphorical expressions: face a problem, tackle an issue, overcome an obstacle, shed light on (explain), throw cold water on (discourage), in the spotlight (receiving attention).";
+
+  if(/punctuation|spelling|comma|apostrophe|full stop/.test(t))
+    return "Punctuation — Full stop/period (.) ends a sentence. Comma (,) separates items and clauses. Question mark (?) ends questions. Exclamation mark (!) shows strong emotion. Colon (:) introduces a list/explanation. Semicolon (;) connects related clauses. Apostrophe (') shows possession (John's) or contraction (don't). Quotation marks (\"\") for direct speech. Hyphen (-) joins compound words (well-known). Spelling rules: double consonant before -ing/-ed (running, stopped); drop -e before -ing (making, writing); change -y to -i (carries, studied). Common mistakes: accommodation, necessary, definitely, separate, occurrence.";
+
+  if(/abbreviation|symbol|e\.g\.|i\.e\.|asap/.test(t))
+    return "Abbreviations and symbols — Latin abbreviations: e.g. (exempli gratia = for example), i.e. (id est = that is/in other words), etc. (et cetera = and so on), NB (nota bene = note well/pay attention), vs. (versus). Common: ASAP (as soon as possible), approx. (approximately), dept. (department), max./min., no./nos. (number/s), pp./p. (pages/page). Titles: Mr (Mister), Mrs (married woman), Ms (woman/marital status unknown), Miss (unmarried), Dr (Doctor), Prof. (Professor). Symbols: @ (at), & (and/ampersand), % (percent), £/$/€/¥ (currencies), = (equals), + (plus), × (multiplied by), ÷ (divided by), © (copyright), ® (registered trademark).";
+
+  // ── GRAMMAR RULES (from previous version, kept) ───────────────────────────
   if(/present simple|simple present/.test(t))
-    return "Present Simple is used for habits and facts. Structure: I/you/we/they + verb, he/she/it + verb+S. Example: 'I work every day.' 'She works in Rome.' Remember the S for he/she/it!";
+    return "Present Simple = habits, facts, routines. I/you/we/they + base verb. He/she/it + verb+S. 'I work every day. She works in Rome.' Question: Do/Does + subject + base verb? 'Does she work?' Negative: don't/doesn't + base verb. Italian mistake: adding S for ALL persons — only he/she/it takes S!";
+
   if(/present continuous|present progressive/.test(t))
-    return "Present Continuous is used for actions happening NOW. Structure: am/is/are + verb+ING. Example: 'I am studying English.' 'She is working now.' Always need am/is/are before the -ing verb!";
+    return "Present Continuous = action happening NOW or temporary. am/is/are + ING. 'I am studying now.' Stative verbs NEVER use continuous: know, want, believe, love, hate, own, understand. Wrong: 'I am knowing him.' ❌ Correct: 'I know him.' ✅";
+
+  if(/present perfect/.test(t))
+    return "Present Perfect = past connected to now. have/has + past participle. Uses: 1) Experience: 'I have visited London.' 2) Recent result: 'I have lost my keys.' 3) Duration to now: 'I have lived here for 10 years.' KEY: use Past Simple for specific finished times — 'I visited London in 2019' ✅ NOT 'I have visited London in 2019' ❌.";
+
   if(/past simple|simple past/.test(t))
-    return "Past Simple is used for finished actions. Regular verbs: add -ED. Example: 'I worked yesterday.' 'She visited Rome.' Irregular verbs have special forms: go→went, have→had, do→did.";
-  if(/article|the |a |an /.test(t))
-    return "Articles: use 'A' before consonant sounds (a book, a car), 'AN' before vowel sounds (an apple, an hour). Use 'THE' for specific things both speaker and listener know about. Example: 'I saw A film. THE film was great!'";
-  return "Great grammar question! The most important rules for Italian speakers: 1) Add S to he/she/it verbs in present simple. 2) Use am/is/are + -ing for present continuous. 3) Use did + infinitive for past questions. Which would you like to practise?";
+    return "Past Simple = finished actions at a specific time. Regular: add -ED (worked, played). Irregular: go→went, have→had, see→saw, come→came, buy→bought, make→made, take→took. Question: Did + subject + base verb? Negative: didn't + base verb. Time markers: yesterday, last week, in 2020, ago.";
+
+  if(/future|will |going to/.test(t))
+    return "Three futures: 1) WILL — spontaneous decisions, predictions. 2) GOING TO — plans, intentions, evidence: 'It's going to rain!' 3) Present Continuous — fixed appointments: 'I'm meeting John at 3pm.' Italian mistake: 'If it will rain' ❌ → 'If it rains' ✅.";
+
+  if(/conditional|if clause/.test(t))
+    return "4 conditionals: 0) 'If you heat water, it boils.' 1) 'If it rains, I will stay.' 2) 'If I had money, I would travel.' (unreal present) 3) 'If I had studied, I would have passed.' (unreal past) NEVER: 'If I will go' ❌ → 'If I go' ✅.";
+
+  if(/article|use of the|a or an/.test(t))
+    return "A/AN: first mention or non-specific. A before consonant SOUNDS (a book, a university). AN before vowel SOUNDS (an apple, an hour). THE: both know which specific one. No article: general concepts, most countries. 'I want a coffee. The coffee is hot. Coffee is good for you.'";
+
+  if(/modal|can |could |must |should |would |may |might /.test(t))
+    return "Modals: never add S, always + base verb. CAN (ability), COULD (past/polite), MUST (strong obligation), SHOULD (advice), MAY/MIGHT (possibility), WOULD (conditional/polite). MUST has no past — use HAD TO: 'I had to work yesterday.' Should have + pp = past regret: 'I should have studied.'";
+
+  if(/passive voice/.test(t))
+    return "Passive: be (correct tense) + past participle. Focus on action not who does it. Present: 'English is spoken here.' Past: 'The bridge was built in 1950.' Future: 'The report will be sent.' Use when agent is unknown, unimportant or obvious.";
+
+  if(/relative clause/.test(t))
+    return "WHO (people), WHICH (things), THAT (both informally), WHOSE (possession). Defining (no commas) = essential info. Non-defining (commas) = extra info: 'My mother, who lives in Rome, is a teacher.' You can omit THAT/WHICH when it's the object: 'The book (that) I'm reading.'";
+
+  if(/reported speech|indirect speech/.test(t))
+    return "Reported speech shifts tenses back: 'I am tired' → She said she WAS tired. Will→would, can→could, have→had. Say (no person after) vs Tell (person after): 'He said he was tired.' 'He told me he was tired.' Time: now→then, today→that day, tomorrow→the next day.";
+
+  // ── COMMON ITALIAN MISTAKES ────────────────────────────────────────────────
+  if(/mistake|common mistake|italian mistake|wrong|error|typical error/.test(t))
+    return "Common Italian speaker mistakes: 1) Age: 'I have 30 years' ❌ → 'I am 30 years old' ✅. 2) 'I am agree' ❌ → 'I agree' ✅ (agree is a verb, not adjective). 3) 'Make a photo' ❌ → 'Take a photo' ✅. 4) 'If it will rain' ❌ → 'If it rains' ✅. 5) 'Since 3 years' ❌ → 'For 3 years' ✅ (FOR=duration, SINCE=starting point). 6) Double negatives: 'I don't know nothing' ❌ → 'I don't know anything' ✅. 7) 'Make homework' ❌ → 'Do homework' ✅. 8) 'I am boring' ❌ (=I am a boring person) → 'I am bored' ✅. 9) 'A news' ❌ → 'A piece of news' ✅ (news is uncountable). 10) Arrive in home ❌ → Arrive home ✅ (no preposition needed).";
+
+  // ── WHAT/HOW QUESTIONS ────────────────────────────────────────────────────
+  if(/^(what|how|when|why|where|which|explain|can you|tell me about)/.test(t))
+    return "Good question! Could you be more specific? I can help with: vocabulary by topic (food, travel, work, sport, technology...), grammar (tenses, articles, modals, conditionals...), word formation (prefixes, suffixes, compound nouns), phrasal verbs, idioms, collocations, or common mistakes. What specifically would you like to know?";
+
+  // ── DEFAULT ───────────────────────────────────────────────────────────────
+  return `I'm your English expert based on Cambridge Vocabulary in Use (100 units). I can answer questions about: vocabulary topics (food, travel, work, health, sport...), grammar rules (tenses, articles, modals, conditionals...), phrasal verbs, idioms, collocations, word formation (prefixes/suffixes), or common Italian mistakes. What would you like to learn? Try asking: "What does 'get over' mean?" or "Explain the present perfect" or "Common mistakes Italians make."`;
 }
+
 
 function checkGrammar(text){
   const t = text.toLowerCase();
