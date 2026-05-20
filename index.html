@@ -417,14 +417,16 @@ nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justif
       <h3 style="margin-bottom:6px;color:var(--navy)">Coach Alex</h3>
       <p style="color:var(--muted);font-size:.88rem;margin-bottom:24px" id="gate-desc">
         Inserisci il tuo PIN per accedere a Coach Alex.<br>
-        <span style="font-size:.78rem;">Gli studenti ricevono il PIN al primo acquisto. Gli admin usano il PIN admin.</span>
+        <span style="font-size:.78rem;">Gli admin usano il PIN admin. Gli studenti possono accedere acquistando un modulo.</span>
       </p>
       <div id="gate-error" style="display:none;background:#FEF2F2;color:#991B1B;border-radius:8px;padding:8px 12px;font-size:.82rem;margin-bottom:14px;"></div>
-      <input id="gate-pin" type="password" inputmode="numeric" placeholder="Inserisci il tuo PIN"
+      <input id="gate-pin" type="password" inputmode="numeric" placeholder="PIN admin"
         style="width:100%;border:1.5px solid #E2E8F0;border-radius:10px;padding:12px 16px;font-size:1.2rem;text-align:center;letter-spacing:6px;box-sizing:border-box;margin-bottom:12px;"
         onkeydown="if(event.key==='Enter')checkCoachPin()">
-      <button class="btn btn-gold" onclick="checkCoachPin()" style="width:100%;margin-bottom:12px;">Accedi →</button>
-      <div style="color:var(--muted);font-size:.76rem;margin-top:8px;">Non hai ancora un PIN? <span style="color:var(--navy);cursor:pointer;font-weight:600;" onclick="showView('explore')">Acquista un modulo →</span></div>
+      <button class="btn btn-gold" onclick="checkCoachPin()" style="width:100%;margin-bottom:16px;">Accedi con PIN →</button>
+      <div style="text-align:center;color:var(--muted);font-size:.78rem;margin-bottom:12px;">— oppure —</div>
+      <button class="btn" onclick="checkStudentModuleAccess()" style="width:100%;background:#F0F4FF;color:var(--navy);border:1.5px solid #C7D2FE;font-weight:700;margin-bottom:12px;">🎓 Accedi come Studente</button>
+      <div style="color:var(--muted);font-size:.76rem;text-align:center;">Non hai moduli? <span style="color:var(--navy);cursor:pointer;font-weight:600;" onclick="showView('explore')">Acquista un modulo →</span></div>
     </div>
   </div>
 
@@ -598,6 +600,13 @@ function showView(name){
   if(v) v.classList.add('active');
   const nb=document.getElementById('nav-'+name);
   if(nb) nb.classList.add('active');
+  scrollToTop();
+}
+
+function scrollToTop(){
+  window.scrollTo({top:0, behavior:'instant'});
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
 }
 
 // ── HOME ───────────────────────────────────────────────────────────────────
@@ -702,8 +711,7 @@ function openModule(levelCode, modId){
   
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-module').classList.add('active');
-  
-  const owned=isPurchased(mod.id);
+  scrollToTop();
   const price=getModulePrice(mod);
   
   document.getElementById('module-header').style.background=lev.color;
@@ -765,8 +773,7 @@ function openSituation(levelCode, modId, sitIdx){
   currentLevel=lev; currentModule=mod;
   const sit=mod.situations[sitIdx]; if(!sit) return;
   currentSituation=sit; currentDialogueIdx=0;
-  
-  // Track progress
+  scrollToTop();
   if(!progress[mod.id]) progress[mod.id]={completed:[]};
   if(!progress[mod.id].completed.includes(sitIdx)) progress[mod.id].completed.push(sitIdx);
   saveProgress();
@@ -988,6 +995,7 @@ async function judgeRepeat(target, said, uid){
     const isGood=/brav|ottim|perfett|esatt|corrett|benissimo/i.test(reply);
     rf.className=`repeat-feedback ${isGood?'good':'bad'} show`;
     rf.innerHTML=`<b>Hai detto:</b> "${said}"<br>${reply}`;
+    speakItalian(reply);
   }catch(e){
     rf.className='repeat-feedback bad show';
     rf.innerHTML=`<b>Hai detto:</b> "${said}"<br>Connessione non disponibile.`;
@@ -1049,6 +1057,7 @@ async function lineWriteCheck(target, uid){
     const reply=data.content?.[0]?.text||'Buon tentativo!';
     wf.className='write-feedback show';
     wf.innerHTML=`<b>Hai scritto:</b> "${written}"<br>${reply}`;
+    speakItalian(reply);
   }catch(e){
     wf.innerHTML=`Connessione non disponibile.`;
   }
@@ -1075,17 +1084,15 @@ function speakText(text){
     if(en) utt.voice = en;
     window.speechSynthesis.speak(utt);
   }
-  // Voices may not be loaded yet — wait if needed
-  if(window.speechSynthesis.getVoices().length > 0){
-    doSpeak();
-  } else {
-    window.speechSynthesis.onvoiceschanged = function(){
-      window.speechSynthesis.onvoiceschanged = null;
-      doSpeak();
-    };
-    // Fallback: try after short delay
-    setTimeout(doSpeak, 250);
-  }
+  if(window.speechSynthesis.getVoices().length > 0){ doSpeak(); }
+  else { window.speechSynthesis.onvoiceschanged=function(){ window.speechSynthesis.onvoiceschanged=null; doSpeak(); }; setTimeout(doSpeak,250); }
+}
+
+function speakItalian(text){
+  if(!text) return;
+  const plain = text.replace(/<[^>]+>/g,'').replace(/&[a-z]+;/gi,'').trim();
+  if(!plain) return;
+  speakText(plain);
 }
 document.addEventListener('click', function(e){
   const btn = e.target.closest('.tts-btn');
@@ -1309,8 +1316,17 @@ function checkCoachPin(){
     document.getElementById('gate-pin').value='';
   }
 }
-function checkCoachAccess(){ checkCoachPin(); }
-function checkStudentAccess(){ checkCoachPin(); }
+
+function checkStudentModuleAccess(){
+  const err = document.getElementById('gate-error');
+  err.style.display='none';
+  if(purchased.length > 0){
+    grantCoachAccess('🎓 Studente');
+  } else {
+    err.style.display='block';
+    err.textContent='Nessun modulo acquistato. Acquista almeno un modulo per accedere a Coach Alex gratuitamente.';
+  }
+}
 
 function grantCoachAccess(role){
   document.getElementById('coach-gate').style.display='none';
@@ -1378,22 +1394,7 @@ async function sendMsg(){
     document.getElementById('typing')?.remove();
     appendMsg('alex',reply);
     chatHistory.push({role:'assistant',content:reply});
-    // TTS for coach reply — speak ONLY English sentences
-    // Extract English part: lines that don't contain Italian markers
-    const lines = reply.split('\n');
-    const enLines = lines.filter(l => {
-      const t = l.trim();
-      if(!t) return false;
-      // Skip lines that are clearly Italian (contain italian words)
-      const itWords = /\b(sono|sei|è|ho|hai|ha|come|cosa|che|per|con|una|uno|del|della|dei|gli|alle|nel|nella|questo|questa|però|anche|quindi|molto|tutti|ogni|fare|non|ma|si|mi|ti|ci|vi|loro|lui|lei|noi|voi)\b/i;
-      // Skip if more than 30% Italian markers
-      const words = t.split(/\s+/);
-      const itCount = words.filter(w => itWords.test(w)).length;
-      if(itCount / words.length > 0.25) return false;
-      return true;
-    });
-    const enText = enLines.join(' ').replace(/[^\w\s.,!?'"-]/g,' ').trim();
-    if(enText) speakText(enText);
+    speakItalian(reply);
   } catch(e){
     document.getElementById('typing')?.remove();
     appendMsg('alex','Connessione momentaneamente non disponibile. Riprova tra poco!');
