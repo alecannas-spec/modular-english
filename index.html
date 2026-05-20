@@ -331,17 +331,17 @@ nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justif
       </div>
       <div class="hero-text">
         <h1 class="hero-brand">Modular English</h1>
-        <p class="hero-sub1">Impara L'Inglese in Modo Naturale</p>
-        <p class="hero-sub2">Parla di più · Preoccupati di Meno</p>
+        <p class="hero-sub1">Learn English Naturally</p>
+        <p class="hero-sub2">Speak More · Worry Less</p>
         <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
-          <button class="btn btn-gold" onclick="showView('explore')">Esplora i Moduli →</button>
-          <button class="btn btn-outline" onclick="showView('ftt')">✨ Prova Gratis</button>
+          <button class="btn btn-gold" onclick="showView('explore')">Explore Modules →</button>
+          <button class="btn btn-outline" onclick="showView('ftt')">✨ Try for Free</button>
         </div>
         <div class="stats-row">
-          <div class="stat"><div class="stat-num">72</div><div class="stat-label">Moduli</div></div>
-          <div class="stat"><div class="stat-num">360+</div><div class="stat-label">Situazioni</div></div>
-          <div class="stat"><div class="stat-num">6</div><div class="stat-label">Livelli CEFR</div></div>
-          <div class="stat"><div class="stat-num">25</div><div class="stat-label">Anni Esp.</div></div>
+          <div class="stat"><div class="stat-num">72</div><div class="stat-label">Modules</div></div>
+          <div class="stat"><div class="stat-num">360+</div><div class="stat-label">Situations</div></div>
+          <div class="stat"><div class="stat-num">6</div><div class="stat-label">CEFR Levels</div></div>
+          <div class="stat"><div class="stat-num">25</div><div class="stat-label">Yrs Exp.</div></div>
         </div>
       </div>
     </div>
@@ -600,21 +600,19 @@ function showView(name){
   if(v) v.classList.add('active');
   const nb=document.getElementById('nav-'+name);
   if(nb) nb.classList.add('active');
-  scrollToTop();
-}
-
-function scrollToTop(){
-  // Use rAF to scroll after DOM repaints
+  // Scroll after render and paint
   requestAnimationFrame(()=>{
     window.scrollTo(0,0);
     document.documentElement.scrollTop=0;
     document.body.scrollTop=0;
-    // Also try after a short delay for slower renders
-    setTimeout(()=>{
-      window.scrollTo(0,0);
-      document.documentElement.scrollTop=0;
-      document.body.scrollTop=0;
-    },50);
+  });
+}
+
+function scrollToTop(){
+  requestAnimationFrame(()=>{
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop=0;
+    document.body.scrollTop=0;
   });
 }
 
@@ -684,7 +682,7 @@ function showModuleList(){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-module').classList.add('active');
   document.getElementById('nav-explore').classList.add('active');
-  
+  requestAnimationFrame(()=>{ window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0; });
   document.getElementById('module-header').style.background=lev.color;
   document.getElementById('module-breadcrumb').innerHTML=`<span onclick="showView('home')">🏠</span><span class="sep">›</span><span onclick="showView('home')">${lev.code}</span>`;
   const _e={A1:'🌱',A2:'📗',B1:'💬',B2:'🔥',C1:'⭐',C2:'👑'};
@@ -790,8 +788,8 @@ function openSituation(levelCode, modId, sitIdx){
   renderDialogue();
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-dialogue').classList.add('active');
+  requestAnimationFrame(()=>{ window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0; });
 }
-
 function renderDialogue(){
   const sit=currentSituation; const mod=currentModule; const lev=currentLevel;
   if(!sit||!sit.dialogues?.length) return;
@@ -986,29 +984,47 @@ function startLineRec(target, uid, btn, rf){
 
 async function judgeRepeat(target, said, uid){
   const rf=document.getElementById(uid+'-rf');
-  rf.className='repeat-feedback loading show';
-  rf.textContent='⏳ Coach Alex sta valutando...';
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','x-api-key':ANTHROPIC_KEY},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:350,
-        system:'You are Coach Alex, a professional English pronunciation and grammar coach for Italian speakers. A student just tried to repeat a sentence. Your job:\n1. Compare what they said to the target sentence word by word\n2. Point out specific words they mispronounced or got wrong (e.g. "You said \'goood\' — the word is \'good\', short vowel sound")\n3. Explain HOW to fix it (mouth position, stress, rhythm)\n4. If grammar was wrong, correct it with a brief explanation\n5. End with one encouraging sentence\nBe specific, practical and direct. Max 4 sentences. Always reply in English.',
-        messages:[{role:'user',content:`Target sentence: "${target}"\nStudent said: "${said}"\n\nAnalyse the differences. Give specific pronunciation and grammar feedback with corrections.`}]
-      })
-    });
-    const data=await resp.json();
-    const reply=data.content?.[0]?.text||'Good try! Keep practising.';
-    const isGood=/perfect|excellent|great|well done|correct|good job|spot on|accurate|nearly|almost/i.test(reply);
-    rf.className=`repeat-feedback ${isGood?'good':'bad'} show`;
-    rf.innerHTML=`<b>Hai detto:</b> "${said}"<br>${reply}`;
-    speakItalian(reply);
-  }catch(e){
-    rf.className='repeat-feedback bad show';
-    rf.innerHTML=`<b>Hai detto:</b> "${said}"<br>Connessione non disponibile.`;
+
+  // Compare word by word — no API needed
+  const targetWords = target.toLowerCase().replace(/[.,!?;:]/g,'').split(/\s+/);
+  const saidWords   = said.toLowerCase().replace(/[.,!?;:]/g,'').split(/\s+/);
+
+  // Build highlighted comparison
+  let targetHtml='', saidHtml='';
+  const maxLen = Math.max(targetWords.length, saidWords.length);
+  let correct=0;
+
+  for(let i=0;i<maxLen;i++){
+    const tw = targetWords[i]||'';
+    const sw = saidWords[i]||'';
+    if(tw===sw){
+      targetHtml+=`<span style="color:#16a34a;font-weight:600">${tw}</span> `;
+      saidHtml  +=`<span style="color:#16a34a;font-weight:600">${sw}</span> `;
+      correct++;
+    } else if(!sw){
+      targetHtml+=`<span style="background:#FEE2E2;color:#991B1B;padding:1px 4px;border-radius:3px">${tw}</span> `;
+      saidHtml  +=`<span style="background:#FEE2E2;color:#991B1B;padding:1px 4px;border-radius:3px">missing</span> `;
+    } else if(!tw){
+      targetHtml+=`<span style="background:#FEF3C7;color:#92400E;padding:1px 4px;border-radius:3px">—</span> `;
+      saidHtml  +=`<span style="background:#FEF3C7;color:#92400E;padding:1px 4px;border-radius:3px">${sw} extra</span> `;
+    } else {
+      targetHtml+=`<span style="background:#FEE2E2;color:#991B1B;padding:1px 4px;border-radius:3px">${tw}</span> `;
+      saidHtml  +=`<span style="background:#FEE2E2;color:#991B1B;padding:1px 4px;border-radius:3px">${sw}</span> `;
+    }
   }
+
+  const score = Math.round((correct/targetWords.length)*100);
+  const isGood = score >= 80;
+
+  rf.className=`repeat-feedback ${isGood?'good':'bad'} show`;
+  rf.innerHTML=`
+    <div style="margin-bottom:8px"><b>Score: ${score}%</b> ${isGood?'✅ Well done!':'— Keep practising!'}</div>
+    <div style="font-size:.78rem;margin-bottom:4px"><b>Target:</b> ${targetHtml}</div>
+    <div style="font-size:.78rem"><b>You said:</b> ${saidHtml}</div>
+    <div style="font-size:.76rem;color:#64748B;margin-top:6px">🟢 correct &nbsp; 🔴 wrong/missing</div>`;
+
+  // Speak the target sentence so student hears the correct version
+  setTimeout(()=>speakText(target), 500);
 }
 
 // ── Mode 3: Write — dictate then check ─────────────────────────────────────
@@ -1047,29 +1063,46 @@ function lineWriteMic(uid){
 async function lineWriteCheck(target, uid){
   const ta=document.getElementById(uid+'-ta');
   const written=ta.value.trim();
-  if(!written){ showToast('Scrivi prima la frase!'); return; }
+  if(!written){ showToast('Write the sentence first!'); return; }
   const wf=document.getElementById(uid+'-wf');
-  wf.className='write-feedback show';
-  wf.textContent='⏳ Coach Alex sta correggendo...';
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','x-api-key':ANTHROPIC_KEY},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:350,
-        system:'You are Coach Alex, a professional English grammar coach for Italian speakers. A student tried to write a sentence from memory after hearing it. Your job:\n1. Compare their version to the target sentence exactly\n2. Highlight every spelling, grammar or word-order mistake specifically (e.g. "You wrote \'I am go\' — it should be \'I am going\', present continuous needs -ing")\n3. Explain WHY each mistake is wrong using a simple rule\n4. Show the correct sentence in full\n5. End with brief encouragement\nBe specific and educational. Max 5 sentences. Always reply in English.',
-        messages:[{role:'user',content:`Target sentence: "${target}"\nStudent wrote: "${written}"\n\nIdentify every mistake and explain the correct grammar rule for each one.`}]
-      })
-    });
-    const data=await resp.json();
-    const reply=data.content?.[0]?.text||'Good try! Keep practising.';
-    wf.className='write-feedback show';
-    wf.innerHTML=`<b>Hai scritto:</b> "${written}"<br>${reply}`;
-    speakItalian(reply);
-  }catch(e){
-    wf.innerHTML=`Connessione non disponibile.`;
+
+  const targetWords = target.toLowerCase().replace(/[.,!?;:]/g,'').split(/\s+/);
+  const writtenWords= written.toLowerCase().replace(/[.,!?;:]/g,'').split(/\s+/);
+
+  let targetHtml='', writtenHtml='';
+  const maxLen = Math.max(targetWords.length, writtenWords.length);
+  let correct=0;
+
+  for(let i=0;i<maxLen;i++){
+    const tw = targetWords[i]||'';
+    const ww = writtenWords[i]||'';
+    if(tw===ww){
+      targetHtml +=`<span style="color:#16a34a;font-weight:600">${tw}</span> `;
+      writtenHtml+=`<span style="color:#16a34a;font-weight:600">${ww}</span> `;
+      correct++;
+    } else if(!ww){
+      targetHtml +=`<span style="background:#FEE2E2;color:#991B1B;padding:1px 4px;border-radius:3px">${tw}</span> `;
+      writtenHtml+=`<span style="background:#FEE2E2;color:#991B1B;padding:1px 4px;border-radius:3px">missing</span> `;
+    } else if(!tw){
+      targetHtml +=`<span style="background:#FEF3C7;color:#92400E;padding:1px 4px;border-radius:3px">—</span> `;
+      writtenHtml+=`<span style="background:#FEF3C7;color:#92400E;padding:1px 4px;border-radius:3px">${ww} extra</span> `;
+    } else {
+      targetHtml +=`<span style="background:#FEE2E2;color:#991B1B;padding:1px 4px;border-radius:3px">${tw}</span> `;
+      writtenHtml+=`<span style="background:#FEE2E2;color:#991B1B;padding:1px 4px;border-radius:3px">${ww}</span> `;
+    }
   }
+
+  const score = Math.round((correct/targetWords.length)*100);
+  const isGood = score >= 80;
+
+  wf.className='write-feedback show';
+  wf.innerHTML=`
+    <div style="margin-bottom:8px"><b>Score: ${score}%</b> ${isGood?'✅ Correct!':'— Check the differences below'}</div>
+    <div style="font-size:.78rem;margin-bottom:4px"><b>Target:</b> ${targetHtml}</div>
+    <div style="font-size:.78rem"><b>You wrote:</b> ${writtenHtml}</div>
+    <div style="font-size:.76rem;color:#64748B;margin-top:6px">🟢 correct &nbsp; 🔴 wrong/missing</div>`;
+
+  if(isGood) speakText("Perfect! Well done.");
 }
 
 // ── Mode 4: Translate toggle ────────────────────────────────────────────────
@@ -1359,8 +1392,9 @@ function grantCoachAccess(role){
   if(!msgs.children.length){
     const greeting = isAdmin
       ? "Welcome Admin! 👑 I'm Coach Alex. I can help you test features, review content or simulate student sessions. How can I help?"
-      : "Hello! I'm Coach Alex 🎙️ your personal English tutor. I can correct your mistakes, explain grammar, and simulate real conversations. Write in English or Italian, or use the microphone!";
+      : "Hello! I'm Coach Alex 🎙️ your personal English tutor. I can correct your mistakes, explain grammar, and simulate real conversations. Write in English or use the microphone!";
     appendMsg('alex', greeting);
+    setTimeout(()=>speakText(greeting), 400);
   }
 }
 
@@ -1383,7 +1417,14 @@ function appendMsg(role, text){
   const isFirstAlex = role==='alex' && msgs.querySelectorAll('.msg.alex').length===0;
   div.className='msg '+role+(isFirstAlex?' welcome':'');
   if(role==='alex'){
-    div.innerHTML=`<div class="msg-label">🎙️ COACH ALEX</div><div class="msg-text">${text}</div>`;
+    const plain=text.replace(/<[^>]+>/g,'');
+    div.innerHTML=`
+      <div class="msg-label">🎙️ COACH ALEX
+        <button onclick="speakText(${JSON.stringify(plain)})" 
+          style="background:none;border:none;cursor:pointer;font-size:.85rem;margin-left:6px;opacity:.7;" 
+          title="Replay">🔊</button>
+      </div>
+      <div class="msg-text">${text}</div>`;
   } else {
     div.textContent=text;
   }
@@ -1404,36 +1445,114 @@ async function sendMsg(){
   input.value=''; appendMsg('user',text);
   chatHistory.push({role:'user',content:text});
   appendTyping();
-  
-  try {
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','x-api-key':ANTHROPIC_KEY},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:600,
-        system:`You are Coach Alex, a friendly and encouraging English tutor for Italian speakers. Your role:
-- Help Italian speakers improve their English through conversation
-- Gently correct grammar and pronunciation mistakes
-- Explain English grammar in simple terms (you can use Italian when helpful)
-- Simulate real-life conversations and scenarios  
-- Encourage the student and keep them motivated
-- Keep responses concise and conversational (2-4 sentences max)
-- If the student writes in Italian, respond in both Italian and English
-- Always be warm, patient, and enthusiastic about their progress`,
-        messages:chatHistory.slice(-10)
-      })
-    });
-    const data=await resp.json();
-    const reply=data.content?.[0]?.text||'Sorry, I had a connection issue. Please try again.';
-    document.getElementById('typing')?.remove();
-    appendMsg('alex',reply);
-    chatHistory.push({role:'assistant',content:reply});
-    speakItalian(reply);
-  } catch(e){
-    document.getElementById('typing')?.remove();
-    appendMsg('alex','Connessione momentaneamente non disponibile. Riprova tra poco!');
+
+  // Try API first if key available, otherwise use rule-based coach
+  if(ANTHROPIC_KEY){
+    try{
+      const resp=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','x-api-key':ANTHROPIC_KEY},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:600,
+          system:`You are Coach Alex, a friendly English tutor for Italian speakers. Correct grammar mistakes, explain rules clearly, simulate conversations. Keep responses to 2-4 sentences. If student writes Italian, reply in both languages. Always encouraging.`,
+          messages:chatHistory.slice(-10)
+        })
+      });
+      const data=await resp.json();
+      const reply=data.content?.[0]?.text||coachReply(text);
+      document.getElementById('typing')?.remove();
+      appendMsg('alex',reply);
+      chatHistory.push({role:'assistant',content:reply});
+      speakText(reply);
+      return;
+    }catch(e){}
   }
+
+  // Rule-based coach — no API needed
+  setTimeout(()=>{
+    document.getElementById('typing')?.remove();
+    const reply = coachReply(text);
+    appendMsg('alex', reply);
+    chatHistory.push({role:'assistant',content:reply});
+    speakText(reply);
+  }, 600);
+}
+
+function coachReply(text){
+  const t = text.toLowerCase().trim();
+
+  // Greetings
+  if(/^(hi|hello|ciao|hey|good morning|good evening|buongiorno|buonasera)\b/.test(t))
+    return "Hello! Great to see you! Let's practise your English. You can write anything — I'll correct your grammar, answer questions, or have a conversation with you. What would you like to do today?";
+
+  // How are you
+  if(/how are you|come stai|come va/.test(t))
+    return "I'm doing great, thank you for asking — and well done for using a question! A tip: in English we often say 'How are you doing?' or 'How's it going?' as alternatives. How are YOU doing today?";
+
+  // Grammar questions
+  if(/what is|what's|what are/.test(t) && /present|past|future|tense|grammar|verb|article|plural|singular/.test(t))
+    return coachGrammar(t);
+
+  // Italian input
+  if(/[àèìòùé]/.test(text) || /\b(sono|ho|hai|è|che|per|con|non|ma|si)\b/.test(t))
+    return "Good effort writing to me! I noticed some Italian there. Try to write it in English and I'll help you correct it. For example, instead of writing in Italian, try your best English version — mistakes are fine!";
+
+  // Common mistakes - verb to be
+  if(/\bi are\b|\bhe are\b|\bshe are\b|\bwe is\b|\bthey is\b/.test(t)){
+    const fix = text.replace(/\bi are\b/gi,'I am').replace(/\bhe are\b/gi,'he is').replace(/\bshe are\b/gi,'she is').replace(/\bwe is\b/gi,'we are').replace(/\bthey is\b/gi,'they are');
+    return `I noticed a verb "to be" mistake! The correct version is: "${fix}". Remember: I am / you are / he-she-it IS / we-they are. Try saying it again!`;
+  }
+
+  // Common mistakes - missing -ing
+  if(/\bi am \w+ (to|the|a|an)\b/.test(t) && !/\bi am (going|trying|learning|studying|working|doing|feeling)\b/.test(t))
+    return "Good sentence! Remember with 'I am + verb', you usually need -ing: 'I am going', 'I am learning', 'I am trying'. What were you trying to say? Write it again!";
+
+  // Questions about words
+  if(/what does .+ mean|how do you say|how to say|how do i say/.test(t)){
+    const match = t.match(/what does (.+) mean/) || t.match(/how do you say (.+)/);
+    if(match) return `Great question! I'd love to help with "${match[1]}". Unfortunately I can't look up translations without internet, but try typing the word into Google Translate and then come back and use it in a sentence — I'll check it for you!`;
+  }
+
+  // Practice request
+  if(/can we practise|let's practise|practice|let's talk|conversation/.test(t))
+    return "Absolutely! Let's have a conversation. I'll start: What do you do for work? Answer in English, don't worry about mistakes — just try!";
+
+  // Asking for help
+  if(/help|aiuto|non capisco|don't understand|i don't know/.test(t))
+    return "No problem, I'm here to help! Tell me specifically what you're struggling with — is it grammar, vocabulary, pronunciation, or understanding English? The more specific you are, the better I can help you!";
+
+  // Compliments/thanks
+  if(/thank|grazie|thanks|great|amazing|good/.test(t))
+    return "You're very welcome! Keep up the great work. Remember, the key to learning English is practice every day — even just 10 minutes! Is there anything else you'd like to practise?";
+
+  // Default — correct grammar and encourage
+  const corrections = checkGrammar(text);
+  if(corrections)
+    return corrections;
+
+  return `Good effort! Your message was: "${text}". Keep practising — try to write a full sentence about your day, your work, or something you did recently. I'll check your grammar!`;
+}
+
+function coachGrammar(t){
+  if(/present simple|simple present/.test(t))
+    return "Present Simple is used for habits and facts. Structure: I/you/we/they + verb, he/she/it + verb+S. Example: 'I work every day.' 'She works in Rome.' Remember the S for he/she/it!";
+  if(/present continuous|present progressive/.test(t))
+    return "Present Continuous is used for actions happening NOW. Structure: am/is/are + verb+ING. Example: 'I am studying English.' 'She is working now.' Always need am/is/are before the -ing verb!";
+  if(/past simple|simple past/.test(t))
+    return "Past Simple is used for finished actions. Regular verbs: add -ED. Example: 'I worked yesterday.' 'She visited Rome.' Irregular verbs have special forms: go→went, have→had, do→did.";
+  if(/article|the |a |an /.test(t))
+    return "Articles: use 'A' before consonant sounds (a book, a car), 'AN' before vowel sounds (an apple, an hour). Use 'THE' for specific things both speaker and listener know about. Example: 'I saw A film. THE film was great!'";
+  return "Great grammar question! The most important rules for Italian speakers: 1) Add S to he/she/it verbs in present simple. 2) Use am/is/are + -ing for present continuous. 3) Use did + infinitive for past questions. Which would you like to practise?";
+}
+
+function checkGrammar(text){
+  const t = text.toLowerCase();
+  if(/\bi have \d+ year/.test(t)) return `Small correction: in English we say "I am 30 years old" not "I have 30 years". "Avere" (to have) for age is Italian — in English we use "to be"! Try again with the correct form.`;
+  if(/\bi am agree\b/.test(t)) return `Almost! We say "I agree" not "I am agree". "Agree" is a verb in English, so no "am" needed. Compare: "I am happy" (adjective) vs "I agree" (verb).`;
+  if(/\bmore \w+er\b/.test(t)) return `Watch out for double comparatives! We say either "more beautiful" OR "prettier" — not "more prettier". Use "more" with long words and -er with short words.`;
+  if(/\bvery \w+ (than|as)\b/.test(t)) return `For comparisons, use "much" not "very": "much better than", "much more expensive". "Very" is for simple descriptions: "very good", "very expensive".`;
+  return null;
 }
 
 // ── MIC / SPEECH RECOGNITION ───────────────────────────────────────────────
