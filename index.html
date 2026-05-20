@@ -441,7 +441,7 @@ nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justif
     </div>
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input-area">
-      <input class="chat-input" id="chat-input" type="text" placeholder="Write to Coach Alex..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <input class="chat-input" id="chat-input" type="text" placeholder="Ask a grammar question... e.g. Explain the present perfect" onkeydown="if(event.key==='Enter')sendMsg()">
       <button class="send-btn" onclick="sendMsg()">Send</button>
     </div>
   </div>
@@ -1375,8 +1375,8 @@ function grantCoachAccess(role){
   const msgs=document.getElementById('chat-messages');
   if(!msgs.children.length){
     const greeting = isAdmin
-      ? "Welcome Admin! 👑 I'm Coach Alex. I can help you test features, review content or simulate student sessions. How can I help?"
-      : "Hello! I'm Coach Alex 🎙️ your personal English tutor. Write to me in English or Italian — I'll correct your grammar, explain rules and have real conversations with you!";
+      ? "Welcome Admin! 👑 I'm Coach Alex — grammar expert.<br><br>I have three Cambridge books loaded:<br>• English Vocabulary in Use (Redman, 100 units)<br>• English Grammar in Use (Murphy, 136 units)<br>• Advanced Grammar in Use (Hewings, 100 units)<br><br>Ask me any grammar or vocabulary question to test my knowledge."
+      : "Hello! I'm Coach Alex 🎙️ your English grammar expert, based on Cambridge Grammar in Use.<br><br>Ask me any grammar question, for example:<br>• Explain the present perfect<br>• When do I use WILL vs GOING TO?<br>• Difference between SINCE and FOR?<br>• How does the passive voice work?<br>• What are question tags?<br><br>Type your question below ↓";
     appendMsg('alex', greeting);
   }
 }
@@ -2675,7 +2675,7 @@ function coachReply(text){
     return "Good question! Could you be more specific? I can help with: vocabulary by topic (food, travel, work, sport, technology...), grammar (tenses, articles, modals, conditionals...), word formation (prefixes, suffixes, compound nouns), phrasal verbs, idioms, collocations, or common mistakes. What specifically would you like to know?";
 
   // ── DEFAULT ───────────────────────────────────────────────────────────────
-  return `I'm your English expert based on Cambridge Vocabulary in Use (100 units). I can answer questions about: vocabulary topics (food, travel, work, health, sport...), grammar rules (tenses, articles, modals, conditionals...), phrasal verbs, idioms, collocations, word formation (prefixes/suffixes), or common Italian mistakes. What would you like to learn? Try asking: "What does 'get over' mean?" or "Explain the present perfect" or "Common mistakes Italians make."`;
+  return `I'm your English expert based on Cambridge Vocabulary in Use (100 units). I can answer questions about: vocabulary topics (food, travel, work, health, sport...), grammar rules (tenses, articles, modals, conditionals...), phrasal verbs, idioms, collocations, word formation (prefixes/suffixes), or common Italian mistakes. Try asking: "Explain the present perfect", "When do I use WILL vs GOING TO?", "How does the passive voice work?", "What are question tags?", or "Common Italian mistakes in English."`;
 }
 
 
