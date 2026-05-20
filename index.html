@@ -367,8 +367,8 @@ nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justif
 <!-- FREE TO TRY -->
 <div class="view" id="view-ftt">
   <div class="page-header">
-    <h2>✨ Prova Gratis</h2>
-    <p>Dialoghi di esempio per ogni livello — senza acquisto</p>
+    <h2>✨ Free Trial</h2>
+    <p>A1 Greetings sample dialogues — no purchase required</p>
   </div>
   <div class="ftt-view" id="ftt-content"></div>
 </div>
@@ -600,12 +600,12 @@ function showView(name){
   if(v) v.classList.add('active');
   const nb=document.getElementById('nav-'+name);
   if(nb) nb.classList.add('active');
-  // Scroll after render and paint
-  requestAnimationFrame(()=>{
+  // Double rAF ensures scroll fires after browser has fully painted the new view
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
     window.scrollTo(0,0);
     document.documentElement.scrollTop=0;
     document.body.scrollTop=0;
-  });
+  }));
 }
 
 function scrollToTop(){
@@ -682,7 +682,7 @@ function showModuleList(){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-module').classList.add('active');
   document.getElementById('nav-explore').classList.add('active');
-  requestAnimationFrame(()=>{ window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0; });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0; }));
   document.getElementById('module-header').style.background=lev.color;
   document.getElementById('module-breadcrumb').innerHTML=`<span onclick="showView('home')">🏠</span><span class="sep">›</span><span onclick="showView('home')">${lev.code}</span>`;
   const _e={A1:'🌱',A2:'📗',B1:'💬',B2:'🔥',C1:'⭐',C2:'👑'};
@@ -788,7 +788,7 @@ function openSituation(levelCode, modId, sitIdx){
   renderDialogue();
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-dialogue').classList.add('active');
-  requestAnimationFrame(()=>{ window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0; });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0; }));
 }
 function renderDialogue(){
   const sit=currentSituation; const mod=currentModule; const lev=currentLevel;
@@ -1268,7 +1268,7 @@ function renderFTT(){
   header.className='ftt-card';
   header.innerHTML=`<h3>🌱 A1 — ${mod.title} <span class="module-badge badge-free">FREE</span></h3>
     <div style="color:var(--muted);font-size:.82rem;margin-bottom:4px">💬 ${sit.title}</div>
-    <div style="color:var(--muted);font-size:.78rem;margin-bottom:16px">Prova 2 frasi gratis — acquista per accedere a tutto il modulo.</div>`;
+    <div style="color:var(--muted);font-size:.78rem;margin-bottom:16px">2 free sentences — purchase the module to unlock everything.</div>`;
   c.appendChild(header);
 
   // 2 free lines
@@ -1313,9 +1313,9 @@ function renderFTT(){
   const lock=document.createElement('div');
   lock.style.cssText='text-align:center;padding:16px 12px;background:#F8FAFC;border-radius:10px;border:1.5px dashed #CBD5E1;';
   lock.innerHTML=`<div style="font-size:1.4rem;margin-bottom:6px">🔒</div>
-    <div style="font-size:.85rem;font-weight:600;color:var(--navy);margin-bottom:4px">${totalLocked}+ frasi bloccate</div>
-    <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">${mod.situations.length} situazioni · dialoghi completi · Coach AI</div>
-    <button class="btn btn-gold" onclick="openModule('A1','a1-m1')" style="width:100%;font-size:.88rem;">🔓 Acquista Greetings</button>`;
+    <div style="font-size:.85rem;font-weight:600;color:var(--navy);margin-bottom:4px">${totalLocked}+ sentences locked</div>
+    <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">${mod.situations.length} situations · full dialogues · AI Coach</div>
+    <button class="btn btn-gold" onclick="openModule('A1','a1-m1')" style="width:100%;font-size:.88rem;">🔓 Buy Greetings Module</button>`;
   sitCard.appendChild(lock);
   c.appendChild(sitCard);
 
@@ -1323,9 +1323,9 @@ function renderFTT(){
   const cta=document.createElement('div');
   cta.className='ftt-card';
   cta.style.cssText='margin-top:12px;text-align:center;background:linear-gradient(135deg,#0A143C,#1e3a8a);color:white;';
-  cta.innerHTML=`<div style="font-size:1rem;font-weight:700;margin-bottom:6px">🎓 72 moduli disponibili</div>
+  cta.innerHTML=`<div style="font-size:1rem;font-weight:700;margin-bottom:6px">🎓 72 modules available</div>
     <div style="font-size:.82rem;opacity:.8;margin-bottom:14px">A1 · A2 · B1 · B2 · C1 · C2</div>
-    <button class="btn btn-gold" onclick="showView('explore')" style="width:100%;font-size:.88rem;">Esplora tutti i moduli →</button>`;
+    <button class="btn btn-gold" onclick="showView('explore')" style="width:100%;font-size:.88rem;">Explore all modules →</button>`;
   c.appendChild(cta);
 }
 
