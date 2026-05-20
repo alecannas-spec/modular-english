@@ -1933,6 +1933,425 @@ Look FORWARD TO: 'I'm looking forward to the holiday.' (+ ING: looking forward t
 
 };
 
+// ── ADVANCED GRAMMAR IN USE — Martin Hewings (Cambridge) ───────────────────
+
+const ADVANCED_KB = {
+
+// ── TENSES ─────────────────────────────────────────────────────────────────
+'present continuous.*simple.*1|stative.*dynamic|state.*action verb': `Advanced Present Tenses (Hewings Unit 1-2):
+Dynamic verbs (actions) CAN use continuous: run, eat, work, think (actively).
+Stative verbs (states) RARELY use continuous: know, believe, want, need, prefer, own, contain, seem, appear, consist, depend, deserve, doubt, fit, hate, involve, lack, like, love, matter, mean, mind, possess, realise, recognise, remember, suppose, understand, weigh.
+ADVANCED exceptions — some stative verbs CAN use continuous for emphasis or temporary state:
+'I'm loving this!' (informal, temporary enjoyment)
+'She's being difficult.' (deliberate behaviour, not personality)
+'I'm thinking about it.' (active process vs 'I think it's good' = opinion)
+'He's appearing in a new film.' (performing) vs 'He appears tired.' (seems)`,
+
+'past simple.*present perfect|present perfect.*past simple|advanced perfect': `Past Simple vs Present Perfect — Advanced (Hewings Unit 3):
+Present Perfect: action/state with CURRENT RELEVANCE.
+'Scientists have discovered a new treatment.' (recent, relevant now)
+'Sales have fallen this year.' (the year is still ongoing)
+Past Simple: finished time with NO connection to now.
+'Sales fell last year.' (last year is finished)
+Advanced uses of Present Perfect:
+With SUPERLATIVES: 'It's the best film I've ever seen.' (always present perfect)
+With FIRST/SECOND/LAST TIME: 'This is the first time I've tried sushi.'
+In formal writing: 'The government has announced new measures.' (news = recent relevance)
+Regional: American English uses Past Simple more freely: 'Did you eat yet?' (British: 'Have you eaten yet?')`,
+
+'past perfect.*simple|pluperfect advanced|had done.*when': `Past Perfect — Advanced Use (Hewings Unit 5):
+Not always required when time sequence is clear:
+'She got up, had a shower and went to work.' (sequence clear without past perfect)
+REQUIRED when sequence would be ambiguous:
+'When I arrived, she left.' (she left AT THAT MOMENT) vs 'When I arrived, she had left.' (she left BEFORE)
+Reporting contexts always need past perfect:
+'He explained that he hadn't read the report.'
+Conditionals: 'If she had known, she would have told me.'
+With ALREADY, JUST, BY THE TIME, NEVER...BEFORE:
+'By the time we arrived, the film had already started.'
+'I had never seen anything like it before.'`,
+
+'past perfect continuous advanced': `Past Perfect Continuous — Advanced (Hewings Unit 7):
+Structure: HAD BEEN + ING
+Emphasises duration of an activity BEFORE a past moment:
+'He was out of breath because he had been running.'
+'By midnight, we had been travelling for 18 hours.'
+Used in reported speech: 'She said she had been waiting for an hour.'
+Compare: 'He had worked there for years.' (past perfect = just states the fact)
+vs 'He had been working there for years.' (past perfect continuous = emphasises the ongoing nature)
+Often with HOW LONG: 'How long had you been waiting when the bus came?'`,
+
+// ── THE FUTURE ─────────────────────────────────────────────────────────────
+'be to infinitive|be to do|formal future': `Be To + Infinitive — Formal Future (Hewings Future Unit 4):
+Used for: official arrangements, instructions, formal plans.
+'The President is to visit Rome next week.' (official/formal)
+'All staff are to attend the meeting.' (instruction/order)
+'The new law is to come into force next year.' (scheduled formally)
+Negative = prohibition: 'You are not to leave the building.' (you must not)
+In conditionals (formal): 'If this is to work, everyone must cooperate.'
+If it was/were to happen: 'If she were to resign, what would happen?'
+Compare: 'She's going to resign.' (informal plan) vs 'She is to resign.' (formal/official)`,
+
+'future seen from past|was going to|would': `The Future Seen From the Past (Hewings Future Unit 6):
+WAS/WERE GOING TO = something planned in the past (often didn't happen):
+'She was going to call, but she forgot.' 'I was going to leave early.'
+WAS/WERE TO = formal past arrangement:
+'The ceremony was to take place at noon, but it was delayed.'
+WOULD = future from a past perspective, often in reported/narrative:
+'In 2010, nobody knew that smartphones would change everything.'
+'He looked at the clouds. It would rain later.'
+HAD BEEN GOING TO = original intention before something changed:
+'I had been going to tell her, but I changed my mind.'`,
+
+// ── MODALS & SEMI-MODALS ───────────────────────────────────────────────────
+'can could allowed to|permission ability advanced': `Can, Could, Be Able To, Be Allowed To — Advanced (Hewings Modals 1):
+CAN = ability (general) or possibility: 'Children can be very creative.'
+BE ABLE TO = needed in compound tenses and after modals:
+'I would like to be able to drive.' 'She has been able to walk since age 1.'
+COULD = past general ability, OR polite request, OR possibility in conditionals:
+'When I was young, I could run fast.' (past ability)
+'Could you open the window?' (polite request)
+'You could try calling her.' (suggestion = it's possible)
+BE ALLOWED TO = permission (external rule): 'We're not allowed to park here.'
+COULD HAVE DONE = past possibility that didn't happen: 'You could have asked me!'`,
+
+'will would used to|habitual past|advanced will': `Will, Would and Used To — Advanced (Hewings Modals 2):
+WILL for habits/typical behaviour (present): 'She'll sit and talk for hours.'
+WOULD for past habits (NOT states): 'When we were kids, we'd play in the garden.'
+Used to CAN be for past states OR habits: 'I used to be taller.' / 'I used to go there.'
+WOULD cannot be used for past states: 'I would be taller.' ❌ (use 'used to be' or 'was')
+WILL/WOULD for characteristic behaviour (sometimes annoying):
+'He will insist on talking with his mouth full.' (habit with mild criticism)
+'She would always arrive late.' (typical past behaviour)
+Advanced WILL = certainty/logical deduction: 'That'll be the postman.' 'You'll know what I mean.'`,
+
+'needn\'t don\'t need to|don\'t have to|necessity advanced': `Need(n't), Don't Need To, Don't Have To — Advanced (Hewings Modals 5):
+NEEDN'T + base verb: 'You needn't worry.' (British, formal)
+DON'T NEED TO + infinitive: 'You don't need to come.' (more common, any variety)
+BOTH mean: it's not necessary. Key: neither FORBIDS — just says it's not required.
+NEEDN'T HAVE DONE = did it but it wasn't necessary:
+'You needn't have brought flowers.' (but you did — it wasn't necessary)
+DIDN'T NEED TO = it wasn't necessary (may or may not have done it):
+'I didn't need to take a taxi.' (unclear if you did or not)
+'He didn't need to take the test again.' (probably didn't take it)
+Compare: 'You MUSTN'T do it.' (forbidden) vs 'You NEEDN'T do it.' (not necessary)`,
+
+'should ought to had better advanced': `Should, Ought To, Had Better — Advanced (Hewings Modals 6):
+SHOULD = moral obligation, advice, recommendation, expectation:
+'You should see a specialist.' 'The report should be ready by now.'
+OUGHT TO = similar to should, slightly more formal/objective:
+'We ought to do more to help.' 'Prices ought to come down.'
+HAD BETTER = strong advice about a specific situation (warning of bad consequence):
+'You'd better leave now or you'll miss the train.' (implies a warning)
+'We'd better not be late.' (strong recommendation, this specific time)
+HAD BETTER ≠ WOULD PREFER: 'I'd rather go.' (preference, no warning)
+SHOULD HAVE = criticism of past action: 'You should have told me sooner.'
+OUGHT TO HAVE = same, slightly more objective: 'She ought to have been more careful.'`,
+
+// ── PASSIVE ADVANCED ────────────────────────────────────────────────────────
+'linking verb|seem appear become get|copula': `Linking Verbs — Advanced (Hewings Unit: Linking verbs):
+Linking verbs connect subject to complement (adjective/noun), NOT followed by adverb.
+BE: 'She is happy.' SEEM/APPEAR: 'He seems tired.' / 'She appears to be nervous.'
+BECOME/GET: 'It's getting dark.' / 'He became famous.'
+Other linking verbs: feel, look, sound, smell, taste, remain, stay, keep, go, turn, prove, grow.
+'The milk smells sour.' (NOT 'smells sourly') — adjective, not adverb!
+'She went pale.' 'He turned red.' 'The sky grew dark.' (go/turn/grow for change)
+SEEM/APPEAR with to-infinitive: 'She seems to know the answer.'
+APPEAR to + perfect infinitive: 'He appears to have left.'`,
+
+'passive advanced|get passive|causative|reporting passive': `Advanced Passive Forms (Hewings Passive Units):
+Standard passive: be + past participle.
+GET passive (informal, often unexpected events): 'She got promoted.' 'He got fined.'
+Passive with REPORTING VERBS (Unit: Reporting with passives):
+'It is said that he is very rich.' = 'He is said to be very rich.'
+'It is believed that the building dates from...' = 'The building is believed to date from...'
+Other reporting verbs: think, know, expect, consider, report, understand, claim, allege.
+Perfect infinitive passive: 'He is believed to have escaped.' (past action)
+Passive with HAVE SOMETHING DONE (causative):
+'We had the roof repaired.' (arranged for someone to do it)
+'She's having her portrait painted.' (currently arranged)`,
+
+// ── REPORTING ADVANCED ──────────────────────────────────────────────────────
+'reporting advanced|tense choice reporting|backshift': `Tense Choice in Reporting — Advanced (Hewings Reporting Unit 4):
+Backshift (shifting tense back) when reporting past speech:
+'I am leaving.' → She said she WAS leaving.
+'I have finished.' → He said he HAD finished.
+NO backshift needed when: the situation is still true/current:
+'Tokyo is the capital of Japan.' → She said Tokyo IS/WAS the capital.
+'Water boils at 100 degrees.' → He explained that water BOILS at 100.
+NO backshift in academic/formal writing referring to current facts.
+MODAL backshift: will→would, can→could, may→might, must→had to, shall→should.
+NO change: would, could, might, should, ought to (already past form).`,
+
+'subjunctive|that clause should|were subjunctive': `Subjunctive and Should in That-Clauses — Advanced (Hewings Reporting Unit 8):
+PRESENT SUBJUNCTIVE (base verb form, no -s for 3rd person singular):
+Used after verbs/adjectives of recommendation, demand, suggestion, requirement:
+VERBS: suggest, recommend, propose, demand, insist, require, request, urge, ask, advise.
+ADJECTIVES: essential, vital, important, necessary, desirable, advisable.
+'It is essential that every student SUBMIT their work on time.' (NOT submits)
+'The doctor recommended that she REST for a week.'
+'I insist that he BE present at the meeting.'
+British alternative: SHOULD + base verb:
+'It is essential that every student SHOULD SUBMIT their work.'
+WERE subjunctive: 'If I were you...' 'If she were to resign...' 'Were I in your position...'`,
+
+// ── NOUNS & AGREEMENT ──────────────────────────────────────────────────────
+'subject verb agreement|singular plural agreement|collective noun': `Subject-Verb Agreement — Advanced (Hewings Nouns Units 1-3):
+Collective nouns (team, government, committee, family, group, company):
+British English: often PLURAL verb: 'The team are playing well.'
+American English: usually SINGULAR verb: 'The team is playing well.'
+Titles of books/films with plural: singular verb: 'The Beatles was a British band.'
+NEITHER...NOR, EITHER...OR: verb agrees with NEAREST subject:
+'Neither the students nor the teacher was prepared.' (nearest = teacher = singular)
+'Either the manager or the staff are responsible.' (nearest = staff = plural)
+NONE: can be singular OR plural: 'None of the students has/have finished.'
+Uncountable nouns: always singular: 'The news is bad.' 'Mathematics is difficult.'
+WHO/THAT/WHICH relative clauses: verb agrees with the antecedent:
+'She is one of the best teachers who HAVE worked here.' (teachers = plural → have)`,
+
+// ── RELATIVE CLAUSES ADVANCED ──────────────────────────────────────────────
+'relative clause advanced|whom|whereby|preposition relative': `Advanced Relative Clauses (Hewings Relative Units):
+WHOM = formal/written, object of verb:
+'The man whom I met yesterday...' (formal) / 'The man (who) I met...' (informal)
+WHOSE = possession (people and things):
+'A company whose profits have fallen...' 'The building whose roof collapsed...'
+WHICH referring to a whole clause (non-defining only):
+'She passed all her exams, which surprised everyone.' (which = the fact that she passed)
+Prepositions in relative clauses:
+Formal: 'The company for which she works is...' 
+Informal: 'The company (that) she works for is...'
+WHEREBY = by which/by means of: 'A system whereby students can track their progress.'
+WHEREIN = in which (very formal): 'The period wherein this took place...'
+WHAT = the thing/things which (never in a relative clause, always a noun clause):
+'What surprised me was...' 'I didn't get what I wanted.'`,
+
+'participle clause|ing clause adverbial|having done': `Participle Clauses with Adverbial Meaning — Advanced (Hewings):
+-ING clauses: simultaneous action or reason/result:
+'Switching on the lights, she saw the mess.' (when she switched on...)
+'Knowing she was right, he said nothing.' (because he knew...)
+'Not wanting to argue, she left.' (because she didn't want to...)
+HAVING + past participle: completed action before the main verb:
+'Having finished her work, she went home.' (after she had finished...)
+'Having been told the news, he sat down.' (passive — after he had been told...)
+-ED clauses (passive meaning):
+'Faced with a difficult decision, he asked for advice.' (when he was faced with...)
+'Written in 1900, the novel is still read today.' (the novel, which was written in 1900...)
+These clauses require the same subject as the main clause.`,
+
+// ── PRONOUNS & SUBSTITUTION ────────────────────────────────────────────────
+'reflexive pronoun|myself himself themselves|emphatic reflexive': `Reflexive Pronouns — Advanced (Hewings Pronouns Unit 1):
+REFLEXIVE (subject = object): myself, yourself, himself, herself, itself, ourselves, yourselves, themselves.
+'She hurt herself.' 'They organised it themselves.'
+EMPHATIC (for emphasis, not grammatically required):
+'I baked the cake myself.' (emphasises I did it personally, not someone else)
+'The president himself attended the meeting.'
+After PREPOSITIONS (when referring back to subject): usually reflexive:
+'She was talking to herself.' 'He has a room to himself.' 'I bought it for myself.'
+NOT reflexive with: concentrate, feel, relax, meet, wonder, complain, sit down, stand up:
+'She sat down.' ✅ NOT 'She sat herself down.' ❌ (unless highly emphatic)
+Reciprocal: EACH OTHER / ONE ANOTHER: 'They looked at each other.' (two people)
+'They all shouted at one another.' (more than two)`,
+
+'so not substitute|i think so|i hope so': `So and Not as Substitutes (Hewings Pronouns Unit 3):
+Avoiding repetition with SO and NOT:
+After: think, believe, hope, expect, suppose, imagine, reckon, be afraid, guess.
+'Will it rain?' 'I think so.' / 'I don't think so.' (=I think it won't)
+'Is she coming?' 'I hope so.' / 'I hope not.'
+'Did he pass?' 'I'm afraid not.' / 'I believe so.'
+Note: 'I don't think so.' (more common than 'I think not.')
+But: 'I hope not.' / 'I'm afraid not.' / 'I expect not.' (think not is rare)
+DO SO = substitutes for a verb phrase already mentioned:
+'She asked me to resign and I did so immediately.' (formal)
+'He told her to leave and she did so.' = she left`,
+
+// ── ADJECTIVES & ADVERBS ADVANCED ──────────────────────────────────────────
+'gradable non-gradable adjective|extreme adjective|absolutely': `Gradable and Non-gradable Adjectives — Advanced (Hewings Adj Units 2-3):
+GRADABLE (have degrees, use very/quite/rather/fairly): tired, cold, interesting, difficult, happy.
+'very tired, quite cold, rather interesting, fairly difficult'
+NON-GRADABLE/ABSOLUTE (complete states, use absolutely/completely/utterly/totally):
+exhausted, freezing, fascinating, impossible, perfect, unique, dead, empty, full, certain.
+'absolutely exhausted, completely impossible, utterly perfect'
+NEVER say: 'very exhausted', 'very impossible', 'very unique' ❌
+Intensifiers for gradable: very, really, extremely, incredibly, terribly, awfully, rather, quite, fairly, pretty, a bit, slightly, somewhat.
+Intensifiers for non-gradable: absolutely, completely, totally, utterly, entirely, practically, virtually, nearly, almost.`,
+
+'compound adjective|participle adjective|well-known|built-in': `Compound and Participle Adjectives — Advanced (Hewings Adj Unit 4):
+COMPOUND ADJECTIVES (hyphenated before noun):
+Adjective + noun + ed: cold-blooded, broad-shouldered, warm-hearted, short-sighted, absent-minded.
+Noun + past participle: hand-made, home-grown, sun-dried, water-damaged.
+Adverb + past participle: well-known, well-built, widely-held, fully-funded, deeply-rooted.
+Number + noun: a three-hour meeting, a five-star hotel, a six-foot man.
+PARTICIPLE ADJECTIVES:
+-ING (active, ongoing): a developing country, a growing problem, a challenging task.
+-ED (passive, completed): a developed country, an exhausted worker, a confused student.
+Positional rule: compound adjectives use hyphen BEFORE noun only:
+'a well-known author' (before) vs 'the author is well known' (after, no hyphen)`,
+
+'degree adverb focus adverb|even only just merely': `Degree and Focus Adverbs — Advanced (Hewings Adv Unit 12):
+DEGREE adverbs (modify gradable adjectives/adverbs): very, quite, rather, fairly, extremely, incredibly, barely, hardly, scarcely.
+FOCUS adverbs (emphasise one element, often come before it): even, only, just, merely, mainly, simply, largely, especially, particularly, alone, also, too, as well.
+'Even the teacher didn't know.' (the teacher = surprising choice)
+'Only she passed.' (nobody else) vs 'She only passed.' (didn't do better)
+'He simply refused.' (that's all he did) vs 'He refused simply.' (in a simple manner)
+'I just wanted to help.' (I did nothing more/I only wanted to help)
+Position matters: 'I only told JOHN.' (not others) vs 'I only TOLD John.' (didn't show him)`,
+
+'comment adverb viewpoint adverb|frankly honestly apparently': `Comment and Viewpoint Adverbs — Advanced (Hewings Adv Unit 13):
+COMMENT ADVERBS: speaker's comment on whole sentence. Usually at sentence beginning.
+Fortunately, unfortunately, luckily, surprisingly, amazingly, naturally, inevitably, clearly, obviously, apparently, evidently, arguably, interestingly, curiously, strangely, admittedly, frankly, honestly, hopefully, ideally, basically, essentially, generally.
+'Surprisingly, he agreed to everything.'
+'Frankly, I don't think it will work.'
+'Hopefully, we'll arrive on time.' (controversial but widely used)
+VIEWPOINT ADVERBS: restrict the statement to a particular viewpoint.
+Financially, technically, scientifically, economically, politically, historically, traditionally, grammatically.
+'Financially, the project is not viable.' 'Technically, he's right.'`,
+
+// ── ADVERBIAL CLAUSES ──────────────────────────────────────────────────────
+'adverbial clause time|when while after before as soon as': `Adverbial Clauses of Time — Advanced (Hewings):
+WHEN: at the time that. WHILE/AS: during the time that (simultaneous).
+BEFORE/AFTER/UNTIL/ONCE/AS SOON AS/BY THE TIME.
+With future meaning: use PRESENT or PRESENT PERFECT (NOT will) after time conjunctions:
+'I'll call you when I arrive.' ✅ NOT 'when I will arrive' ❌
+'Once you have finished, let me know.' (present perfect = before the main event)
+'By the time you get here, I will have cooked.' (present → future perfect)
+AS (simultaneous with change): 'As the sun rose, the temperature increased.'
+Advanced: WHENEVER (any time), NO SOONER...THAN, HARDLY/SCARCELY...WHEN:
+'No sooner had she arrived than the meeting started.' (inverted — formal)
+'Hardly had I sat down when the phone rang.'`,
+
+'advanced conditional|if only|supposing|provided that|unless': `Advanced Conditionals — If (Hewings If Units 5-8):
+UNLESS = if not: 'Unless you hurry, you'll be late.' = 'If you don't hurry...'
+Only use UNLESS with negative conditions (not with already negative clauses).
+PROVIDED THAT / AS LONG AS / ON CONDITION THAT / ONLY IF = conditionals with conditions:
+'I'll lend you the money provided (that) you pay it back.'
+'You can go as long as you finish your work first.'
+SUPPOSE/SUPPOSING (informal alternatives to if, imagining):
+'Suppose you won the lottery, what would you do?'
+IF IT WEREN'T FOR / IF IT HADN'T BEEN FOR:
+'If it weren't for your help, I'd have failed.' (present unreal)
+'If it hadn't been for her, we would have lost.' (past unreal)
+WHETHER...OR: 'Whether you agree or not, we're going ahead.'`,
+
+'inversion|never had i|not only|should you|formal inversion': `Inversion — Advanced (Hewings Inversion Units 5-6):
+Formal/emphatic inversion: auxiliary verb BEFORE subject (like question word order).
+After negative/restrictive adverbials at the start of a sentence:
+NEVER: 'Never have I seen such a mess.' (= I have never seen...)
+NOT ONLY: 'Not only did she pass, but she came first.'
+RARELY/SELDOM: 'Rarely do we get such good weather.'
+UNDER NO CIRCUMSTANCES: 'Under no circumstances should you lie.'
+HARDLY/SCARCELY/NO SOONER: 'Hardly had we started when it began to rain.'
+ONLY THEN/AFTER/WHEN/IF: 'Only then did I understand what had happened.'
+Conditional inversion (formal, no IF):
+'Were I in your position, I would accept.' (= If I were in your position)
+'Had she known, she would have acted differently.' (= If she had known)
+'Should you need help, call me.' (= If you should need help)`,
+
+'there is advanced|existential there|it cleft|what cleft|focusing': `Focusing with It-Clauses and What-Clauses — Advanced (Hewings Organising 4):
+IT-CLEFT (to emphasise one part of the sentence):
+'Tom broke the window.' →
+'It was TOM who broke the window.' (focus on Tom)
+'It was THE WINDOW that Tom broke.' (focus on window)
+'It was YESTERDAY that she called.' (focus on time)
+WHAT-CLEFT (what = the thing that):
+'What surprised me was his reaction.' (= His reaction surprised me)
+'What we need is more time.' (= We need more time)
+'What she did was (to) apologise.' (focus on the action)
+IT-CLEFT with negatives: 'It wasn't Tom who broke it — it was Mike.'
+Used in spoken English for emphasis and in formal writing to highlight information.`,
+
+// ── PREPOSITIONS ADVANCED ──────────────────────────────────────────────────
+'between among|between two|among group': `Between and Among — Advanced (Hewings Prep Unit 2):
+BETWEEN: used with two things (or more when they are individually distinct):
+'Choose between red and blue.' 'The agreement between the three companies.'
+'She sat between John and Mary.' 'There's a difference between them.'
+AMONG: used with three or more things/people as a group (not individually distinct):
+'She found it among the papers.' 'He was popular among his colleagues.'
+'Distribute this among the staff.' 'There was disagreement among the members.'
+Note: between CAN be used with groups when individual relationships are stressed:
+'There are differences between the various countries.' (each vs each)
+vs 'There are differences among European countries.' (within the group)`,
+
+'preposition after noun|arrival at|difficulty in|reason for': `Prepositions After Nouns — Advanced (Hewings Prep Unit 6):
+Common noun + preposition patterns:
+Arrival/increase/rise/fall/decrease IN: 'an increase in prices', 'a rise in temperature'.
+Attempt/effort/failure/success IN doing: 'an attempt to solve / at solving'.
+Belief/interest/rise/fall IN: 'a belief in democracy', 'interest in science'.
+Reason FOR: 'the reason for the delay', 'no reason for concern'.
+Attitude/approach/reaction/response TO: 'his attitude to work', 'a reaction to the news'.
+Damage/effect/impact ON: 'the effect on the environment'.
+Difficulty/problem IN doing: 'I had difficulty in understanding.'
+Example OF: 'an example of good practice'.
+Lack OF: 'a lack of funding', 'a shortage of staff'.
+Advantage/disadvantage OF: 'the advantages of living abroad'.`,
+
+'three word phrasal verb|two word inseparable|particle advanced': `Two- and Three-Word Verbs — Advanced (Hewings Prep Unit 7):
+THREE-WORD PHRASAL VERBS (inseparable — object always at end):
+come up with (think of): 'She came up with a great idea.'
+look forward to (anticipate): 'I'm looking forward to seeing you.' (+ING after to)
+put up with (tolerate): 'I can't put up with the noise.'
+run out of (have none left): 'We've run out of coffee.'
+catch up with (reach the same level): 'I need to catch up with the others.'
+get on with (have a good relationship / continue): 'Get on with your work.'
+look down on (feel superior to): 'He looks down on everyone.'
+make up for (compensate): 'She made up for lost time.'
+come down with (become ill with): 'He came down with flu.'
+SEPARABLE two-word verbs: object can go in the middle:
+'Turn off the light.' / 'Turn it off.' ✅ NOT 'Turn off it.' ❌ (pronoun must go in middle)`,
+
+// ── ARTICLES ADVANCED ──────────────────────────────────────────────────────
+'a an one|a or one|article advanced': `A/An and One — Advanced (Hewings Articles Unit 1):
+A/AN vs ONE — both are determiners but:
+ONE emphasises that it's a single item (as opposed to two or more):
+'I need ONE more ticket, not two.' 'She made ONE mistake, not several.'
+A/AN for classification, type, or first mention:
+'She's a doctor.' 'He bought a car.' 'I need a hand.'
+ONE with whole, single, certain (set expressions):
+'One moment, please.' 'With one accord, they agreed.'
+'I'll do it ONE day.' (some future day, unspecified)
+'Not one person volunteered.' (emphatic negative = not even one)
+A/AN in expressions of frequency: 'once a week', 'twice a day', '£50 an hour'.
+ONE cannot replace A/AN in these: 'once one week' ❌`,
+
+'zero article advanced|no article|generalisation|abstract noun': `Zero Article — Advanced (Hewings Articles Units 2-4):
+No article with:
+GENERAL meaning (uncountable/plural): 'Life is short.' 'Cats are independent.'
+LANGUAGES: 'She speaks French.' 'Italian is beautiful.'
+COUNTRIES (most): 'Italy', 'France', BUT the USA, the UK, the Netherlands (plural/abbreviated).
+PROPER NOUNS: people's names, most cities, mountains, lakes.
+BUT: the Thames (rivers), the Alps (mountain ranges), the Pacific (oceans).
+MEALS: 'at breakfast', 'for dinner', BUT 'a formal dinner', 'the dinner we had last night'.
+TRANSPORT: 'by car/bus/train', BUT 'on the bus I take every day'.
+INSTITUTIONS (general function): 'go to prison', 'in hospital', 'at university', 'go to church', BUT 'the prison was overcrowded' (specific building).`,
+
+// ── ADVANCED GRAMMAR ADDITIONAL POINTS ─────────────────────────────────────
+'it cleft sentence|it was that who|emphasis sentence': `It-Cleft Sentences — Advanced Emphasis:
+Structure: It + be + FOCUS + who/that + rest of sentence.
+Used to emphasise one part of the sentence:
+'Tom broke the window yesterday.' Can be clefted as:
+'It was TOM who broke the window.' (not someone else)
+'It was the WINDOW that Tom broke.' (not something else)
+'It was YESTERDAY that Tom broke the window.' (not another time)
+After the cleft, the rest uses WHO for people, THAT for others.
+With negatives: 'It wasn't until midnight that we arrived.'
+'It's not that I don't trust you — it's that I'm worried.'
+Wh-cleft: 'What I need is a rest.' 'What surprised me was his attitude.'`,
+
+'inversion negative adverb formal writing': `Negative Adverial Inversion — Advanced Formal Writing:
+For emphasis and formality: negative/restrictive expression → auxiliary → subject.
+'NEVER have I seen such courage.' 'RARELY does this happen.'
+'NOT ONLY did he arrive late, but he also forgot the report.'
+'NOT UNTIL she arrived did the meeting begin.'
+'UNDER NO CIRCUMSTANCES are students to use mobile phones.'
+'ON NO ACCOUNT should you sign the contract without reading it.'
+'IN NO WAY does this affect our decision.'
+'AT NO TIME was the public informed.'
+Only AFTER/ONLY WHEN/ONLY IF + inversion:
+'Only after the war ended was the truth revealed.'
+'Only if you agree can we proceed.'
+Common in formal speeches, academic writing, and literary English.`,
+
+};
+
 function coachReply(text){
 
   // Search Grammar in Use KB (136 units — Murphy)
@@ -1943,6 +2362,14 @@ function coachReply(text){
       try{ return new RegExp(pattern,'i').test(t); }catch(e){ return t.includes(k); }
     })){ return answer; }
   }
+  // Search Advanced Grammar in Use KB (Hewings)
+  for(const [keys, answer] of Object.entries(ADVANCED_KB)){
+    const keyList = keys.split('|');
+    if(keyList.some(k => {
+      try{ return new RegExp(k,'i').test(t); }catch(e){ return t.includes(k); }
+    })){ return answer; }
+  }
+
   const t = text.toLowerCase().trim();
 
   // Greeting
