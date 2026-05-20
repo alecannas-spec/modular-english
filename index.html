@@ -855,7 +855,7 @@ function lineListen(text, btn){
 let _repeatTarget=''; let _repeatUID=''; let _repeatBtn=null;
 function lineRepeat(target, uid, btn){
   const SRec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SRec){ showToast('⚠️ Safari: vai su Impostazioni → Safari → Microfono → Consenti'); return; }
+  if(!SRec){ showToast('⚠️ Microfono non disponibile su questo browser'); return; }
 
   // If already recording → stop
   if(btn.classList.contains('recording')){
@@ -864,31 +864,18 @@ function lineRepeat(target, uid, btn){
   }
 
   const rf=document.getElementById(uid+'-rf');
-  rf.className='repeat-feedback loading show';
-  rf.textContent='🔊 Ascolta la frase...';
 
-  // Cancel any ongoing TTS first
+  // Start mic IMMEDIATELY (must be direct from user gesture — no setTimeout)
   window.speechSynthesis.cancel();
 
-  // Speak sentence, then start mic only after TTS finishes
-  const utt=new SpeechSynthesisUtterance(target);
-  utt.lang='en-GB'; utt.rate=0.85;
-  const voices=window.speechSynthesis.getVoices();
-  const enV=voices.find(v=>v.lang==='en-GB')||voices.find(v=>v.lang.startsWith('en'))||null;
-  if(enV) utt.voice=enV;
-
-  utt.onend=()=>{
-    // Small gap so iOS mic doesn't pick up TTS echo
-    setTimeout(()=>startLineRec(target, uid, btn, rf), 400);
-  };
-  // Fallback: if onend never fires (iOS bug), start after estimated duration
-  const fallbackMs = Math.max(2000, target.split(' ').length * 400);
-  const fallbackTimer=setTimeout(()=>{
-    if(!btn.classList.contains('recording')) startLineRec(target,uid,btn,rf);
-  }, fallbackMs);
-  utt.onend=()=>{ clearTimeout(fallbackTimer); setTimeout(()=>startLineRec(target,uid,btn,rf),400); };
-
-  window.speechSynthesis.speak(utt);
+  requestMicPermission((granted)=>{
+    if(!granted){
+      rf.className='repeat-feedback bad show';
+      rf.innerHTML='❌ Microfono bloccato.<br>Consenti il microfono e riprova.';
+      return;
+    }
+    startLineRec(target, uid, btn, rf);
+  });
 }
 
 // Request mic permission explicitly first (required for iOS Safari over HTTPS)
