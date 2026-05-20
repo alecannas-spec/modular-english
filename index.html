@@ -604,15 +604,18 @@ function showView(name){
 }
 
 function scrollToTop(){
-  // Try all possible scroll containers
-  window.scrollTo(0,0);
-  document.documentElement.scrollTop=0;
-  document.body.scrollTop=0;
-  const app=document.getElementById('app');
-  if(app) app.scrollTop=0;
-  // Also scroll active view to top
-  const active=document.querySelector('.view.active');
-  if(active) active.scrollTop=0;
+  // Use rAF to scroll after DOM repaints
+  requestAnimationFrame(()=>{
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop=0;
+    document.body.scrollTop=0;
+    // Also try after a short delay for slower renders
+    setTimeout(()=>{
+      window.scrollTo(0,0);
+      document.documentElement.scrollTop=0;
+      document.body.scrollTop=0;
+    },50);
+  });
 }
 
 // ── HOME ───────────────────────────────────────────────────────────────────
@@ -988,7 +991,7 @@ async function judgeRepeat(target, said, uid){
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','x-api-key':ANTHROPIC_KEY},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:350,
@@ -997,8 +1000,8 @@ async function judgeRepeat(target, said, uid){
       })
     });
     const data=await resp.json();
-    const reply=data.content?.[0]?.text||'Buon tentativo!';
-    const isGood=/brav|ottim|perfett|esatt|corrett|benissimo/i.test(reply);
+    const reply=data.content?.[0]?.text||'Good try! Keep practising.';
+    const isGood=/perfect|excellent|great|well done|correct|good job|spot on|accurate|nearly|almost/i.test(reply);
     rf.className=`repeat-feedback ${isGood?'good':'bad'} show`;
     rf.innerHTML=`<b>Hai detto:</b> "${said}"<br>${reply}`;
     speakItalian(reply);
@@ -1051,7 +1054,7 @@ async function lineWriteCheck(target, uid){
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','x-api-key':ANTHROPIC_KEY},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:350,
@@ -1060,7 +1063,7 @@ async function lineWriteCheck(target, uid){
       })
     });
     const data=await resp.json();
-    const reply=data.content?.[0]?.text||'Buon tentativo!';
+    const reply=data.content?.[0]?.text||'Good try! Keep practising.';
     wf.className='write-feedback show';
     wf.innerHTML=`<b>Hai scritto:</b> "${written}"<br>${reply}`;
     speakItalian(reply);
@@ -1295,6 +1298,7 @@ function renderFTT(){
 
 // ── COACH ALEX ─────────────────────────────────────────────────────────────
 const ADMIN_PIN = '2505';
+let ANTHROPIC_KEY = localStorage.getItem('me_api_key')||'';
 
 function initCoach(){
   document.getElementById('coach-gate').style.display='flex';
@@ -1336,15 +1340,40 @@ function checkStudentModuleAccess(){
 
 function grantCoachAccess(role){
   document.getElementById('coach-gate').style.display='none';
-  document.getElementById('coach-chat').style.display='flex';
+  const chatEl = document.getElementById('coach-chat');
+  chatEl.style.display='flex';
   document.getElementById('coach-role-badge').textContent=role;
+  const isAdmin = role.includes('Admin');
+  // Show API key setup for admin if not set
+  if(isAdmin && !ANTHROPIC_KEY){
+    const keyBanner = document.createElement('div');
+    keyBanner.style.cssText='background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:10px;padding:12px 16px;margin:12px 16px 0;font-size:.82rem;';
+    keyBanner.innerHTML=`<b>⚙️ Setup API Key</b><br>Inserisci la tua Anthropic API key per attivare Coach Alex:
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <input id="api-key-input" type="password" placeholder="sk-ant-..." style="flex:1;border:1px solid #E2E8F0;border-radius:6px;padding:6px 10px;font-size:.82rem;">
+        <button onclick="saveApiKey()" style="background:var(--navy);color:white;border:none;border-radius:6px;padding:6px 14px;font-size:.82rem;cursor:pointer;">Salva</button>
+      </div>`;
+    chatEl.insertBefore(keyBanner, chatEl.querySelector('.chat-messages'));
+  }
   const msgs=document.getElementById('chat-messages');
   if(!msgs.children.length){
-    const isAdmin = role.includes('Admin');
     const greeting = isAdmin
-      ? 'Benvenuto Admin! 👑 Sono Coach Alex. Posso aiutarti a testare le funzionalità, revisionare i contenuti o simulare sessioni studente. Come posso aiutarti?'
-      : 'Ciao! Sono Coach Alex 🎙️ Il tuo tutor di inglese personale. Posso correggere i tuoi errori, spiegarti la grammatica, e simulare conversazioni reali. Scrivi in inglese o italiano, o usa il microfono! Come posso aiutarti oggi?';
+      ? "Welcome Admin! 👑 I'm Coach Alex. I can help you test features, review content or simulate student sessions. How can I help?"
+      : "Hello! I'm Coach Alex 🎙️ your personal English tutor. I can correct your mistakes, explain grammar, and simulate real conversations. Write in English or Italian, or use the microphone!";
     appendMsg('alex', greeting);
+  }
+}
+
+function saveApiKey(){
+  const key = document.getElementById('api-key-input')?.value.trim();
+  if(key && key.startsWith('sk-')){
+    ANTHROPIC_KEY = key;
+    localStorage.setItem('me_api_key', key);
+    const banner = document.getElementById('api-key-input')?.closest('div[style*=FFF7ED]');
+    if(banner) banner.innerHTML='<b style="color:green">✅ API Key salvata!</b>';
+    setTimeout(()=>banner?.remove(), 2000);
+  } else {
+    showToast('❌ API key non valida. Deve iniziare con sk-ant-');
   }
 }
 
@@ -1379,7 +1408,7 @@ async function sendMsg(){
   try {
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','x-api-key':ANTHROPIC_KEY},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:600,
@@ -1396,7 +1425,7 @@ async function sendMsg(){
       })
     });
     const data=await resp.json();
-    const reply=data.content?.[0]?.text||'Mi dispiace, ho avuto un problema. Riprova!';
+    const reply=data.content?.[0]?.text||'Sorry, I had a connection issue. Please try again.';
     document.getElementById('typing')?.remove();
     appendMsg('alex',reply);
     chatHistory.push({role:'assistant',content:reply});
