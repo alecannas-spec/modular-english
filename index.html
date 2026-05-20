@@ -939,10 +939,27 @@ function startLineRec(target, uid, btn, rf){
     };
     rec.onerror=(e)=>{
       btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-      rf.className='repeat-feedback bad show';
       if(e.error==='not-allowed'){
+        rf.className='repeat-feedback bad show';
         rf.innerHTML='❌ Microfono non autorizzato.<br>Impostazioni iPhone → Safari → Microfono → Consenti';
+      } else if(e.error==='service-not-allowed'){
+        // iOS sometimes needs a user gesture retry
+        rf.className='repeat-feedback loading show';
+        rf.textContent='⏳ Riprovo...';
+        setTimeout(()=>{
+          try{
+            const rec2=new SRec();
+            rec2.lang='en-US'; rec2.interimResults=false; rec2.continuous=false; rec2.maxAlternatives=1;
+            rec2.onresult=(e)=>{ gotResult=true; const said=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim(); judgeRepeat(target,said,uid); };
+            rec2.onerror=()=>{ rf.className='repeat-feedback bad show'; rf.innerHTML='❌ Microfono non disponibile.<br>Controlla connessione internet e riprova.'; };
+            rec2.onend=()=>{ btn.classList.remove('recording'); btn.textContent='🎤 Ripeti'; if(!gotResult){ rf.className='repeat-feedback bad show'; rf.textContent='⚠️ Nessun audio. Riprova.'; } };
+            btn.classList.add('recording'); btn.textContent='⏹ Stop';
+            rf.textContent='🎤 Parla ora!';
+            rec2.start();
+          }catch(ex){ rf.className='repeat-feedback bad show'; rf.textContent='Errore: '+ex.message; }
+        }, 1000);
       } else {
+        rf.className='repeat-feedback bad show';
         rf.innerHTML=`❌ Errore: ${e.error}. Riprova.`;
       }
     };
@@ -969,7 +986,7 @@ async function judgeRepeat(target, said, uid){
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:200,
@@ -1034,7 +1051,7 @@ async function lineWriteCheck(target, uid){
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:200,
@@ -1354,7 +1371,7 @@ async function sendMsg(){
   try {
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:600,
@@ -1439,7 +1456,11 @@ function startMic(){
       btn.classList.remove('listening'); btn.textContent='🎤';
       const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
       if(e.error==='not-allowed'||e.error==='service-not-allowed'){
-        showToast(isIOS?'🎤 Impostazioni iPhone → Safari → Microfono → Consenti':'🎤 Clicca 🔒 → Consenti Microfono', 6000);
+        if(e.error==='service-not-allowed'){
+          showToast('⚠️ Servizio microfono non disponibile. Controlla connessione e riprova.');
+        } else {
+          showToast(isIOS?'🎤 Impostazioni iPhone → Safari → Microfono → Consenti':'🎤 Clicca 🔒 → Consenti Microfono', 6000);
+        }
       } else {
         showToast('⚠️ Errore microfono: '+e.error);
       }
