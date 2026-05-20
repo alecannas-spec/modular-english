@@ -928,72 +928,44 @@ function requestMicPermission(callback){
 
 function startLineRec(target, uid, btn, rf){
   const SRec=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const rec=new SRec();
+  window._lineRec=rec;
+  rec.lang='en-US'; rec.interimResults=false; rec.continuous=false; rec.maxAlternatives=1;
 
+  btn.classList.add('recording'); btn.textContent='⏹ Stop';
   rf.className='repeat-feedback loading show';
-  rf.textContent='🎤 Richiedo accesso al microfono...';
+  rf.textContent='🎤 Parla ora — poi premi ⏹ Stop';
 
-  requestMicPermission((granted, err)=>{
-    if(!granted){
-      btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-      rf.className='repeat-feedback bad show';
-      rf.innerHTML='❌ Microfono bloccato.<br><b>Come sbloccare:</b><br>1. Tocca 🔒 nella barra indirizzi<br>2. Tocca "Sito web Impostazioni"<br>3. Microfono → Consenti<br>4. Ricarica la pagina';
-      return;
+  let gotResult=false;
+  rec.onresult=(e)=>{
+    gotResult=true;
+    const said=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim();
+    judgeRepeat(target, said, uid);
+  };
+  rec.onerror=(e)=>{
+    btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
+    rf.className='repeat-feedback bad show';
+    if(e.error==='not-allowed'){
+      rf.innerHTML='❌ Microfono non autorizzato.<br>Clicca 🔒 nella barra indirizzi → Consenti Microfono';
+    } else if(e.error==='service-not-allowed'){
+      rf.innerHTML='❌ Servizio non disponibile.<br>Assicurati di usare HTTPS e riprova.';
+    } else {
+      rf.innerHTML='❌ Errore: '+e.error+'. Riprova.';
     }
-
-    const rec=new SRec();
-    window._lineRec=rec;
-    rec.lang='en-US'; rec.interimResults=false; rec.continuous=false; rec.maxAlternatives=1;
-
-    btn.classList.add('recording'); btn.textContent='⏹ Stop';
-    rf.className='repeat-feedback loading show';
-    rf.textContent='🎤 Parla ora — poi premi ⏹ Stop';
-
-    let gotResult=false;
-    rec.onresult=(e)=>{
-      gotResult=true;
-      const said=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim();
-      judgeRepeat(target, said, uid);
-    };
-    rec.onerror=(e)=>{
-      btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-      if(e.error==='not-allowed'){
-        rf.className='repeat-feedback bad show';
-        rf.innerHTML='❌ Microfono non autorizzato.<br>Impostazioni iPhone → Safari → Microfono → Consenti';
-      } else if(e.error==='service-not-allowed'){
-        // iOS sometimes needs a user gesture retry
-        rf.className='repeat-feedback loading show';
-        rf.textContent='⏳ Riprovo...';
-        setTimeout(()=>{
-          try{
-            const rec2=new SRec();
-            rec2.lang='en-US'; rec2.interimResults=false; rec2.continuous=false; rec2.maxAlternatives=1;
-            rec2.onresult=(e)=>{ gotResult=true; const said=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim(); judgeRepeat(target,said,uid); };
-            rec2.onerror=()=>{ rf.className='repeat-feedback bad show'; rf.innerHTML='❌ Microfono non disponibile.<br>Controlla connessione internet e riprova.'; };
-            rec2.onend=()=>{ btn.classList.remove('recording'); btn.textContent='🎤 Ripeti'; if(!gotResult){ rf.className='repeat-feedback bad show'; rf.textContent='⚠️ Nessun audio. Riprova.'; } };
-            btn.classList.add('recording'); btn.textContent='⏹ Stop';
-            rf.textContent='🎤 Parla ora!';
-            rec2.start();
-          }catch(ex){ rf.className='repeat-feedback bad show'; rf.textContent='Errore: '+ex.message; }
-        }, 1000);
-      } else {
-        rf.className='repeat-feedback bad show';
-        rf.innerHTML=`❌ Errore: ${e.error}. Riprova.`;
-      }
-    };
-    rec.onend=()=>{
-      btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-      if(!gotResult){
-        rf.className='repeat-feedback bad show';
-        rf.textContent='⚠️ Nessun audio rilevato. Parla più forte e riprova.';
-      }
-    };
-    try{ rec.start(); }
-    catch(ex){
-      btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
+  };
+  rec.onend=()=>{
+    btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
+    if(!gotResult){
       rf.className='repeat-feedback bad show';
-      rf.textContent='Errore avvio microfono: '+ex.message;
+      rf.textContent='⚠️ Nessun audio rilevato. Parla più forte e riprova.';
     }
-  });
+  };
+  try{ rec.start(); }
+  catch(ex){
+    btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
+    rf.className='repeat-feedback bad show';
+    rf.textContent='Errore: '+ex.message;
+  }
 }
 
 async function judgeRepeat(target, said, uid){
