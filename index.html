@@ -854,10 +854,16 @@ function lineListen(text, btn){
 // ── Mode 2: Repeat — record then judge via AI ───────────────────────────────
 let _repeatTarget=''; let _repeatUID=''; let _repeatBtn=null;
 function lineRepeat(target, uid, btn){
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const SRec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SRec){ showToast('⚠️ Microfono non disponibile su questo browser'); return; }
+  const rf=document.getElementById(uid+'-rf');
 
-  // If already recording → stop
+  if(!SRec || isSafari){
+    rf.className='repeat-feedback loading show';
+    rf.innerHTML='⚠️ Il microfono non funziona su Safari Mac.<br>Apri questa pagina in <b>Chrome</b> per usare il microfono.<br><a href="https://alecannas-spec.github.io/modular-english" style="color:var(--navy);font-weight:700;">Copia il link →</a>';
+    return;
+  }
+
   if(btn.classList.contains('recording')){
     if(window._lineRec){ try{window._lineRec.stop();}catch(e){} }
     if(window._lineStream){ window._lineStream.getTracks().forEach(t=>t.stop()); window._lineStream=null; }
@@ -865,20 +871,16 @@ function lineRepeat(target, uid, btn){
   }
 
   window.speechSynthesis.cancel();
-  const rf=document.getElementById(uid+'-rf');
   btn.classList.add('recording'); btn.textContent='⏹ Stop';
   rf.className='repeat-feedback loading show';
   rf.textContent='🎤 Apertura microfono...';
 
-  // Safari fix: open getUserMedia FIRST and keep stream alive during recognition
   navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
     window._lineStream=stream;
     rf.textContent='🎤 Parla ora — poi premi ⏹ Stop';
-
     const rec=new SRec();
     window._lineRec=rec;
     rec.lang='en-US'; rec.interimResults=false; rec.continuous=false; rec.maxAlternatives=1;
-
     let gotResult=false;
     rec.onresult=(e)=>{
       gotResult=true;
@@ -890,31 +892,19 @@ function lineRepeat(target, uid, btn){
       stream.getTracks().forEach(t=>t.stop()); window._lineStream=null;
       btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
       rf.className='repeat-feedback bad show';
-      if(e.error==='not-allowed'||e.error==='service-not-allowed'){
-        rf.innerHTML='❌ Vai su Preferenze di Sistema → Privacy → Microfono → abilita Safari';
-      } else {
-        rf.innerHTML='❌ Errore: '+e.error+'. Riprova.';
-      }
+      rf.innerHTML='❌ Errore: '+e.error+'.<br>Prova ad aprire in <b>Chrome</b>.';
     };
     rec.onend=()=>{
       stream.getTracks().forEach(t=>t.stop()); window._lineStream=null;
       btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-      if(!gotResult){
-        rf.className='repeat-feedback bad show';
-        rf.textContent='⚠️ Nessun audio rilevato. Parla più forte e riprova.';
-      }
+      if(!gotResult){ rf.className='repeat-feedback bad show'; rf.textContent='⚠️ Nessun audio. Riprova.'; }
     };
     try{ rec.start(); }
-    catch(ex){
-      stream.getTracks().forEach(t=>t.stop());
-      btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-      rf.className='repeat-feedback bad show';
-      rf.textContent='Errore: '+ex.message;
-    }
-  }).catch(err=>{
+    catch(ex){ stream.getTracks().forEach(t=>t.stop()); btn.classList.remove('recording'); btn.textContent='🎤 Ripeti'; rf.className='repeat-feedback bad show'; rf.textContent='Errore: '+ex.message; }
+  }).catch(()=>{
     btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
     rf.className='repeat-feedback bad show';
-    rf.innerHTML='❌ Microfono non autorizzato.<br>Preferenze di Sistema → Privacy → Microfono → Safari ✓';
+    rf.innerHTML='❌ Microfono bloccato.<br>System Settings → Privacy → Microphone → Safari ✓';
   });
 }
 
@@ -1422,8 +1412,12 @@ function toggleMic(){
 }
 
 function startMic(){
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const SRec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SRec){ showToast('⚠️ Microfono non disponibile'); return; }
+  if(!SRec || isSafari){
+    showToast('⚠️ Microfono non funziona su Safari Mac — usa Chrome', 4000);
+    return;
+  }
 
   navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
     recognition=new SRec();
