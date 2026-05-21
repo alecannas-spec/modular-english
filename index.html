@@ -19,6 +19,7 @@
   --transition:.22s cubic-bezier(.4,0,.2,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{scroll-behavior:auto !important}
 body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--navy);min-height:100vh}
 h1,h2,h3{font-family:'Playfair Display',serif}
 
@@ -971,11 +972,25 @@ function showView(name){
 }
 
 function scrollToTop(){
-  requestAnimationFrame(()=>{
-    window.scrollTo(0,0);
-    document.documentElement.scrollTop=0;
-    document.body.scrollTop=0;
-  });
+  window.scrollTo(0,0);
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
+}
+
+function showView(name){
+  if(name==='home') renderHome();
+  if(name==='explore') renderExplore();
+  if(name==='cart') renderCart();
+  if(name==='mycourses') renderMyCourses();
+  if(name==='ftt') renderFTT();
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
+  const v=document.getElementById('view-'+name);
+  if(v) v.classList.add('active');
+  const nb=document.getElementById('nav-'+name);
+  if(nb) nb.classList.add('active');
+  scrollToTop();
+  requestAnimationFrame(()=>{ scrollToTop(); requestAnimationFrame(()=>scrollToTop()); });
 }
 
 // ── HOME ───────────────────────────────────────────────────────────────────
@@ -1080,7 +1095,7 @@ function openModule(levelCode, modId){
   
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-module').classList.add('active');
-  scrollToTop();
+  scrollToTop(); requestAnimationFrame(()=>{ scrollToTop(); requestAnimationFrame(()=>scrollToTop()); });
   const owned=isPurchased(mod.id);
   const price=getModulePrice(mod);
   
@@ -1151,7 +1166,7 @@ function openSituation(levelCode, modId, sitIdx){
   renderDialogue();
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-dialogue').classList.add('active');
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{ window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0; }));
+  scrollToTop(); requestAnimationFrame(()=>{ scrollToTop(); requestAnimationFrame(()=>scrollToTop()); });
 }
 function renderDialogue(){
   const sit=currentSituation; const mod=currentModule; const lev=currentLevel;
