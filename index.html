@@ -19,8 +19,8 @@
   --transition:.22s cubic-bezier(.4,0,.2,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{scroll-behavior:auto !important}
-body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--navy);min-height:100vh}
+html,body{height:100%;overflow:hidden;scroll-behavior:auto}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--navy)}
 h1,h2,h3{font-family:'Playfair Display',serif}
 
 /* ── NAV ── */
@@ -285,16 +285,18 @@ html,body{height:100%;overflow:hidden}
   overflow:hidden;
 }
 .view{
-  display:none;
+  display:block;
   position:absolute;
   top:0;left:0;right:0;bottom:0;
   overflow-y:auto;
   overflow-x:hidden;
   -webkit-overflow-scrolling:touch;
   padding-bottom:80px;
-  animation:fadeIn .15s ease;
+  visibility:hidden;
+  pointer-events:none;
+  opacity:0;
 }
-.view.active{display:block}
+.view.active{visibility:visible;pointer-events:auto;opacity:1;animation:fadeIn .15s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 <script src="https://www.paypal.com/sdk/js?client-id=Ac189uQvhhFx2lYMrEf8XnHjeRjGuuJxBDJeM1J8Oij2fzGoZNXU_8mdX6VkkhaUyytI-phiGWUcTbbY&currency=EUR&intent=capture" data-sdk-integration-source="button-factory"></script>
