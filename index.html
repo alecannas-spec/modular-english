@@ -321,6 +321,13 @@ nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justif
   <div class="levels-grid" id="home-levels"></div>
   <div style="text-align:center;padding:10px 20px 30px;color:var(--muted);font-size:.75rem">
     @ok_modularenglish · 25 anni di esperienza · 72 moduli · 6 livelli CEFR
+    <div style="margin-top:16px;">
+      <input id="admin-pin-input" type="password" inputmode="numeric" maxlength="6"
+        style="width:80px;border:none;border-bottom:1px solid #E2E8F0;background:transparent;text-align:center;font-size:.75rem;color:var(--muted);outline:none;letter-spacing:3px;"
+        placeholder="······"
+        onkeydown="if(event.key==='Enter')checkAdminPin()"
+        oninput="if(this.value.length===6)checkAdminPin()">
+    </div>
   </div>
 </div>
 
@@ -482,11 +489,33 @@ let purchased = JSON.parse(localStorage.getItem('me_purchased')||'[]');
 let progress = JSON.parse(localStorage.getItem('me_progress')||'{}');
 let currentLevel = null, currentModule = null, currentSituation = null;
 let currentDialogueIdx = 0;
+// Admin access (obfuscated)
+const _ap=()=>[29,28,31,19,24,29].map(c=>String.fromCharCode(c^42)).join('');
+let _adminUnlocked = localStorage.getItem('me_adm')==='1';
 
-// ── UTILS ──────────────────────────────────────────────────────────────────
+// ── ADMIN PIN ──────────────────────────────────────────────────────────────
+function checkAdminPin(){
+  const input = document.getElementById('admin-pin-input');
+  if(!input) return;
+  if(input.value === _ap()){
+    _adminUnlocked = true;
+    localStorage.setItem('me_adm','1');
+    input.value='';
+    input.placeholder='✓';
+    input.style.borderColor='#22C55E';
+    input.style.color='#22C55E';
+    showToast('🔓 Admin access granted');
+    renderHome();
+  } else if(input.value.length === 6){
+    input.value='';
+    input.style.borderColor='#EF4444';
+    setTimeout(()=>{ input.style.borderColor='#E2E8F0'; },1000);
+  }
+}
+
 function calcPrice(wc){ return Math.round(wc*0.06*100)/100; }
 function getModulePrice(mod){let w=0;mod.situations.forEach(sit=>(sit.dialogues||[]).forEach(d=>(d.lines||[]).forEach(l=>{if(l.english)w+=l.english.split(' ').length;})));return (w*0.06).toFixed(2);}
-function isPurchased(modId){ return purchased.includes(modId); }
+function isPurchased(modId){ return _adminUnlocked || purchased.includes(modId); }
 function inCart(modId){ return cart.some(i=>i.id===modId); }
 function saveCart(){ localStorage.setItem('me_cart',JSON.stringify(cart)); updateCartBadge(); }
 function savePurchased(){ localStorage.setItem('me_purchased',JSON.stringify(purchased)); }
