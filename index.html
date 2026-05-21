@@ -1557,6 +1557,7 @@ function renderCart(){
     <div><div class="total-label">Totale (${cart.length} moduli)</div></div>
     <div class="total-amount">€${total.toFixed(2)}</div></div>
     <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:12px;padding:14px" onclick="openPaymentModal()">💳 Procedi all'acquisto</button>`;
+  setTimeout(scrollToTop,0);
 }
 
 function openPaymentModal(){
@@ -1777,8 +1778,7 @@ function renderMyCourses(){
     </div>
     <div id="restore-msg" style="font-size:.78rem;margin-top:8px;min-height:16px"></div>`;
   c.appendChild(restoreDiv);
-}
-
-// ── FREE TO TRY ────────────────────────────────────────────────────────────</script>
+  setTimeout(scrollToTop,50);
+}</script>
 </body>
 </html>
