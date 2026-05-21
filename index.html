@@ -950,24 +950,8 @@ function lineRepeat(target, uid, btn){
     }
   }
 
-  // iOS Chrome and Android need getUserMedia first to trigger permission prompt
-  // then CLOSE the stream before starting SpeechRecognition
-  if((isIOSChrome || isAndroid) && navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
-    navigator.mediaDevices.getUserMedia({audio:true})
-      .then(stream=>{
-        // Close stream immediately — SpeechRecognition needs the mic free
-        stream.getTracks().forEach(t=>t.stop());
-        startRecognition(null);
-      })
-      .catch(()=>{
-        btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-        rf.className='repeat-feedback bad show';
-        rf.innerHTML='❌ Microfono bloccato.<br>Vai in Impostazioni → Chrome → Microfono → Consenti';
-      });
-  } else {
-    // Mac Chrome — SpeechRecognition handles permission itself
-    startRecognition(null);
-  }
+  // Use SpeechRecognition directly on all platforms — it handles mic permission itself
+  startRecognition(null);
 }
 
 // Request mic permission explicitly first (required for iOS Safari over HTTPS)
