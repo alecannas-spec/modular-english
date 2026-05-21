@@ -951,9 +951,14 @@ function lineRepeat(target, uid, btn){
   }
 
   // iOS Chrome and Android need getUserMedia first to trigger permission prompt
+  // then CLOSE the stream before starting SpeechRecognition
   if((isIOSChrome || isAndroid) && navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
     navigator.mediaDevices.getUserMedia({audio:true})
-      .then(stream=>{ startRecognition(stream); })
+      .then(stream=>{
+        // Close stream immediately — SpeechRecognition needs the mic free
+        stream.getTracks().forEach(t=>t.stop());
+        startRecognition(null);
+      })
       .catch(()=>{
         btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
         rf.className='repeat-feedback bad show';
