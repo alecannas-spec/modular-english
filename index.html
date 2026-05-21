@@ -879,20 +879,17 @@ function lineListen(text, btn){
 // ── Mode 2: Repeat — record then judge via AI ───────────────────────────────
 let _repeatTarget=''; let _repeatUID=''; let _repeatBtn=null;
 function lineRepeat(target, uid, btn){
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isIOSChrome = isIOS && /CriOS/.test(navigator.userAgent);
-  const isSafariMac = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && !isIOS;
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isIOSChrome = isIOS && /CriOS/.test(ua);
+  const isIOSSafari = isIOS && !isIOSChrome;
+  const isMacSafari = !isIOS && /Safari/.test(ua) && !/Chrome/.test(ua) && !/Chromium/.test(ua);
   const SRec=window.SpeechRecognition||window.webkitSpeechRecognition;
   const rf=document.getElementById(uid+'-rf');
 
-  if(isIOSChrome){
+  if(isMacSafari || !SRec){
     rf.className='repeat-feedback loading show';
-    rf.innerHTML='⚠️ Chrome su iPhone non supporta il microfono.<br>Apri in <b>Safari</b> per usare il microfono.';
-    return;
-  }
-  if(isSafariMac || !SRec){
-    rf.className='repeat-feedback loading show';
-    rf.innerHTML='⚠️ Il microfono non funziona su Safari Mac.<br>Apri in <b>Chrome</b>.<br><a href="https://alecannas-spec.github.io/modular-english" style="color:var(--navy);font-weight:700;">Copia il link →</a>';
+    rf.innerHTML='⚠️ Safari non supporta il microfono.<br>Copia il link e apri in <b>Chrome</b>:<br><span style="font-size:.75rem;word-break:break-all;background:#f1f5f9;padding:4px 8px;border-radius:6px;display:inline-block;margin-top:4px">alecannas-spec.github.io/modular-english</span>';
     return;
   }
   if(btn.classList.contains('recording')){
