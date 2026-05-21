@@ -882,59 +882,87 @@ function lineRepeat(target, uid, btn){
   const ua = navigator.userAgent;
   const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
   const isIOSChrome = isIOS && /CriOS/.test(ua);
-  const isIOSSafari = isIOS && !isIOSChrome;
+  const isAndroid = /Android/.test(ua);
   const isMacSafari = !isIOS && /Safari/.test(ua) && !/Chrome/.test(ua) && !/Chromium/.test(ua);
-  const SRec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  const rf=document.getElementById(uid+'-rf');
+  const SRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rf = document.getElementById(uid+'-rf');
 
-  if(isMacSafari || !SRec){
+  if(isMacSafari){
     rf.className='repeat-feedback loading show';
-    rf.innerHTML='⚠️ Safari non supporta il microfono.<br>Copia il link e apri in <b>Chrome</b>:<br><span style="font-size:.75rem;word-break:break-all;background:#f1f5f9;padding:4px 8px;border-radius:6px;display:inline-block;margin-top:4px">alecannas-spec.github.io/modular-english</span>';
+    rf.innerHTML='⚠️ Safari non supporta il microfono.<br>Apri in <b>Chrome</b>:<br><span style="font-size:.75rem;background:#f1f5f9;padding:4px 8px;border-radius:6px;display:inline-block;margin-top:4px">alecannas-spec.github.io/modular-english</span>';
     return;
   }
+
+  if(!SRec){
+    rf.className='repeat-feedback loading show';
+    rf.innerHTML='⚠️ Il microfono non è supportato in questo browser.<br>Usa <b>Chrome</b> su Mac/Android o <b>Safari</b> su iPhone.';
+    return;
+  }
+
   if(btn.classList.contains('recording')){
-    if(window._lineRec){ try{window._lineRec.stop();}catch(e){} }
+    if(window._lineRec){ try{ window._lineRec.stop(); }catch(e){} }
     if(window._lineStream){ window._lineStream.getTracks().forEach(t=>t.stop()); window._lineStream=null; }
     return;
   }
+
   window.speechSynthesis.cancel();
   btn.classList.add('recording'); btn.textContent='⏹ Stop';
   rf.className='repeat-feedback loading show';
   rf.textContent='🎤 Apertura microfono...';
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-    window._lineStream=stream;
+
+  function startRecognition(stream){
+    if(stream) window._lineStream = stream;
     rf.textContent='🎤 Parla ora — poi premi ⏹ Stop';
-    const rec=new SRec();
-    window._lineRec=rec;
+    const rec = new SRec();
+    window._lineRec = rec;
     rec.lang='en-US'; rec.interimResults=false; rec.continuous=false; rec.maxAlternatives=1;
-    let gotResult=false;
+    let gotResult = false;
+
     rec.onresult=(e)=>{
       gotResult=true;
       const said=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim();
-      stream.getTracks().forEach(t=>t.stop()); window._lineStream=null;
+      if(stream){ stream.getTracks().forEach(t=>t.stop()); window._lineStream=null; }
       btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
       judgeRepeat(target, said, uid);
     };
     rec.onerror=(e)=>{
-      stream.getTracks().forEach(t=>t.stop()); window._lineStream=null;
+      if(stream){ stream.getTracks().forEach(t=>t.stop()); window._lineStream=null; }
       btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
       rf.className='repeat-feedback bad show';
-      rf.innerHTML='❌ Errore: '+e.error+'. Controlla i permessi microfono.';
+      if(e.error==='not-allowed'){
+        rf.innerHTML='❌ Microfono bloccato.<br>Vai in Impostazioni → Chrome → Microfono → Consenti';
+      } else {
+        rf.innerHTML='❌ Errore: '+e.error+'. Riprova.';
+      }
     };
     rec.onend=()=>{
-      stream.getTracks().forEach(t=>t.stop()); window._lineStream=null;
+      if(stream){ stream.getTracks().forEach(t=>t.stop()); window._lineStream=null; }
       btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
       setTimeout(function(){
-        if(!gotResult){ rf.className='repeat-feedback bad show'; rf.textContent='⚠️ Nessun audio. Riprova.'; }
+        if(!gotResult){ rf.className='repeat-feedback bad show'; rf.textContent='⚠️ Nessun audio. Parla più forte e riprova.'; }
       }, 300);
     };
     try{ rec.start(); }
-    catch(ex){ stream.getTracks().forEach(t=>t.stop()); btn.classList.remove('recording'); btn.textContent='🎤 Ripeti'; rf.className='repeat-feedback bad show'; rf.textContent='Errore: '+ex.message; }
-  }).catch(()=>{
-    btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
-    rf.className='repeat-feedback bad show';
-    rf.innerHTML='❌ Microfono bloccato. Controlla i permessi nelle impostazioni.';
-  });
+    catch(ex){
+      if(stream){ stream.getTracks().forEach(t=>t.stop()); }
+      btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
+      rf.className='repeat-feedback bad show'; rf.textContent='Errore: '+ex.message;
+    }
+  }
+
+  // iOS Chrome and Android need getUserMedia first to trigger permission prompt
+  if((isIOSChrome || isAndroid) && navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true})
+      .then(stream=>{ startRecognition(stream); })
+      .catch(()=>{
+        btn.classList.remove('recording'); btn.textContent='🎤 Ripeti';
+        rf.className='repeat-feedback bad show';
+        rf.innerHTML='❌ Microfono bloccato.<br>Vai in Impostazioni → Chrome → Microfono → Consenti';
+      });
+  } else {
+    // Mac Chrome — SpeechRecognition handles permission itself
+    startRecognition(null);
+  }
 }
 
 // Request mic permission explicitly first (required for iOS Safari over HTTPS)
