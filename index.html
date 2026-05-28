@@ -474,7 +474,7 @@ let currentDialogueIdx = 0;
 // ── PAYPAL CONFIG ──────────────────────────────────────────────────────────
 // Admin access (obfuscated)
 const _ap=()=>[29,28,31,19,24,29].map(c=>String.fromCharCode(c^42)).join('');
-let _adminUnlocked = localStorage.getItem('me_adm')==='1';
+let _adminUnlocked = false;
 
 function renderFTT(){
   const c=document.getElementById('ftt-content'); c.innerHTML='';
@@ -562,7 +562,6 @@ function checkAdminPin(){
   if(!input) return;
   if(input.value === _ap()){
     _adminUnlocked = true;
-    localStorage.setItem('me_adm','1');
     input.value='';
     input.placeholder='✓';
     input.style.borderColor='#22C55E';
@@ -1462,6 +1461,7 @@ function renderMyCourses(){
 }
 
 // ── INIT ────────────────────────────────────────────────────────────────────
+localStorage.removeItem('me_adm');
 updateCartBadge();
 renderHome();
 checkPayPalReturn();
