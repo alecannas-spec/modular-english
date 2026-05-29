@@ -307,7 +307,7 @@ html,body{height:100%;overflow:hidden}
 <body>
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.0.2</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.0.3</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
@@ -1292,6 +1292,8 @@ function checkPayPalReturn(){
           localStorage.setItem('me_receipts',JSON.stringify(receipts));
         }catch(e){}
         showToast('\u2705 Pagamento confermato! Benvenuto!');
+        // Modules are now saved to this device via savePurchased()
+        // Show PIN for reference (to restore on other devices) then go to mycourses
         if(isFirst){
           var pin=String(Math.floor(100000+Math.random()*900000));
           studentPins.push(pin); localStorage.setItem('me_student_pins',JSON.stringify(studentPins));
@@ -1333,19 +1335,18 @@ function restorePurchase(){
 }
 
 function showPinModal(pin){
-  // Create overlay
   const ov=document.createElement('div');
   ov.style.cssText='position:fixed;inset:0;background:rgba(10,20,60,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;';
   ov.innerHTML=`
     <div style="background:white;border-radius:20px;padding:32px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);">
       <div style="font-size:2.5rem;margin-bottom:12px">🎉</div>
       <h3 style="color:var(--navy);margin-bottom:8px">Acquisto completato!</h3>
-      <p style="color:#64748B;font-size:.88rem;margin-bottom:20px">Salva questo PIN — salva questo PIN per i tuoi accessi:</p>
+      <p style="color:#64748B;font-size:.88rem;margin-bottom:16px">I tuoi moduli sono ora disponibili nella tua area. Salva questo codice per accedere ai moduli da un altro dispositivo:</p>
       <div style="background:#0A143C;color:#F5C518;font-size:2rem;font-weight:900;letter-spacing:8px;border-radius:12px;padding:16px;margin-bottom:8px;">${pin}</div>
       <p style="color:#EF4444;font-size:.78rem;margin-bottom:20px">⚠️ Salvalo ora — non verrà mostrato di nuovo.</p>
       <button onclick="this.closest('div[style*=fixed]').remove();showView('mycourses');"
         style="background:var(--gold);color:var(--navy);border:none;border-radius:10px;padding:14px 32px;font-weight:700;font-size:1rem;cursor:pointer;width:100%;">
-        Ho salvato il PIN ✓
+        Vai ai miei corsi →
       </button>
     </div>`;
   document.body.appendChild(ov);
@@ -1369,8 +1370,8 @@ function renderMyCourses(){
     </div>`;
     const rd=document.createElement('div');
     rd.style.cssText='margin:16px;background:white;border-radius:12px;padding:16px;box-shadow:var(--shadow)';
-    rd.innerHTML=`<div style="font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:8px">📧 Restore a purchase</div>
-      <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px">Bought on another device? Enter your PayPal order ID.</div>
+    rd.innerHTML=`<div style="font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:8px">📱 Accesso da altro dispositivo</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px">Hai acquistato su un altro dispositivo? Inserisci il codice ricevuto al momento dell'acquisto.</div>
       <div style="display:flex;gap:8px">
         <input id="restore-code-input" type="text" placeholder="PayPal order ID"
           style="flex:1;border:1.5px solid #E2E8F0;border-radius:8px;padding:9px 12px;font-size:.82rem;font-family:inherit;outline:none">
@@ -1511,26 +1512,30 @@ var _pdfData = {
 };
 
 function renderPdf(key, containerId){
+  var b64 = (typeof key === 'string' && key.length < 20) ? _pdfData[key] : key;
   var container = document.getElementById(containerId);
-  if(!container || !_pdfData[key]) return;
+  if(!container || !b64) return;
   container.innerHTML = '<div style="text-align:center;padding:20px;color:white;font-size:.9rem">⏳ Loading...</div>';
-  var pdfData = atob(_pdfData[key]);
+  var pdfData = atob(b64);
   var uint8 = new Uint8Array(pdfData.length);
   for(var i=0;i<pdfData.length;i++) uint8[i]=pdfData.charCodeAt(i);
   pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   pdfjsLib.getDocument({data:uint8}).promise.then(function(pdf){
     container.innerHTML='';
-    var width = container.offsetWidth || 300;
+    var dpr = Math.min(window.devicePixelRatio || 1, 3);
+    var containerWidth = container.offsetWidth || 320;
     for(var p=1;p<=pdf.numPages;p++){
       (function(pageNum){
         pdf.getPage(pageNum).then(function(page){
-          var scale = (width-20)/page.getViewport({scale:1}).width;
+          var baseScale = (containerWidth - 20) / page.getViewport({scale:1}).width;
+          var scale = baseScale * dpr;
           var viewport = page.getViewport({scale:scale});
           var canvas = document.createElement('canvas');
-          canvas.width=viewport.width; canvas.height=viewport.height;
-          canvas.style.cssText='display:block;margin-bottom:8px;border-radius:4px;max-width:100%';
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          canvas.style.cssText = 'display:block;margin-bottom:8px;border-radius:4px;width:' + (containerWidth-20) + 'px;height:auto';
           container.appendChild(canvas);
-          page.render({canvasContext:canvas.getContext('2d'),viewport:viewport});
+          page.render({canvasContext:canvas.getContext('2d'), viewport:viewport});
         });
       })(p);
     }
