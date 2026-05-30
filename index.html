@@ -307,7 +307,7 @@ html,body{height:100%;overflow:hidden}
 <body>
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.0.3</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.0.4</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
@@ -1311,10 +1311,10 @@ function restorePurchase(){
   const input = document.getElementById('restore-code-input');
   const msg = document.getElementById('restore-msg');
   const code = input ? input.value.trim() : '';
-  if(!code){ if(msg) msg.textContent='Enter your PayPal order ID from the receipt email.'; return; }
-  if(msg){ msg.style.color='var(--muted)'; msg.textContent='Checking...'; }
+  if(!code){ if(msg) msg.textContent='Inserisci il codice ricevuto al momento dell\'acquisto.'; return; }
+  if(msg){ msg.style.color='var(--muted)'; msg.textContent='⏳ Verifica in corso...'; }
 
-  // Check local receipts first
+  // Check local receipts first (instant)
   try{
     const receipts = JSON.parse(localStorage.getItem('me_receipts')||'[]');
     const match = receipts.find(r=>r.orderId===code);
@@ -1325,13 +1325,49 @@ function restorePurchase(){
         if(!purchased.includes(id)){ purchased.push(id); count++; }
       });
       savePurchased();
-      if(msg){ msg.style.color='green'; msg.textContent='✅ '+(count||match.items.length)+' module(s) restored!'; }
+      if(msg){ msg.style.color='green'; msg.textContent='✅ '+(count||match.items.length)+' modulo/i ripristinato/i!'; }
       setTimeout(()=>showView('mycourses'),1500);
       return;
     }
   }catch(e){}
 
-  if(msg){ msg.style.color='red'; msg.textContent='Order ID not found. Note: purchases are stored on this device. Contact support at gilointernational@gmail.com with your PayPal receipt.'; }
+  // Not found locally — verify against PayPal via worker
+  if(msg){ msg.style.color='var(--muted)'; msg.textContent='⏳ Verifica con PayPal...'; }
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET', API_BASE+'/restore?code='+encodeURIComponent(code), true);
+  xhr.timeout=15000;
+  xhr.onload=function(){
+    try{
+      var d=JSON.parse(xhr.responseText);
+      if(d.verified && d.modules && d.modules.length){
+        let count=0;
+        d.modules.forEach(function(m){
+          const id=m.situationId||m.id;
+          if(id && !purchased.includes(id)){ purchased.push(id); count++; }
+        });
+        savePurchased();
+        // Save receipt locally for future use
+        try{
+          const receipts=JSON.parse(localStorage.getItem('me_receipts')||'[]');
+          if(!receipts.find(r=>r.orderId===code)){
+            receipts.push({orderId:code,items:d.modules,date:new Date().toISOString()});
+            localStorage.setItem('me_receipts',JSON.stringify(receipts));
+          }
+        }catch(e){}
+        if(msg){ msg.style.color='green'; msg.textContent='✅ '+count+' modulo/i ripristinato/i!'; }
+        setTimeout(()=>showView('mycourses'),1500);
+      } else if(d.verified){
+        if(msg){ msg.style.color='orange'; msg.textContent='✅ Pagamento verificato. Contatta supporto: gilointernational@gmail.com con il codice '+code; }
+      } else {
+        if(msg){ msg.style.color='red'; msg.textContent='❌ Codice non trovato. Controlla il codice o contatta gilointernational@gmail.com'; }
+      }
+    }catch(e){
+      if(msg){ msg.style.color='red'; msg.textContent='❌ Errore di connessione. Riprova.'; }
+    }
+  };
+  xhr.onerror=function(){ if(msg){ msg.style.color='red'; msg.textContent='❌ Errore di connessione. Riprova.'; } };
+  xhr.ontimeout=function(){ if(msg){ msg.style.color='red'; msg.textContent='❌ Timeout. Riprova.'; } };
+  xhr.send();
 }
 
 function showPinModal(pin){
