@@ -307,7 +307,7 @@ html,body{height:100%;overflow:hidden}
 <body>
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.0.6</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.0.7</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
@@ -340,8 +340,9 @@ html,body{height:100%;overflow:hidden}
           <button class="btn btn-outline" onclick="openGrammarModal()">📖 Grammar</button>
         </div>
         <div class="stats-row">
-          <div class="stat"><div class="stat-num">72</div><div class="stat-label">Modules</div></div>
-          <div class="stat"><div class="stat-num">360+</div><div class="stat-label">Situations</div></div>
+          <div class="stat"><div class="stat-num" id="stat-modules">73</div><div class="stat-label">Modules</div></div>
+          <div class="stat"><div class="stat-num" id="stat-situations">441</div><div class="stat-label">Situations</div></div>
+          <div class="stat"><div class="stat-num" id="stat-words">54,253</div><div class="stat-label">Words</div></div>
           <div class="stat"><div class="stat-num">6</div><div class="stat-label">CEFR Levels</div></div>
           <div class="stat"><div class="stat-num">25</div><div class="stat-label">Yrs Exp.</div></div>
         </div>
@@ -354,7 +355,7 @@ html,body{height:100%;overflow:hidden}
   </div>
   <div class="levels-grid" id="home-levels"></div>
   <div style="text-align:center;padding:10px 20px 30px;color:var(--muted);font-size:.75rem">
-    @ok_modularenglish · 25 anni di esperienza · 72 moduli · 6 livelliCEFR
+    @ok_modularenglish · 25 anni di esperienza · 73 moduli · 6 livelliCEFR
     <div style="margin-top:16px;">
       <input id="admin-pin-input" type="password" inputmode="numeric" maxlength="6"
         style="width:80px;border:none;border-bottom:1px solid #E2E8F0;background:transparent;text-align:center;font-size:.75rem;color:var(--muted);outline:none;letter-spacing:3px;"
@@ -369,7 +370,7 @@ html,body{height:100%;overflow:hidden}
 <div class="view" id="view-explore">
   <div class="page-header">
     <h2>📚 Esplora i Corsi</h2>
-    <p>72 moduli · A1 → C2 · Dialoghi bilingui autentici</p>
+    <p>73 moduli · A1 → C2 · Dialoghi bilingui autentici</p>
   </div>
   <div class="explore-search">
     <input class="search-input" type="text" placeholder="🔍 Cerca moduli..." oninput="filterExplore(this.value)" id="explore-search">
@@ -647,14 +648,21 @@ function openSituation(levelCode, modId, sitIdx){
     try{
       var d = JSON.parse(xhr.responseText);
       if(d.ok && d.module && d.module.situations){
-        // Cache in LEVELS for this session
+        // Merge returned dialogues into the full situation list BY ID.
+        // (The server may return only the situations the user owns, so we must
+        //  not replace the full list by index — we fill dialogues in by id.)
         var liveLev = LEVELS.find(function(l){ return l.code === levelCode; });
-        if(liveLev){
-          var liveMod = liveLev.modules.find(function(m){ return m.id === modId; });
-          if(liveMod) liveMod.situations = d.module.situations;
-        }
-        currentSituation = d.module.situations[sitIdx];
-        if(!currentSituation){ showToast('Situazione non trovata.'); return; }
+        var liveMod = liveLev && liveLev.modules.find(function(m){ return m.id === modId; });
+        d.module.situations.forEach(function(rs){
+          if(liveMod){
+            var target = liveMod.situations.find(function(ls){ return ls.id === rs.id; });
+            if(target){ target.dialogues = rs.dialogues; }
+          }
+        });
+        // Find the requested situation by id (robust to filtered arrays)
+        currentSituation = d.module.situations.find(function(rs){ return rs.id === sit.id; })
+                        || (liveMod && liveMod.situations[sitIdx]);
+        if(!currentSituation || !currentSituation.dialogues){ showToast('Situazione non trovata.'); return; }
         renderDialogue();
       } else if(xhr.status === 401 || xhr.status === 403){
         document.getElementById('diag-lines').innerHTML = '<div style="text-align:center;padding:40px"><div style="font-size:2.5rem;margin-bottom:12px">🔒</div><p style="color:var(--navy);font-weight:700;font-size:1rem">Accesso non autorizzato</p><p style="color:var(--muted);font-size:.85rem">Acquista questo modulo per accedere al contenuto.</p></div>';
@@ -675,7 +683,23 @@ var _origCheckPayPalReturn = typeof checkPayPalReturn === 'function' ? checkPayP
 
 // Patch: save token whenever we get one from Worker responses
 function saveAccessToken(d){
-  if(d && d.accessToken){ setCookie('me_token', d.accessToken, 30); }
+  if(d && d.accessToken){
+    try{
+      var payload = JSON.parse(atob(d.accessToken.split('.')[0]));
+      // Don't store or apply a token that's already expired (1-year cap)
+      if(payload && payload.expires && Date.now() > payload.expires){ return; }
+      setCookie('me_token', d.accessToken, 365);
+      if(payload && payload.purchased && payload.purchased.length){
+        payload.purchased.forEach(function(id){
+          if(purchased.indexOf(id) < 0) purchased.push(id);
+        });
+        savePurchased();
+      }
+    }catch(e){
+      // Fallback: still store the token (length-validated server-side)
+      setCookie('me_token', d.accessToken, 365);
+    }
+  }
 }
 
 // Override proceedToPayPal capture to save token
@@ -704,7 +728,127 @@ var _origCaptureDone = null;
   };
 })();
 
+// ── Customer Design: per-situation pricing & sales ─────────────────────────
+// In the CD level, courses are sold per SITUATION rather than per module.
+// Each situation has its own priceEur; the situation id (e.g. b1-m11-s1) is
+// the purchasable unit. Non-CD levels are completely unaffected.
+
+function _cdMinPrice(mod){
+  var ps = (mod.situations||[]).map(function(s){ return parseFloat(s.priceEur||0); }).filter(function(p){ return p>0; });
+  return ps.length ? Math.min.apply(null, ps) : 0;
+}
+
+function addSituationToCart(mod, lev, idx){
+  var sit = mod.situations[idx];
+  if(!sit) return;
+  if(isPurchased(sit.id)){ showToast('Già acquistato'); return; }
+  if(inCart(sit.id)){ showView('cart'); return; }
+  cart.push({
+    id: sit.id,
+    title: mod.title + ' — ' + sit.title,
+    icon: mod.icon,
+    levelCode: lev.code,
+    price: parseFloat(sit.priceEur||0)
+  });
+  saveCart();
+  showToast('🛒 "' + sit.title + '" aggiunto al carrello');
+  decorateCDModuleDetail();
+}
+
+// CD level grid: replace each module's TOTAL price with "da €{min situation price}"
+function decorateCDLevelGrid(){
+  var list = document.getElementById('situations-list');
+  if(!list || !currentLevel || currentLevel.code !== 'CD') return;
+  var cards = list.children, mods = currentLevel.modules || [];
+  for(var i=0; i<cards.length && i<mods.length; i++){
+    (function(card, mod){
+      card.querySelectorAll('span,div,p').forEach(function(n){
+        var txt = (n.textContent||'').trim();
+        if(n.children.length === 0 && /^€\s*\d/.test(txt)){
+          n.textContent = 'da €' + _cdMinPrice(mod).toFixed(2);
+        }
+      });
+    })(cards[i], mods[i]);
+  }
+}
+
+// CD module page: hide module total + buy-bar, sell each situation individually
+function decorateCDModuleDetail(){
+  if(!currentLevel || currentLevel.code !== 'CD' || !currentModule) return;
+  var mod = currentModule, lev = currentLevel;
+  var bar = document.getElementById('module-buy-bar'); if(bar) bar.style.display = 'none';
+  var sub = document.getElementById('module-subtitle');
+  if(sub){ sub.textContent = (mod.titleItalian||'') + ' · ' + (mod.situations||[]).length + ' situazioni · prezzo per situazione'; }
+  var list = document.getElementById('situations-list'); if(!list) return;
+  var cards = list.children, sits = mod.situations || [];
+  for(var i=0; i<cards.length && i<sits.length; i++){
+    (function(card, sit, idx){
+      var owned = isPurchased(sit.id), inC = inCart(sit.id);
+      var h4 = card.querySelector('h4');
+      if(h4){ h4.textContent = (owned ? '✅ ' : '🔒 ') + (sit.title||''); }
+      var right = card.querySelector('.sit-right') || card.lastElementChild;
+      if(right){
+        right.style.display = 'flex';
+        right.style.flexDirection = 'column';
+        right.style.alignItems = 'flex-end';
+        right.style.gap = '6px';
+        if(owned){
+          right.innerHTML = '<span style="font-size:.78rem;font-weight:700;color:#16A34A">✅ Sbloccato</span>';
+        } else if(inC){
+          right.innerHTML = '<span style="font-size:.72rem;font-weight:700;color:#92400E;background:rgba(245,197,24,.25);padding:3px 9px;border-radius:12px">Nel carrello ✓</span>';
+        } else {
+          right.innerHTML = '<span style="font-size:1rem;font-weight:900;color:var(--navy);font-family:\'Playfair Display\',serif">€' + parseFloat(sit.priceEur||0).toFixed(2) + '</span>' +
+                            '<button class="btn btn-gold btn-sm">Aggiungi</button>';
+        }
+      }
+      card.onclick = function(){
+        if(isPurchased(sit.id)) openSituation('CD', mod.id, idx);
+        else if(inCart(sit.id)) showView('cart');
+        else addSituationToCart(mod, lev, idx);
+      };
+    })(cards[i], sits[i], i);
+  }
+}
+
+// Wrap the original renderers so CD gets decorated after each render
+(function(){
+  if(typeof openModule === 'function'){
+    var _om = openModule;
+    openModule = function(levelCode, modId){
+      _om(levelCode, modId);
+      if(levelCode === 'CD'){ try{ decorateCDModuleDetail(); }catch(e){} }
+    };
+  }
+  if(typeof openLevel === 'function'){
+    var _ol = openLevel;
+    openLevel = function(code){
+      _ol(code);
+      if(code === 'CD'){ try{ decorateCDLevelGrid(); }catch(e){} }
+    };
+  }
+})();
+
+// Home stats: compute totals from LEVELS so the counter always reflects every
+// level (including Customer Design) and never drifts when content changes.
+(function setHomeStats(){
+  try{
+    var mods = 0, sits = 0, words = 0;
+    LEVELS.forEach(function(l){
+      mods += l.modules.length;
+      l.modules.forEach(function(m){
+        var ms = m.situations || [];
+        sits += ms.length;
+        ms.forEach(function(s){ words += (parseInt(s.wordCount, 10) || 0); });
+      });
+    });
+    var em = document.getElementById('stat-modules'); if(em) em.textContent = mods;
+    var es = document.getElementById('stat-situations'); if(es) es.textContent = sits;
+    var ew = document.getElementById('stat-words'); if(ew) ew.textContent = words.toLocaleString('en-US');
+  }catch(e){}
+})();
+
 console.log('✅ Modular English v3 — Server-side gating active');
+console.log('✅ Customer Design — per-situation sales active');
 </script>
 
 </body>
