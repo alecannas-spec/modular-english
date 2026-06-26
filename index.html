@@ -949,6 +949,14 @@ console.log('✅ Customer Design — per-situation sales active');
 
   // ---- wrap globals (additive; fall back to originals) ----
   function wrap(){
+    if(typeof window.openModule==='function' && !window.__vcModuleWrapped){
+      var om=window.openModule;
+      window.openModule=function(levelCode,modId){
+        if(modId && String(modId).indexOf('vc-')===0){ if(render(modId)) return; }
+        return om.apply(this,arguments);
+      };
+      window.__vcModuleWrapped=true;
+    }
     if(typeof window.openSituation==='function' && !window.__vcOpenWrapped){
       var o=window.openSituation;
       window.openSituation=function(levelCode,modId,sitIdx){
