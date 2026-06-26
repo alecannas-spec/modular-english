@@ -921,7 +921,13 @@ console.log('✅ Customer Design — per-situation sales active');
     host.innerHTML=html;
 
     if(!own){
-      var b=$('vc-buy'); if(b) b.onclick=function(){ try{ if(typeof addToCart==='function'){ addToCart(mod); } }catch(e){} try{ if(typeof showToast==='function') showToast('Aggiunto al carrello'); }catch(e){} };
+      var b=$('vc-buy'); if(b) b.onclick=function(){
+        try{
+          var LV=G('LEVELS'), lev=null;
+          if(LV){ for(var i=0;i<LV.length && !lev;i++){ var ms=LV[i].modules||[]; for(var j=0;j<ms.length;j++){ if(ms[j].id===mod.id){ lev=LV[i]; break; } } } }
+          if(typeof addToCart==='function'){ addToCart(mod, lev||{code:'VC'}); }
+        }catch(e){ try{ if(typeof showToast==='function') showToast('Errore nell\'aggiunta al carrello'); }catch(e2){} }
+      };
       var g=$('vc-gocart'); if(g) g.onclick=function(){ try{ if(typeof showView==='function') showView('cart'); }catch(e){} };
       return true;
     }
