@@ -870,9 +870,10 @@ console.log('✅ Customer Design — per-situation sales active');
 <script>
 (function(){
   function $(id){return document.getElementById(id);}
+  function G(name){ try{ return eval(name); }catch(e){ try{ return window[name]; }catch(e2){ return undefined; } } }
   function findVC(modId){
-    if(!window.LEVELS) return null;
-    for(var i=0;i<LEVELS.length;i++){var ms=LEVELS[i].modules||[];for(var j=0;j<ms.length;j++){if(ms[j].id===modId)return ms[j];}}
+    var LV=G('LEVELS'); if(!LV) return null;
+    for(var i=0;i<LV.length;i++){var ms=LV[i].modules||[];for(var j=0;j<ms.length;j++){if(ms[j].id===modId)return ms[j];}}
     return null;
   }
   function modIdFromAny(id){
@@ -887,7 +888,7 @@ console.log('✅ Customer Design — per-situation sales active');
 
   function entitled(mod){
     try{
-      if(window._adminUnlocked) return true;
+      if(G('_adminUnlocked')) return true;
       if(typeof isPurchased==='function'){
         if(isPurchased(mod.id)) return true;
         var s=(mod.situations||[])[0]; if(s&&isPurchased(s.id)) return true;
@@ -927,7 +928,7 @@ console.log('✅ Customer Design — per-situation sales active');
 
     // entitled: fetch the protected link from the Worker (KV) using the access token
     var token=''; try{ token=(typeof getCookie==='function'? (getCookie('me_token')||''):''); }catch(e){}
-    var base=(window.API_BASE||'');
+    var base=(G('API_BASE')||'');
     var xhr=new XMLHttpRequest();
     xhr.open('GET', base+'/content/'+mod.id, true); xhr.timeout=15000;
     if(token) xhr.setRequestHeader('Authorization','Bearer '+token);
@@ -969,8 +970,9 @@ console.log('✅ Customer Design — per-situation sales active');
       window.addToCart=function(item,extra){
         var r=a.apply(this,arguments);
         try{
-          if(item && item.id && String(item.id).indexOf('vc-')===0 && Array.isArray(window.cart)){
-            var ci=window.cart.find(function(c){return c.id===item.id;});
+          var CART=G('cart');
+          if(item && item.id && String(item.id).indexOf('vc-')===0 && Array.isArray(CART)){
+            var ci=CART.find(function(c){return c.id===item.id;});
             if(ci){ ci.price=parseFloat(item._price||(item.situations&&item.situations[0]&&item.situations[0].priceEur)||0);
                     try{ if(typeof saveCart==='function') saveCart(); }catch(e){}
                     try{ if(typeof updateCartBadge==='function') updateCartBadge(); }catch(e){} }
