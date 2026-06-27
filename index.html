@@ -271,7 +271,8 @@ nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justif
   position:fixed;bottom:0;left:0;right:0;
   background:#fff;border-top:2px solid var(--gold);
   padding:14px 20px;display:flex;align-items:center;
-  justify-content:space-between;z-index:200;
+  justify-content:space-between;z-index:260;
+  padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));
   box-shadow:0 -4px 20px rgba(0,0,0,.15);
 }
 
@@ -310,7 +311,7 @@ html,body{height:100%;overflow:hidden}
 <body>
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.0.9</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.0</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
@@ -1009,7 +1010,7 @@ console.log('✅ Customer Design — per-situation sales active');
 <script>
 /* v1.0.9 — cart hardening + build check (additive, safe; does not alter working paths) */
 (function(){
-  try{ console.log('\u2705 Modular English build v1.0.9 \u2014 cart hardening active'); }catch(e){}
+  try{ console.log('\u2705 Modular English build v1.1.0 \u2014 cart hardening + inline buy active'); }catch(e){}
   function levelCodeFor(item, level){
     if(level && level.code) return level.code;
     try{
@@ -1042,6 +1043,47 @@ console.log('✅ Customer Design — per-situation sales active');
       }
     };
     window.__hardenedAdd=true;
+  }
+})();
+</script>
+<script>
+/* v1.1.0 — inline add-to-cart button for A1..C2 (always reachable; mirrors CD/VC) */
+(function(){
+  function curLevel(){ try{ return (typeof currentLevel!=='undefined')?currentLevel:null; }catch(e){ return null; } }
+  function curModule(){ try{ return (typeof currentModule!=='undefined')?currentModule:null; }catch(e){ return null; } }
+  function priceOf(mod){ try{ return (typeof getModulePrice==='function')?getModulePrice(mod):(mod._price||''); }catch(e){ return mod._price||''; } }
+  function injectInlineBuy(){
+    try{
+      var lev=curLevel(), mod=curModule();
+      if(!lev||!mod) return;
+      if(lev.code==='CD'||lev.code==='VC') return;
+      if(String(mod.id).indexOf('vc-')===0) return;
+      var list=document.getElementById('situations-list'); if(!list) return;
+      var old=document.getElementById('inline-buy-wrap'); if(old) old.remove();
+      var owned=(typeof isPurchased==='function')&&isPurchased(mod.id);
+      if(owned) return;
+      var inC=(typeof inCart==='function')&&inCart(mod.id);
+      var wrap=document.createElement('div');
+      wrap.id='inline-buy-wrap';
+      wrap.style.cssText='margin:4px 0 16px;';
+      wrap.innerHTML='<button id="inline-buy-btn" style="width:100%;background:var(--gold);color:#0A143C;border:none;border-radius:12px;padding:16px;font-size:1rem;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12)">'
+        +(inC?'\ud83d\uded2 Nel carrello \u2014 Vai al carrello':'+ Aggiungi al carrello \u2014 \u20ac'+priceOf(mod))+'</button>';
+      list.insertBefore(wrap, list.firstChild);
+      var btn=document.getElementById('inline-buy-btn');
+      btn.onclick=function(){
+        try{
+          if((typeof inCart==='function')&&inCart(mod.id)){ if(typeof showView==='function') showView('cart'); return; }
+          if(typeof addToCart==='function') addToCart(mod, lev);
+          setTimeout(injectInlineBuy, 30);
+        }catch(e){ try{console.error('inline buy click failed',e);}catch(_){ } }
+      };
+    }catch(e){ try{console.error('inline buy inject failed',e);}catch(_){ } }
+  }
+  window.__injectInlineBuy=injectInlineBuy;
+  if(typeof window.openModule==='function' && !window.__inlineBuyWrapped){
+    var _om=window.openModule;
+    window.openModule=function(code,id){ var r=_om.apply(this,arguments); try{ injectInlineBuy(); }catch(e){} return r; };
+    window.__inlineBuyWrapped=true;
   }
 })();
 </script>
