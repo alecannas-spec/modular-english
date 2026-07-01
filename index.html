@@ -1131,8 +1131,61 @@ console.log('✅ Customer Design — per-situation sales active');
       window.__meTrackSit = true;
     }
   }
-  if(document.readyState!=='loading') wrapSit(); else document.addEventListener('DOMContentLoaded', wrapSit);
-  setTimeout(wrapSit, 800); setTimeout(wrapSit, 2500);
+  // 3) Module opens, add-to-cart, cart view, and reaching the PayPal window.
+  //    All additive: wrap the existing globals without changing their behaviour.
+  function meWrapOnce(name, makePayload){
+    var flag='__meT_'+name;
+    if(typeof window[name]==='function' && !window[flag]){
+      var orig=window[name];
+      window[name]=function(){
+        try{ var p=makePayload.apply(null, arguments); if(p) meTrack(p); }catch(e){}
+        return orig.apply(this, arguments);
+      };
+      window[flag]=true;
+    }
+  }
+  function meModuleMeta(levelCode, modId){
+    var mtitle='';
+    try{
+      var lev = LEVELS.find(function(l){ return l.code===levelCode; });
+      var mod = lev && lev.modules.find(function(m){ return m.id===modId; });
+      mtitle = (mod && mod.title) || '';
+    }catch(_){}
+    return { level: levelCode||'', module: modId||'', title: mtitle };
+  }
+  function meWrapAll(){
+    wrapSit();
+    // module opened — openModule(levelCode, modId). Skip when the open is a
+    // programmatic re-render triggered by addToCart (not a real navigation).
+    meWrapOnce('openModule', function(levelCode, modId){
+      if(window.__meSuppressModule) return null;
+      var m = meModuleMeta(levelCode, modId);
+      return { type:'module', level:m.level, module:m.module, title:m.title };
+    });
+    // item added to cart — addToCart(item, ...). Suppress the module re-render
+    // it triggers internally so it is not double-counted as a module open.
+    if(typeof window.addToCart==='function' && !window.__meT_addToCart){
+      var _meAC = window.addToCart;
+      window.addToCart = function(item){
+        try{
+          var id=(item&&(item.id||item.moduleId))||''; var t=(item&&item.title)||'';
+          meTrack({ type:'addcart', item:String(id), title:String(t) });
+        }catch(e){}
+        window.__meSuppressModule = true;
+        try{ return _meAC.apply(this, arguments); }
+        finally{ window.__meSuppressModule = false; }
+      };
+      window.__meT_addToCart = true;
+    }
+    // cart view opened — showView('cart')
+    meWrapOnce('showView', function(view){
+      return String(view)==='cart' ? { type:'cart' } : null;
+    });
+    // reached the PayPal payment window — proceedToPayPal()
+    meWrapOnce('proceedToPayPal', function(){ return { type:'paypal' }; });
+  }
+  if(document.readyState!=='loading') meWrapAll(); else document.addEventListener('DOMContentLoaded', meWrapAll);
+  setTimeout(meWrapAll, 800); setTimeout(meWrapAll, 2500);
 })();
 </script>
 </body>
