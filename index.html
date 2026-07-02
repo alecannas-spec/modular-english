@@ -2,6 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -908,7 +909,7 @@ console.log('✅ Customer Design — per-situation sales active');
     // a situation id like vc-xxx-v1 -> strip trailing -vN
     return id.replace(/-v\d+$/,'');
   }
-  function yt(id){return 'https://www.youtube.com/embed/'+id+'?rel=0&modestbranding=1';}
+  function yt(id){return 'https://www.youtube-nocookie.com/embed/'+id+'?rel=0&modestbranding=1&playsinline=1';}
   function fmtDur(s){s=parseInt(s||0,10);var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=s%60;
     function p(n){return (n<10?'0':'')+n;} return h>0?(h+':'+p(m)+':'+p(x)):(m+':'+p(x));}
 
@@ -936,7 +937,7 @@ console.log('✅ Customer Design — per-situation sales active');
         '<span class="vc-badge">▶ VIDEO-CORSO</span>'+
         '<div class="vc-h">'+(mod.titleItalian||mod.title)+'</div>'+
         '<div class="vc-sub">Durata '+fmtDur(mod.durationSec)+' · €'+price+'</div>'+
-        '<div class="vc-frame" id="vc-frame"><iframe allow="accelerometer;encrypted-media;picture-in-picture" allowfullscreen src="'+yt(mod.previewId)+'"></iframe></div>'+
+        '<div class="vc-frame" id="vc-frame"><iframe allow="accelerometer;encrypted-media;picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="'+yt(mod.previewId)+'"></iframe></div>'+
         (own
           ? '<div class="vc-note" id="vc-status">⏳ Carico il corso completo…</div>'
           : '<div class="vc-row"><span class="vc-price">€'+price+'</span>'+
@@ -969,7 +970,7 @@ console.log('✅ Customer Design — per-situation sales active');
       try{ var d=JSON.parse(xhr.responseText); var m=d.module||{};
         vid=m.videoId || (m.situations&&m.situations[0]&&m.situations[0].videoId) || null; }catch(e){}
       var fr=$('vc-frame'), st=$('vc-status');
-      if(vid){ if(fr) fr.innerHTML='<iframe allow="accelerometer;encrypted-media;picture-in-picture" allowfullscreen src="'+yt(vid)+'"></iframe>';
+      if(vid){ if(fr) fr.innerHTML='<iframe allow="accelerometer;encrypted-media;picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="'+yt(vid)+'"></iframe>';
                if(st){ st.textContent='✓ Corso completo sbloccato'; } }
       else { if(st) st.textContent='Non riesco a caricare il video. Riprova o ripristina l\'acquisto da “My Courses”.'; }
     };
