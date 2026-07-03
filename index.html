@@ -1318,6 +1318,34 @@ console.log('✅ Customer Design — per-situation sales active');
     document.documentElement.style.overflow=''; document.body.style.overflow='';
   }
   function store(token, persist){ try{ (persist?localStorage:sessionStorage).setItem('me_entry',token); }catch(e){} }
+  function playWelcome(done){
+    var ov=document.createElement('div'); ov.id='me-welcome';
+    ov.style.cssText='position:fixed;inset:0;z-index:2147483003;background:#000;overflow:hidden;';
+    var v=document.createElement('video');
+    v.src='welcome.mp4'; v.autoplay=true; v.controls=false; v.playsInline=true;
+    v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+    v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;';
+    ov.appendChild(v);
+    var cap=document.createElement('div');
+    cap.style.cssText='position:absolute;left:0;right:0;bottom:16%;text-align:center;z-index:2;padding:0 20px;pointer-events:none;font-family:Arial,sans-serif;opacity:0;transition:opacity 1s ease .5s;';
+    cap.innerHTML='<div style="color:#8CFF6E;font-size:18px;font-weight:600;letter-spacing:4px;text-shadow:0 0 10px rgba(57,255,20,.7)">BENVENUTO A</div>'
+      +'<div style="color:#39FF14;font-size:40px;font-weight:800;letter-spacing:2px;text-shadow:0 0 18px rgba(57,255,20,.85);margin-top:6px">MODULAR ENGLISH</div>'
+      +'<div style="color:#8CFF6E;font-size:20px;font-weight:600;letter-spacing:8px;text-shadow:0 0 10px rgba(57,255,20,.7);margin-top:6px">360\u00b0 EXPERIENCE</div>';
+    ov.appendChild(cap);
+    requestAnimationFrame(function(){ cap.style.opacity='1'; });
+    var skip=document.createElement('button'); skip.textContent='Salta \u203a';
+    skip.style.cssText='position:absolute;bottom:26px;right:20px;z-index:2;background:rgba(0,0,0,.55);color:#39FF14;border:1px solid #39FF14;border-radius:22px;padding:9px 18px;font-size:15px;font-family:inherit;cursor:pointer;';
+    ov.appendChild(skip);
+    document.body.appendChild(ov);
+    var fin=false;
+    function finish(){ if(fin) return; fin=true; try{v.pause();}catch(e){} try{done();}catch(e){} try{ov.remove();}catch(e){} }
+    skip.addEventListener('click', finish);
+    v.addEventListener('ended', finish);
+    v.addEventListener('error', finish);   // missing/blocked video -> skip straight to app
+    var pr=v.play();
+    if(pr && pr.catch){ pr.catch(function(){ v.muted=true; var p2=v.play(); if(p2&&p2.catch) p2.catch(finish); }); }
+    setTimeout(finish, 9000);              // safety cap
+  }
   function msg(el,txt,ok){ el.textContent=txt; el.className='msg '+(ok?'ok':'no'); }
 
   // Already have a valid entry token? Skip the door entirely.
@@ -1327,6 +1355,7 @@ console.log('✅ Customer Design — per-situation sales active');
     var g=$('me-guard'); if(g) g.remove();
     document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden';
     startRain();
+    try{ var pv=document.createElement('video'); pv.preload='auto'; pv.muted=true; pv.src='welcome.mp4'; pv.style.display='none'; document.body.appendChild(pv);}catch(e){}
     // New-user register
     $('me-reg-go').addEventListener('click', async function(){
       var n=$('me-name').value, p=$('me-phone').value, e=$('me-email').value;
@@ -1340,7 +1369,7 @@ console.log('✅ Customer Design — per-situation sales active');
       try{
         var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'register',fullName:n,phone:p,email:e})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,false); msg($('me-reg-msg'),'Accesso consentito.',true); setTimeout(reveal,250); }
+        if(d.ok&&d.token){ store(d.token,false); msg($('me-reg-msg'),'Accesso consentito.',true); setTimeout(function(){playWelcome(reveal);},250); }
         else{ msg($('me-reg-msg'), d.error==='name'?'Nome non valido.':d.error==='phone'?'Telefono non valido.':d.error==='email'?'Email non valida.':'Dati non validi.', false); }
       }catch(err){ msg($('me-reg-msg'),'Errore di rete. Riprova.',false); }
     });
@@ -1353,7 +1382,7 @@ console.log('✅ Customer Design — per-situation sales active');
       try{
         var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'txn',id:id})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,true); msg($('me-txn-msg'),'Accesso consentito.',true); setTimeout(reveal,250); }
+        if(d.ok&&d.token){ store(d.token,true); msg($('me-txn-msg'),'Accesso consentito.',true); setTimeout(function(){playWelcome(reveal);},250); }
         else{ msg($('me-txn-msg'), d.error==='expired'?'ID scaduto (oltre 1 anno).':d.error==='notfound'?'ID non trovato.':'ID non valido.', false); }
       }catch(err){ msg($('me-txn-msg'),'Errore di rete. Riprova.',false); }
     });
@@ -1365,7 +1394,7 @@ console.log('✅ Customer Design — per-situation sales active');
       try{
         var r=await fetch(WK+'/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:pin})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,true); reveal(); }
+        if(d.ok&&d.token){ store(d.token,true); playWelcome(reveal); }
         else{ msg($('me-pin-msg'),'PIN errato.',false); }
       }catch(err){ msg($('me-pin-msg'),'Errore di rete.',false); }
     });
