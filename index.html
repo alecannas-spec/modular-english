@@ -1318,7 +1318,7 @@ console.log('✅ Customer Design — per-situation sales active');
     document.documentElement.style.overflow=''; document.body.style.overflow='';
   }
   function store(token, persist){ try{ (persist?localStorage:sessionStorage).setItem('me_entry',token); }catch(e){} }
-  function playWelcome(done){
+  function playWelcome(){
     var ov=document.createElement('div'); ov.id='me-welcome';
     ov.style.cssText='position:fixed;inset:0;z-index:2147483003;background:#000;overflow:hidden;';
     var v=document.createElement('video');
@@ -1337,14 +1337,23 @@ console.log('✅ Customer Design — per-situation sales active');
     skip.style.cssText='position:absolute;bottom:26px;right:20px;z-index:2;background:rgba(0,0,0,.55);color:#39FF14;border:1px solid #39FF14;border-radius:22px;padding:9px 18px;font-size:15px;font-family:inherit;cursor:pointer;';
     ov.appendChild(skip);
     document.body.appendChild(ov);
-    var fin=false;
-    function finish(){ if(fin) return; fin=true; try{v.pause();}catch(e){} try{done();}catch(e){} try{ov.remove();}catch(e){} }
-    skip.addEventListener('click', finish);
-    v.addEventListener('ended', finish);
-    v.addEventListener('error', finish);   // missing/blocked video -> skip straight to app
-    var pr=v.play();
-    if(pr && pr.catch){ pr.catch(function(){ v.muted=true; var p2=v.play(); if(p2&&p2.catch) p2.catch(finish); }); }
-    setTimeout(finish, 9000);              // safety cap
+    var vdone=false, entry=0, torn=false;   // entry: 0=pending, 1=approved, -1=rejected
+    function teardown(){ if(torn) return; torn=true; try{v.pause();}catch(e){} try{ov.remove();}catch(e){} }
+    function settle(){
+      if(entry===-1){ teardown(); return; }              // entry failed -> drop welcome (caller shows error)
+      if(entry===1 && vdone){ teardown(); try{reveal();}catch(e){} }
+    }
+    function vEnd(){ vdone=true; settle(); }
+    skip.addEventListener('click', vEnd);
+    v.addEventListener('ended', vEnd);
+    v.addEventListener('error', vEnd);       // undecodable/blocked video -> treat as finished
+    var pr=v.play();                          // runs inside the tap -> autoplay-with-sound is allowed
+    if(pr && pr.catch){ pr.catch(function(){ v.muted=true; var p2=v.play(); if(p2&&p2.catch) p2.catch(vEnd); }); }
+    setTimeout(vEnd, 9000);                   // safety cap on the video
+    return {
+      approve: function(){ if(entry!==-1){ entry=1; settle(); } },
+      reject:  function(){ if(entry!==1){ entry=-1; settle(); } }
+    };
   }
   function msg(el,txt,ok){ el.textContent=txt; el.className='msg '+(ok?'ok':'no'); }
 
@@ -1365,12 +1374,13 @@ console.log('✅ Customer Design — per-situation sales active');
       if(!$('me-consent').checked){ msg($('me-reg-msg'),'Spunta il consenso per continuare.',false); return; }
       if(!(okN&&okP&&okE)) return;
       msg($('me-reg-msg'),'Verifica...',true);
+      var w=playWelcome();   // start the welcome video NOW, inside the tap, so it plays with sound
       try{
         var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'register',fullName:n,phone:p,email:e})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,false); msg($('me-reg-msg'),'Accesso consentito.',true); setTimeout(function(){playWelcome(reveal);},250); }
-        else{ msg($('me-reg-msg'), d.error==='name'?'Nome non valido.':d.error==='phone'?'Telefono non valido.':d.error==='email'?'Email non valida.':'Dati non validi.', false); }
-      }catch(err){ msg($('me-reg-msg'),'Errore di rete. Riprova.',false); }
+        if(d.ok&&d.token){ store(d.token,false); msg($('me-reg-msg'),'Accesso consentito.',true); w.approve(); }
+        else{ w.reject(); msg($('me-reg-msg'), d.error==='name'?'Nome non valido.':d.error==='phone'?'Telefono non valido.':d.error==='email'?'Email non valida.':'Dati non validi.', false); }
+      }catch(err){ w.reject(); msg($('me-reg-msg'),'Errore di rete. Riprova.',false); }
     });
     // Returning customer
     $('me-txn-go').addEventListener('click', async function(){
@@ -1378,24 +1388,26 @@ console.log('✅ Customer Design — per-situation sales active');
       if(!id){ $('me-txn').classList.add('bad'); $('me-txn-e').textContent='Inserisci un ID transazione.'; return; }
       $('me-txn').classList.remove('bad'); $('me-txn-e').textContent='';
       msg($('me-txn-msg'),'Verifica...',true);
+      var w=playWelcome();   // start the welcome video NOW, inside the tap, so it plays with sound
       try{
         var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'txn',id:id})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,true); msg($('me-txn-msg'),'Accesso consentito.',true); setTimeout(function(){playWelcome(reveal);},250); }
-        else{ msg($('me-txn-msg'), d.error==='expired'?'ID scaduto (oltre 1 anno).':d.error==='notfound'?'ID non trovato.':'ID non valido.', false); }
-      }catch(err){ msg($('me-txn-msg'),'Errore di rete. Riprova.',false); }
+        if(d.ok&&d.token){ store(d.token,true); msg($('me-txn-msg'),'Accesso consentito.',true); w.approve(); }
+        else{ w.reject(); msg($('me-txn-msg'), d.error==='expired'?'ID scaduto (oltre 1 anno).':d.error==='notfound'?'ID non trovato.':'ID non valido.', false); }
+      }catch(err){ w.reject(); msg($('me-txn-msg'),'Errore di rete. Riprova.',false); }
     });
     // Admin (semi-hidden 6 dots)
     $('me-dots').addEventListener('click', function(){ $('me-admin').classList.toggle('open'); if($('me-admin').classList.contains('open')) $('me-pin').focus(); });
     $('me-pin-go').addEventListener('click', async function(){
       var pin=$('me-pin').value.trim(); if(!pin){ return; }
       msg($('me-pin-msg'),'...',true);
+      var w=playWelcome();   // start the welcome video NOW, inside the tap, so it plays with sound
       try{
         var r=await fetch(WK+'/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:pin})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,true); playWelcome(reveal); }
-        else{ msg($('me-pin-msg'),'PIN errato.',false); }
-      }catch(err){ msg($('me-pin-msg'),'Errore di rete.',false); }
+        if(d.ok&&d.token){ store(d.token,true); w.approve(); }
+        else{ w.reject(); msg($('me-pin-msg'),'PIN errato.',false); }
+      }catch(err){ w.reject(); msg($('me-pin-msg'),'Errore di rete.',false); }
     });
     $('me-pin').addEventListener('keydown',function(e){ if(e.key==='Enter') $('me-pin-go').click(); });
   }
