@@ -334,7 +334,7 @@ html,body{height:100%;overflow:hidden}
 
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.1</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.2</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
@@ -1033,7 +1033,7 @@ console.log('✅ Customer Design — per-situation sales active');
 <script>
 /* v1.0.9 — cart hardening + build check (additive, safe; does not alter working paths) */
 (function(){
-  try{ console.log('\u2705 Modular English build v1.1.1 \u2014 cart hardening + inline buy active'); }catch(e){}
+  try{ console.log('\u2705 Modular English build v1.1.2 \u2014 email OTP verification active'); }catch(e){}
   function levelCodeFor(item, level){
     if(level && level.code) return level.code;
     try{
@@ -1253,7 +1253,7 @@ console.log('✅ Customer Design — per-situation sales active');
     <h1>MODULAR ENGLISH</h1>
     <div class="sub">360&deg; EXPERIENCE</div>
 
-    <div class="card">
+    <div class="card" id="me-reg-card">
       <h2>Nuovo utente <small>New user &mdash; inserisci i tuoi dati</small></h2>
       <input id="me-name" type="text" autocomplete="name" placeholder="Nome e Cognome">
       <div class="err" id="me-name-e"></div>
@@ -1266,6 +1266,16 @@ console.log('✅ Customer Design — per-situation sales active');
       <button class="go" id="me-reg-go">ENTRA &middot; ENTER</button>
       <div class="msg" id="me-reg-msg"></div>
       <div class="note">I tuoi dati (nome, telefono, email) sono conservati in forma cifrata fino a 5 giorni per finalit&agrave; di accesso e contatto, poi cancellati automaticamente. Cancellazione: gilointernational@gmail.com</div>
+    </div>
+
+    <div class="card" id="me-code-card" style="display:none">
+      <h2>Verifica email <small>Enter the 6-digit code we emailed you</small></h2>
+      <div class="note" id="me-code-to" style="margin:0 0 8px"></div>
+      <input id="me-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Codice a 6 cifre" style="letter-spacing:6px;text-align:center;font-size:1.3rem">
+      <div class="err" id="me-code-e"></div>
+      <button class="go" id="me-code-go">VERIFICA &middot; VERIFY</button>
+      <div class="msg" id="me-code-msg"></div>
+      <div class="note">Non hai ricevuto il codice? <a href="#" id="me-resend" style="color:#7CFF5A">Invia di nuovo</a> &middot; controlla anche lo spam.</div>
     </div>
 
     <div class="card">
@@ -1364,7 +1374,18 @@ console.log('✅ Customer Design — per-situation sales active');
     var g=$('me-guard'); if(g) g.remove();
     document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden';
     startRain();
-    // New-user register
+    // New-user register — STEP 1: validate + request an email code (no welcome video yet)
+    var pendingEmail='', resendTimer=null;
+    function startResendCd(sec){
+      var a=$('me-resend'); if(!a) return;
+      var left=sec; a.style.pointerEvents='none'; a.style.opacity='.5'; a.textContent='Invia di nuovo ('+left+'s)';
+      clearInterval(resendTimer);
+      resendTimer=setInterval(function(){
+        left--;
+        if(left<=0){ clearInterval(resendTimer); a.textContent='Invia di nuovo'; a.style.pointerEvents=''; a.style.opacity=''; }
+        else a.textContent='Invia di nuovo ('+left+'s)';
+      },1000);
+    }
     $('me-reg-go').addEventListener('click', async function(){
       var n=$('me-name').value, p=$('me-phone').value, e=$('me-email').value;
       var okN=vName(n), okP=vPhone(p), okE=vEmail(e);
@@ -1373,15 +1394,66 @@ console.log('✅ Customer Design — per-situation sales active');
       $('me-email').classList.toggle('bad',!okE); $('me-email-e').textContent=okE?'':'Usa un provider email noto (gmail, libero, ...).';
       if(!$('me-consent').checked){ msg($('me-reg-msg'),'Spunta il consenso per continuare.',false); return; }
       if(!(okN&&okP&&okE)) return;
-      msg($('me-reg-msg'),'Verifica...',true);
-      var w=playWelcome();   // start the welcome video NOW, inside the tap, so it plays with sound
+      var b=this; b.disabled=true; msg($('me-reg-msg'),'Invio codice...',true);
       try{
         var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'register',fullName:n,phone:p,email:e})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,false); msg($('me-reg-msg'),'Accesso consentito.',true); w.approve(); }
-        else{ w.reject(); msg($('me-reg-msg'), d.error==='name'?'Nome non valido.':d.error==='phone'?'Telefono non valido.':d.error==='email'?'Email non valida.':'Dati non validi.', false); }
-      }catch(err){ w.reject(); msg($('me-reg-msg'),'Errore di rete. Riprova.',false); }
+        if(d.ok&&d.pending){
+          pendingEmail=e.trim().toLowerCase();
+          $('me-reg-card').style.display='none';
+          $('me-code-card').style.display='block';
+          $('me-code-to').textContent='Codice inviato a '+pendingEmail;
+          msg($('me-reg-msg'),'',true);
+          startResendCd(60);
+          $('me-code').focus();
+        } else {
+          msg($('me-reg-msg'),
+            d.error==='name'?'Nome non valido.':
+            d.error==='phone'?'Telefono non valido.':
+            d.error==='email'?'Email non valida.':
+            d.error==='toomany'?'Troppe richieste. Riprova tra un\u2019ora.':
+            d.error==='send'?'Invio email non riuscito. Riprova pi\u00F9 tardi.':
+            'Dati non validi.', false);
+        }
+      }catch(err){ msg($('me-reg-msg'),'Errore di rete. Riprova.',false); }
+      b.disabled=false;
     });
+    // New-user register — STEP 2: verify the code (welcome video plays here, inside the tap, so it has sound)
+    $('me-code-go').addEventListener('click', async function(){
+      var c=($('me-code').value||'').trim();
+      if(!/^\d{6}$/.test(c)){ $('me-code').classList.add('bad'); $('me-code-e').textContent='Inserisci il codice a 6 cifre.'; return; }
+      $('me-code').classList.remove('bad'); $('me-code-e').textContent='';
+      msg($('me-code-msg'),'Verifica...',true);
+      var w=playWelcome();   // start the welcome video NOW, inside the tap, so it plays with sound
+      try{
+        var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'verify',email:pendingEmail,code:c})});
+        var d=await r.json();
+        if(d.ok&&d.token){ store(d.token,false); msg($('me-code-msg'),'Accesso consentito.',true); w.approve(); }
+        else{ w.reject(); msg($('me-code-msg'),
+          d.error==='code'?'Codice errato.':
+          d.error==='expired'?'Codice scaduto. Richiedine uno nuovo.':
+          d.error==='toomany'?'Troppi tentativi. Richiedi un nuovo codice.':
+          'Codice non valido.', false); }
+      }catch(err){ w.reject(); msg($('me-code-msg'),'Errore di rete. Riprova.',false); }
+    });
+    // Resend a fresh code
+    $('me-resend').addEventListener('click', async function(ev){
+      ev.preventDefault();
+      if(!pendingEmail) return;
+      msg($('me-code-msg'),'Reinvio...',true);
+      try{
+        var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'resend',email:pendingEmail})});
+        var d=await r.json();
+        if(d.ok&&d.pending){ msg($('me-code-msg'),'Nuovo codice inviato.',true); startResendCd(60); }
+        else{ msg($('me-code-msg'),
+          d.error==='cooldown'?'Attendi qualche secondo prima di richiedere un nuovo codice.':
+          d.error==='toomany'?'Troppe richieste. Riprova tra un\u2019ora.':
+          d.error==='expired'?'Sessione scaduta. Torna indietro e ricomincia.':
+          'Invio non riuscito.', false); }
+      }catch(err){ msg($('me-code-msg'),'Errore di rete.',false); }
+    });
+    // Enter key on the code field triggers verify
+    $('me-code').addEventListener('keydown',function(ev){ if(ev.key==='Enter') $('me-code-go').click(); });
     // Returning customer
     $('me-txn-go').addEventListener('click', async function(){
       var id=$('me-txn').value.trim();
