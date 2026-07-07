@@ -316,6 +316,10 @@ html,body{height:100%;overflow:hidden}
   var WK='https://modular-english.ale-cannas.workers.dev'; window.__ME_WK=WK;
   function getTok(){ try{ return localStorage.getItem('me_entry')||sessionStorage.getItem('me_entry')||''; }catch(e){ return ''; } }
   window.__meGetEntry=getTok;
+  // Stable per-device id (anti transaction-ID sharing). Persists in localStorage.
+  function getDeviceId(){ try{ var k='me_device', v=localStorage.getItem(k);
+    if(!v){ v=(Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)).slice(0,24); localStorage.setItem(k,v); }
+    return v; }catch(e){ return ''; } }
   var _f=window.fetch;
   window.fetch=function(input,init){
     try{
@@ -1462,10 +1466,14 @@ console.log('✅ Customer Design — per-situation sales active');
       msg($('me-txn-msg'),'Verifica...',true);
       var w=playWelcome();   // start the welcome video NOW, inside the tap, so it plays with sound
       try{
-        var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'txn',id:id})});
+        var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'txn',id:id,deviceId:getDeviceId()})});
         var d=await r.json();
         if(d.ok&&d.token){ store(d.token,true); msg($('me-txn-msg'),'Accesso consentito.',true); w.approve(); }
-        else{ w.reject(); msg($('me-txn-msg'), d.error==='expired'?'ID scaduto (oltre 1 anno).':d.error==='notfound'?'ID non trovato.':'ID non valido.', false); }
+        else{ w.reject(); msg($('me-txn-msg'),
+          d.error==='expired'?'ID scaduto (oltre 1 anno).':
+          d.error==='notfound'?'ID non trovato.':
+          d.error==='devicelimit'?'Questo acquisto ha raggiunto il numero massimo di dispositivi. Scrivi a gilointernational@gmail.com per reimpostarlo.':
+          'ID non valido.', false); }
       }catch(err){ w.reject(); msg($('me-txn-msg'),'Errore di rete. Riprova.',false); }
     });
     // Admin (semi-hidden 6 dots)
