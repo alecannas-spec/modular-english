@@ -344,6 +344,7 @@ html,body{height:100%;overflow:hidden}
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
     <button class="nav-link" onclick="showView('ftt')" id="nav-ftt">✨ <span>Free</span></button>
     <button class="nav-link" onclick="showView('mycourses')" id="nav-mycourses">📚 <span>My</span></button>
+    <button class="nav-link" onclick="window.location.href='mailto:support@gilo-international.com?subject=Richiesta%20di%20supporto%20Modular%20English'" id="nav-support">✉️ <span>Support</span></button>
     <button class="nav-link" onclick="showView('cart')" id="nav-cart">🛒 <span>Cart</span><span class="cart-badge" id="cart-count" style="display:none">0</span></button>
   </div>
 </nav>
@@ -386,7 +387,7 @@ html,body{height:100%;overflow:hidden}
   </div>
   <div class="levels-grid" id="home-levels"></div>
   <div style="text-align:center;padding:10px 20px 30px;color:var(--muted);font-size:.75rem">
-    @ok_modularenglish · 25 anni di esperienza · 73 moduli · 6 livelliCEFR
+    <a href="https://www.tiktok.com/@ok_modularenglish" target="_blank" rel="noopener" aria-label="TikTok" style="display:inline-block;vertical-align:middle;margin-right:7px;color:var(--muted)"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.33 2.02 1.6 3.53 3.9 3.86v2.6c-1.36 0-2.62-.35-3.9-1.03v6.06c0 3.2-2.6 5.8-5.8 5.8s-5.8-2.6-5.8-5.8 2.6-5.8 5.8-5.8c.3 0 .6.02.9.07v2.68c-.29-.1-.59-.15-.9-.15-1.68 0-3.05 1.37-3.05 3.05s1.37 3.05 3.05 3.05 3.05-1.37 3.05-3.05V3h2.7z"/></svg></a><a href="https://www.instagram.com/ok_modularenglish" target="_blank" rel="noopener" aria-label="Instagram" style="display:inline-block;vertical-align:middle;margin-right:8px;color:var(--muted)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></a>@ok_modularenglish · 25 anni di esperienza · 148 moduli · 6 livelli CEFR
     <div style="margin-top:16px;">
       <input id="admin-pin-input" type="password" inputmode="numeric" maxlength="6"
         style="width:80px;border:none;border-bottom:1px solid #E2E8F0;background:transparent;text-align:center;font-size:.75rem;color:var(--muted);outline:none;letter-spacing:3px;"
@@ -401,7 +402,7 @@ html,body{height:100%;overflow:hidden}
 <div class="view" id="view-explore">
   <div class="page-header">
     <h2>📚 Esplora i Corsi</h2>
-    <p>73 moduli · A1 → C2 · Dialoghi bilingui autentici</p>
+    <p>148 moduli · A1 → C2 · Dialoghi bilingui autentici</p>
   </div>
   <div class="explore-search">
     <input class="search-input" type="text" placeholder="🔍 Cerca moduli..." oninput="filterExplore(this.value)" id="explore-search">
