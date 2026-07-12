@@ -392,8 +392,8 @@ html,body{height:100%;overflow:hidden}
       <input id="admin-pin-input" type="password" inputmode="numeric" maxlength="6"
         style="width:80px;border:none;border-bottom:1px solid #E2E8F0;background:transparent;text-align:center;font-size:.75rem;color:var(--muted);outline:none;letter-spacing:3px;"
         placeholder="······"
-        onkeydown="if(event.key==='Enter')checkAdminPin()"
-        oninput="if(this.value.length===6)checkAdminPin()">
+        onkeydown="if(event.key==='Enter')adminPinGo()"
+        oninput="if(this.value.length===6)adminPinGo()">
     </div>
   </div>
 </div>
@@ -1469,7 +1469,7 @@ console.log('✅ Customer Design — per-situation sales active');
       try{
         var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'txn',id:id,deviceId:getDeviceId()})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,true); msg($('me-txn-msg'),'Accesso consentito.',true); w.approve(); }
+        if(d.ok&&d.token){ store(d.token,true); try{ setCookie('me_token',d.token,365); }catch(e){} try{ window._meRefresh&&window._meRefresh(); }catch(e){} msg($('me-txn-msg'),'Accesso consentito.',true); w.approve(); }
         else{ w.reject(); msg($('me-txn-msg'),
           d.error==='expired'?'ID scaduto (oltre 1 anno).':
           d.error==='notfound'?'ID non trovato.':
@@ -1486,7 +1486,7 @@ console.log('✅ Customer Design — per-situation sales active');
       try{
         var r=await fetch(WK+'/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:pin})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,true); w.approve(); }
+        if(d.ok&&d.token){ store(d.token,true); try{ setCookie('me_token', d.token, 1); }catch(e){} try{ _adminUnlocked=true; }catch(e){} try{ window._adminUnlocked=true; }catch(e){} w.approve(); }
         else{ w.reject(); msg($('me-pin-msg'),'PIN errato.',false); }
       }catch(err){ w.reject(); msg($('me-pin-msg'),'Errore di rete.',false); }
     });
@@ -1496,5 +1496,27 @@ console.log('✅ Customer Design — per-situation sales active');
 })();
 </script>
 
+<script>
+/* Admin PIN: keep the client-side unlock AND fetch the server admin token,
+   store it as me_token so the server-enforced /content endpoint serves every
+   module (Worker grants content when the token carries admin:true). */
+async function adminPinGo(){
+  var el=document.getElementById('admin-pin-input'); if(!el) return;
+  var pin=(el.value||'').trim();
+  try{ if(typeof checkAdminPin==='function') checkAdminPin(); }catch(e){}   // client UI unlock (reads + clears input)
+  if(!pin) return;
+  try{
+    var WKx=(window.__ME_WK)||'https://modular-english.ale-cannas.workers.dev';
+    var r=await fetch(WKx+'/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:pin})});
+    var d=await r.json();
+    if(d&&d.ok&&d.token){
+      try{ if(typeof setCookie==='function') setCookie('me_token',d.token,1); else document.cookie='me_token='+d.token+';path=/;max-age=86400'; }catch(e){}
+      try{ window._adminUnlocked=true; }catch(e){}
+      try{ if(typeof renderHome==='function') renderHome(); }catch(e){}
+    }
+  }catch(e){}
+}
+window.adminPinGo=adminPinGo;
+</script>
 </body>
 </html>
