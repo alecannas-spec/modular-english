@@ -1270,7 +1270,7 @@ console.log('✅ Customer Design — per-situation sales active');
         <span>Acconsento al trattamento dei miei dati di contatto da parte di GILO International.</span></label>
       <button class="go" id="me-reg-go">ENTRA &middot; ENTER</button>
       <div class="msg" id="me-reg-msg"></div>
-      <div class="note">I tuoi dati (nome, telefono, email) sono conservati in forma cifrata fino a 5 giorni per finalit&agrave; di accesso e contatto, poi cancellati automaticamente. Cancellazione: gilointernational@gmail.com</div>
+      <div class="note">I tuoi dati (nome, telefono, email) sono conservati in forma cifrata fino a 5 giorni per finalit&agrave; di accesso e contatto, poi cancellati automaticamente. Cancellazione: support@gilo-international.com</div>
     </div>
 
     <div class="card" id="me-code-card" style="display:none">
@@ -1473,7 +1473,7 @@ console.log('✅ Customer Design — per-situation sales active');
         else{ w.reject(); msg($('me-txn-msg'),
           d.error==='expired'?'ID scaduto (oltre 1 anno).':
           d.error==='notfound'?'ID non trovato.':
-          d.error==='devicelimit'?'Questo acquisto ha raggiunto il numero massimo di dispositivi. Scrivi a gilointernational@gmail.com per reimpostarlo.':
+          d.error==='devicelimit'?'Questo acquisto ha raggiunto il numero massimo di dispositivi. Scrivi a support@gilo-international.com per reimpostarlo.':
           'ID non valido.', false); }
       }catch(err){ w.reject(); msg($('me-txn-msg'),'Errore di rete. Riprova.',false); }
     });
