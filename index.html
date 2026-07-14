@@ -773,6 +773,7 @@ function _cdMinPrice(mod){
 function addSituationToCart(mod, lev, idx){
   var sit = mod.situations[idx];
   if(!sit) return;
+  if(typeof __meCoveredByFull==='function' && __meCoveredByFull(mod, lev)){ showToast('Gia\u0300 incluso nel corso completo'); return; }
   if(isPurchased(sit.id)){ showToast('Già acquistato'); return; }
   if(inCart(sit.id)){ showView('cart'); return; }
   cart.push({
@@ -1526,6 +1527,22 @@ window.adminPinGo=adminPinGo;
   function sumMod(mod){ var s=0; (mod.situations||[]).forEach(function(x){ s+=(parseFloat(x.priceEur||0)||0); }); return s; }
   function sumLevel(lev){ var s=0; (lev.modules||[]).forEach(function(m){ s+=sumMod(m); }); return s; }
   function money(n){ return '\u20ac'+n.toFixed(2); }
+  function coveredSet(lev,mod,isCefr){
+    var set={};
+    if(isCefr){ (lev.modules||[]).forEach(function(m){ set[m.id]=1; (m.situations||[]).forEach(function(s){ set[s.id]=1; }); }); }
+    else { set[mod.id]=1; (mod.situations||[]).forEach(function(s){ set[s.id]=1; }); }
+    return set;
+  }
+  // Global guard: is this module/level already covered by a full-course purchase
+  // (owned) or by a full-course item already in the cart?
+  window.__meCoveredByFull=function(mod,lev){
+    try{
+      var id=CEFR[lev.code]?(lev.code.toLowerCase()+'-all'):mod.id;
+      if(typeof isPurchased==='function'&&isPurchased(id)) return true;
+      var c=window.cart||[]; for(var i=0;i<c.length;i++){ if(c[i].id===id) return true; }
+    }catch(e){}
+    return false;
+  };
   function addRow(lev,mod){
     var list=document.getElementById('situations-list'); if(!list) return;
     var old=document.getElementById('whole-course-row'); if(old) old.remove();
@@ -1559,7 +1576,9 @@ window.adminPinGo=adminPinGo;
       row.onclick=function(){
         try{
           if(typeof inCart==='function'&&inCart(buyId)){ if(typeof showView==='function')showView('cart'); return; }
-          (window.cart||cart).push({ id:buyId, title:ttl, icon:mod.icon, levelCode:lev.code, price:disc });
+          var cov=coveredSet(lev,mod,isCefr), c=(window.cart||cart);
+          for(var i=c.length-1;i>=0;i--){ if(cov[c[i].id]) c.splice(i,1); }   // drop redundant singles of this course
+          c.push({ id:buyId, title:ttl, icon:mod.icon, levelCode:lev.code, price:disc });
           if(typeof saveCart==='function')saveCart();
           if(typeof updateCartBadge==='function')updateCartBadge();
           if(typeof showToast==='function')showToast(isCefr?'Livello completo aggiunto al carrello':'Corso completo aggiunto al carrello');
