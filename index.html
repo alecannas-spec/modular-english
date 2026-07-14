@@ -1518,5 +1518,69 @@ async function adminPinGo(){
 }
 window.adminPinGo=adminPinGo;
 </script>
+<script>
+/* Whole-course / whole-module purchase (-10%). Adds a row at the top of the
+   situations list; the module id unlocks all its situations. Per-situation
+   buying is unchanged. CEFR title = "General English - Level X"; CD = module name. */
+(function(){
+  var CEFR={A1:1,A2:1,B1:1,B2:1,C1:1,C2:1};
+  function sumPrice(mod){ var s=0; (mod.situations||[]).forEach(function(x){ s+=(parseFloat(x.priceEur||0)||0); }); return s; }
+  function courseTitle(lev,mod){ return CEFR[lev.code] ? ('General English \u2014 Level '+lev.code) : mod.title; }
+  function money(n){ return '\u20ac'+n.toFixed(2); }
+  function addRow(lev,mod){
+    var list=document.getElementById('situations-list'); if(!list) return;
+    var old=document.getElementById('whole-course-row'); if(old) old.remove();
+    var sum=sumPrice(mod); if(!(sum>0)) return;
+    var disc=Math.round(sum*90)/100;                       // sum x 0.9, 2 decimals
+    var owned=(typeof isPurchased==='function')&&isPurchased(mod.id);
+    var nSit=(mod.situations||[]).length;
+    var row=document.createElement('div');
+    row.id='whole-course-row'; row.className='sit-card';
+    row.style.cssText='cursor:pointer;border:1.5px solid var(--gold);background:rgba(245,197,24,.06);display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px';
+    var left='<div style="min-width:0">'
+      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+      +'<span style="font-weight:800">'+courseTitle(lev,mod)+'</span>'
+      +'<span style="background:var(--gold);color:#0A143C;font-weight:800;font-size:.7rem;padding:2px 7px;border-radius:20px">\u221210%</span>'
+      +'</div>'
+      +'<div style="font-size:.72rem;color:var(--muted);margin-top:2px">'+(CEFR[lev.code]?(mod.title+' \u00b7 '):'')+'corso completo \u00b7 '+nSit+' situazioni</div>'
+      +'</div>';
+    var right= owned
+      ? '<span style="color:var(--gold);font-weight:800;font-size:.8rem">\u2713 acquistato</span>'
+      : '<div style="text-align:right;white-space:nowrap">'
+        +'<div style="font-size:.72rem;color:var(--muted);text-decoration:line-through">'+money(sum)+'</div>'
+        +'<div style="font-weight:900;color:var(--gold);font-family:\'Playfair Display\',serif">'+money(disc)+'</div>'
+        +'</div>';
+    row.innerHTML=left+right;
+    if(!owned){
+      row.onclick=function(){
+        try{
+          if(typeof inCart==='function'&&inCart(mod.id)){ if(typeof showView==='function')showView('cart'); return; }
+          (window.cart||cart).push({ id:mod.id, title:courseTitle(lev,mod), icon:mod.icon, levelCode:lev.code, price:disc });
+          if(typeof saveCart==='function')saveCart();
+          if(typeof updateCartBadge==='function')updateCartBadge();
+          if(typeof showToast==='function')showToast('Corso completo aggiunto al carrello');
+        }catch(e){}
+      };
+    }
+    list.insertBefore(row, list.firstChild);
+  }
+  function hook(){
+    if(typeof window.openModule!=='function'){ return setTimeout(hook,300); }
+    if(window.__wholeCourseWrapped) return; window.__wholeCourseWrapped=true;
+    var _o=window.openModule;
+    window.openModule=function(levelCode,modId){
+      var r=_o.apply(this,arguments);
+      try{
+        var LV=(typeof LEVELS!=='undefined')?LEVELS:[];
+        var lev=LV.find(function(l){return l.code===levelCode;});
+        var mod=lev&&(lev.modules||[]).find(function(m){return m.id===modId;});
+        if(lev&&mod) setTimeout(function(){ addRow(lev,mod); },0);
+      }catch(e){}
+      return r;
+    };
+  }
+  hook();
+})();
+</script>
 </body>
 </html>
