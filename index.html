@@ -316,10 +316,6 @@ html,body{height:100%;overflow:hidden}
   var WK='https://modular-english.ale-cannas.workers.dev'; window.__ME_WK=WK;
   function getTok(){ try{ return localStorage.getItem('me_entry')||sessionStorage.getItem('me_entry')||''; }catch(e){ return ''; } }
   window.__meGetEntry=getTok;
-  // Stable per-device id (anti transaction-ID sharing). Persists in localStorage.
-  function getDeviceId(){ try{ var k='me_device', v=localStorage.getItem(k);
-    if(!v){ v=(Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)).slice(0,24); localStorage.setItem(k,v); }
-    return v; }catch(e){ return ''; } }
   var _f=window.fetch;
   window.fetch=function(input,init){
     try{
@@ -338,13 +334,12 @@ html,body{height:100%;overflow:hidden}
 
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.2</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.4</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
     <button class="nav-link" onclick="showView('ftt')" id="nav-ftt">✨ <span>Free</span></button>
     <button class="nav-link" onclick="showView('mycourses')" id="nav-mycourses">📚 <span>My</span></button>
-    <button class="nav-link" onclick="window.location.href='mailto:support@gilo-international.com?subject=Richiesta%20di%20supporto%20Modular%20English'" id="nav-support">✉️ <span>Support</span></button>
     <button class="nav-link" onclick="showView('cart')" id="nav-cart">🛒 <span>Cart</span><span class="cart-badge" id="cart-count" style="display:none">0</span></button>
   </div>
 </nav>
@@ -387,13 +382,13 @@ html,body{height:100%;overflow:hidden}
   </div>
   <div class="levels-grid" id="home-levels"></div>
   <div style="text-align:center;padding:10px 20px 30px;color:var(--muted);font-size:.75rem">
-    <a href="https://www.tiktok.com/@ok_modularenglish" target="_blank" rel="noopener" aria-label="TikTok" style="display:inline-block;vertical-align:middle;margin-right:7px;color:var(--muted)"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.33 2.02 1.6 3.53 3.9 3.86v2.6c-1.36 0-2.62-.35-3.9-1.03v6.06c0 3.2-2.6 5.8-5.8 5.8s-5.8-2.6-5.8-5.8 2.6-5.8 5.8-5.8c.3 0 .6.02.9.07v2.68c-.29-.1-.59-.15-.9-.15-1.68 0-3.05 1.37-3.05 3.05s1.37 3.05 3.05 3.05 3.05-1.37 3.05-3.05V3h2.7z"/></svg></a><a href="https://www.instagram.com/ok_modularenglish" target="_blank" rel="noopener" aria-label="Instagram" style="display:inline-block;vertical-align:middle;margin-right:8px;color:var(--muted)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></a>@ok_modularenglish · 25 anni di esperienza · 148 moduli · 6 livelli CEFR
+    @ok_modularenglish · 25 anni di esperienza · 73 moduli · 6 livelliCEFR
     <div style="margin-top:16px;">
       <input id="admin-pin-input" type="password" inputmode="numeric" maxlength="6"
         style="width:80px;border:none;border-bottom:1px solid #E2E8F0;background:transparent;text-align:center;font-size:.75rem;color:var(--muted);outline:none;letter-spacing:3px;"
         placeholder="······"
-        onkeydown="if(event.key==='Enter')adminPinGo()"
-        oninput="if(this.value.length===6)adminPinGo()">
+        onkeydown="if(event.key==='Enter')checkAdminPin()"
+        oninput="if(this.value.length===6)checkAdminPin()">
     </div>
   </div>
 </div>
@@ -402,7 +397,7 @@ html,body{height:100%;overflow:hidden}
 <div class="view" id="view-explore">
   <div class="page-header">
     <h2>📚 Esplora i Corsi</h2>
-    <p>148 moduli · A1 → C2 · Dialoghi bilingui autentici</p>
+    <p>73 moduli · A1 → C2 · Dialoghi bilingui autentici</p>
   </div>
   <div class="explore-search">
     <input class="search-input" type="text" placeholder="🔍 Cerca moduli..." oninput="filterExplore(this.value)" id="explore-search">
@@ -773,7 +768,6 @@ function _cdMinPrice(mod){
 function addSituationToCart(mod, lev, idx){
   var sit = mod.situations[idx];
   if(!sit) return;
-  if(typeof __meCoveredByFull==='function' && __meCoveredByFull(mod, lev)){ showToast('Gia\u0300 incluso nel corso completo'); return; }
   if(isPurchased(sit.id)){ showToast('Già acquistato'); return; }
   if(inCart(sit.id)){ showView('cart'); return; }
   cart.push({
@@ -1039,7 +1033,7 @@ console.log('✅ Customer Design — per-situation sales active');
 <script>
 /* v1.0.9 — cart hardening + build check (additive, safe; does not alter working paths) */
 (function(){
-  try{ console.log('\u2705 Modular English build v1.1.2 \u2014 email OTP verification active'); }catch(e){}
+  try{ console.log('\u2705 Modular English build v1.1.3 \u2014 permanent login; contact encrypted after 5 days'); }catch(e){}
   function levelCodeFor(item, level){
     if(level && level.code) return level.code;
     try{
@@ -1259,7 +1253,7 @@ console.log('✅ Customer Design — per-situation sales active');
     <h1>MODULAR ENGLISH</h1>
     <div class="sub">360&deg; EXPERIENCE</div>
 
-    <div class="card" id="me-reg-card">
+    <div class="card">
       <h2>Nuovo utente <small>New user &mdash; inserisci i tuoi dati</small></h2>
       <input id="me-name" type="text" autocomplete="name" placeholder="Nome e Cognome">
       <div class="err" id="me-name-e"></div>
@@ -1271,25 +1265,7 @@ console.log('✅ Customer Design — per-situation sales active');
         <span>Acconsento al trattamento dei miei dati di contatto da parte di GILO International.</span></label>
       <button class="go" id="me-reg-go">ENTRA &middot; ENTER</button>
       <div class="msg" id="me-reg-msg"></div>
-      <div class="note">I tuoi dati (nome, telefono, email) sono conservati in forma cifrata fino a 5 giorni per finalit&agrave; di accesso e contatto, poi cancellati automaticamente. Cancellazione: support@gilo-international.com</div>
-    </div>
-
-    <div class="card" id="me-code-card" style="display:none">
-      <h2>Verifica email <small>Enter the 6-digit code we emailed you</small></h2>
-      <div class="note" id="me-code-to" style="margin:0 0 8px"></div>
-      <input id="me-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Codice a 6 cifre" style="letter-spacing:6px;text-align:center;font-size:1.3rem">
-      <div class="err" id="me-code-e"></div>
-      <button class="go" id="me-code-go">VERIFICA &middot; VERIFY</button>
-      <div class="msg" id="me-code-msg"></div>
-      <div class="note">Non hai ricevuto il codice? <a href="#" id="me-resend" style="color:#7CFF5A">Invia di nuovo</a> &middot; controlla anche lo spam.</div>
-    </div>
-
-    <div class="card">
-      <h2>Gi&agrave; cliente <small>Returning customer &mdash; ID transazione</small></h2>
-      <input id="me-txn" type="text" placeholder="Incolla un tuo ID transazione / acquisto">
-      <div class="err" id="me-txn-e"></div>
-      <button class="go" id="me-txn-go">ACCEDI &middot; ACCESS</button>
-      <div class="msg" id="me-txn-msg"></div>
+      <div class="note">Il tuo accesso resta attivo su questo dispositivo: non dovrai reinserire i tuoi dati. I tuoi dati (nome, telefono, email) vengono cancellati automaticamente dopo 5 giorni. Su un nuovo dispositivo dovrai inserirli di nuovo. Richieste: gilointernational@gmail.com</div>
     </div>
 
     <div class="dots" id="me-dots" title=""><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -1380,18 +1356,7 @@ console.log('✅ Customer Design — per-situation sales active');
     var g=$('me-guard'); if(g) g.remove();
     document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden';
     startRain();
-    // New-user register — STEP 1: validate + request an email code (no welcome video yet)
-    var pendingEmail='', resendTimer=null;
-    function startResendCd(sec){
-      var a=$('me-resend'); if(!a) return;
-      var left=sec; a.style.pointerEvents='none'; a.style.opacity='.5'; a.textContent='Invia di nuovo ('+left+'s)';
-      clearInterval(resendTimer);
-      resendTimer=setInterval(function(){
-        left--;
-        if(left<=0){ clearInterval(resendTimer); a.textContent='Invia di nuovo'; a.style.pointerEvents=''; a.style.opacity=''; }
-        else a.textContent='Invia di nuovo ('+left+'s)';
-      },1000);
-    }
+    // New-user register
     $('me-reg-go').addEventListener('click', async function(){
       var n=$('me-name').value, p=$('me-phone').value, e=$('me-email').value;
       var okN=vName(n), okP=vPhone(p), okE=vEmail(e);
@@ -1400,83 +1365,14 @@ console.log('✅ Customer Design — per-situation sales active');
       $('me-email').classList.toggle('bad',!okE); $('me-email-e').textContent=okE?'':'Usa un provider email noto (gmail, libero, ...).';
       if(!$('me-consent').checked){ msg($('me-reg-msg'),'Spunta il consenso per continuare.',false); return; }
       if(!(okN&&okP&&okE)) return;
-      var b=this; b.disabled=true; msg($('me-reg-msg'),'Invio codice...',true);
+      msg($('me-reg-msg'),'Verifica...',true);
+      var w=playWelcome();   // start the welcome video NOW, inside the tap, so it plays with sound
       try{
         var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'register',fullName:n,phone:p,email:e})});
         var d=await r.json();
-        if(d.ok&&d.pending){
-          pendingEmail=e.trim().toLowerCase();
-          $('me-reg-card').style.display='none';
-          $('me-code-card').style.display='block';
-          $('me-code-to').textContent='Codice inviato a '+pendingEmail;
-          msg($('me-reg-msg'),'',true);
-          startResendCd(60);
-          $('me-code').focus();
-        } else {
-          msg($('me-reg-msg'),
-            d.error==='name'?'Nome non valido.':
-            d.error==='phone'?'Telefono non valido.':
-            d.error==='email'?'Email non valida.':
-            d.error==='toomany'?'Troppe richieste. Riprova tra un\u2019ora.':
-            d.error==='send'?'Invio email non riuscito. Riprova pi\u00F9 tardi.':
-            'Dati non validi.', false);
-        }
-      }catch(err){ msg($('me-reg-msg'),'Errore di rete. Riprova.',false); }
-      b.disabled=false;
-    });
-    // New-user register — STEP 2: verify the code (welcome video plays here, inside the tap, so it has sound)
-    $('me-code-go').addEventListener('click', async function(){
-      var c=($('me-code').value||'').trim();
-      if(!/^\d{6}$/.test(c)){ $('me-code').classList.add('bad'); $('me-code-e').textContent='Inserisci il codice a 6 cifre.'; return; }
-      $('me-code').classList.remove('bad'); $('me-code-e').textContent='';
-      msg($('me-code-msg'),'Verifica...',true);
-      var w=playWelcome();   // start the welcome video NOW, inside the tap, so it plays with sound
-      try{
-        var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'verify',email:pendingEmail,code:c})});
-        var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,false); msg($('me-code-msg'),'Accesso consentito.',true); w.approve(); }
-        else{ w.reject(); msg($('me-code-msg'),
-          d.error==='code'?'Codice errato.':
-          d.error==='expired'?'Codice scaduto. Richiedine uno nuovo.':
-          d.error==='toomany'?'Troppi tentativi. Richiedi un nuovo codice.':
-          'Codice non valido.', false); }
-      }catch(err){ w.reject(); msg($('me-code-msg'),'Errore di rete. Riprova.',false); }
-    });
-    // Resend a fresh code
-    $('me-resend').addEventListener('click', async function(ev){
-      ev.preventDefault();
-      if(!pendingEmail) return;
-      msg($('me-code-msg'),'Reinvio...',true);
-      try{
-        var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'resend',email:pendingEmail})});
-        var d=await r.json();
-        if(d.ok&&d.pending){ msg($('me-code-msg'),'Nuovo codice inviato.',true); startResendCd(60); }
-        else{ msg($('me-code-msg'),
-          d.error==='cooldown'?'Attendi qualche secondo prima di richiedere un nuovo codice.':
-          d.error==='toomany'?'Troppe richieste. Riprova tra un\u2019ora.':
-          d.error==='expired'?'Sessione scaduta. Torna indietro e ricomincia.':
-          'Invio non riuscito.', false); }
-      }catch(err){ msg($('me-code-msg'),'Errore di rete.',false); }
-    });
-    // Enter key on the code field triggers verify
-    $('me-code').addEventListener('keydown',function(ev){ if(ev.key==='Enter') $('me-code-go').click(); });
-    // Returning customer
-    $('me-txn-go').addEventListener('click', async function(){
-      var id=$('me-txn').value.trim();
-      if(!id){ $('me-txn').classList.add('bad'); $('me-txn-e').textContent='Inserisci un ID transazione.'; return; }
-      $('me-txn').classList.remove('bad'); $('me-txn-e').textContent='';
-      msg($('me-txn-msg'),'Verifica...',true);
-      var w=playWelcome();   // start the welcome video NOW, inside the tap, so it plays with sound
-      try{
-        var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'txn',id:id,deviceId:getDeviceId()})});
-        var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,true); try{ setCookie('me_token',d.token,365); }catch(e){} try{ window._meRefresh&&window._meRefresh(); }catch(e){} msg($('me-txn-msg'),'Accesso consentito.',true); w.approve(); }
-        else{ w.reject(); msg($('me-txn-msg'),
-          d.error==='expired'?'ID scaduto (oltre 1 anno).':
-          d.error==='notfound'?'ID non trovato.':
-          d.error==='devicelimit'?'Questo acquisto ha raggiunto il numero massimo di dispositivi. Scrivi a support@gilo-international.com per reimpostarlo.':
-          'ID non valido.', false); }
-      }catch(err){ w.reject(); msg($('me-txn-msg'),'Errore di rete. Riprova.',false); }
+        if(d.ok&&d.token){ store(d.token,true); msg($('me-reg-msg'),'Accesso consentito.',true); w.approve(); }
+        else{ w.reject(); msg($('me-reg-msg'), d.error==='name'?'Nome non valido.':d.error==='phone'?'Telefono non valido.':d.error==='email'?'Email non valida.':'Dati non validi.', false); }
+      }catch(err){ w.reject(); msg($('me-reg-msg'),'Errore di rete. Riprova.',false); }
     });
     // Admin (semi-hidden 6 dots)
     $('me-dots').addEventListener('click', function(){ $('me-admin').classList.toggle('open'); if($('me-admin').classList.contains('open')) $('me-pin').focus(); });
@@ -1487,7 +1383,7 @@ console.log('✅ Customer Design — per-situation sales active');
       try{
         var r=await fetch(WK+'/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:pin})});
         var d=await r.json();
-        if(d.ok&&d.token){ store(d.token,true); try{ setCookie('me_token', d.token, 1); }catch(e){} try{ _adminUnlocked=true; }catch(e){} try{ window._adminUnlocked=true; }catch(e){} w.approve(); }
+        if(d.ok&&d.token){ store(d.token,true); w.approve(); }
         else{ w.reject(); msg($('me-pin-msg'),'PIN errato.',false); }
       }catch(err){ w.reject(); msg($('me-pin-msg'),'Errore di rete.',false); }
     });
@@ -1497,113 +1393,5 @@ console.log('✅ Customer Design — per-situation sales active');
 })();
 </script>
 
-<script>
-/* Admin PIN: keep the client-side unlock AND fetch the server admin token,
-   store it as me_token so the server-enforced /content endpoint serves every
-   module (Worker grants content when the token carries admin:true). */
-async function adminPinGo(){
-  var el=document.getElementById('admin-pin-input'); if(!el) return;
-  var pin=(el.value||'').trim();
-  try{ if(typeof checkAdminPin==='function') checkAdminPin(); }catch(e){}   // client UI unlock (reads + clears input)
-  if(!pin) return;
-  try{
-    var WKx=(window.__ME_WK)||'https://modular-english.ale-cannas.workers.dev';
-    var r=await fetch(WKx+'/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:pin})});
-    var d=await r.json();
-    if(d&&d.ok&&d.token){
-      try{ if(typeof setCookie==='function') setCookie('me_token',d.token,1); else document.cookie='me_token='+d.token+';path=/;max-age=86400'; }catch(e){}
-      try{ window._adminUnlocked=true; }catch(e){}
-      try{ if(typeof renderHome==='function') renderHome(); }catch(e){}
-    }
-  }catch(e){}
-}
-window.adminPinGo=adminPinGo;
-</script>
-<script>
-/* Whole-course purchase (-10%). CEFR: the WHOLE LEVEL (all modules summed) via a
-   "<level>-all" bundle id. CD: the module itself. Per-situation buying unchanged. */
-(function(){
-  var CEFR={A1:1,A2:1,B1:1,B2:1,C1:1,C2:1};
-  function sumMod(mod){ var s=0; (mod.situations||[]).forEach(function(x){ s+=(parseFloat(x.priceEur||0)||0); }); return s; }
-  function sumLevel(lev){ var s=0; (lev.modules||[]).forEach(function(m){ s+=sumMod(m); }); return s; }
-  function money(n){ return '\u20ac'+n.toFixed(2); }
-  function coveredSet(lev,mod,isCefr){
-    var set={};
-    if(isCefr){ (lev.modules||[]).forEach(function(m){ set[m.id]=1; (m.situations||[]).forEach(function(s){ set[s.id]=1; }); }); }
-    else { set[mod.id]=1; (mod.situations||[]).forEach(function(s){ set[s.id]=1; }); }
-    return set;
-  }
-  // Global guard: is this module/level already covered by a full-course purchase
-  // (owned) or by a full-course item already in the cart?
-  window.__meCoveredByFull=function(mod,lev){
-    try{
-      var id=CEFR[lev.code]?(lev.code.toLowerCase()+'-all'):mod.id;
-      if(typeof isPurchased==='function'&&isPurchased(id)) return true;
-      var c=window.cart||[]; for(var i=0;i<c.length;i++){ if(c[i].id===id) return true; }
-    }catch(e){}
-    return false;
-  };
-  function addRow(lev,mod){
-    var list=document.getElementById('situations-list'); if(!list) return;
-    var old=document.getElementById('whole-course-row'); if(old) old.remove();
-    var isCefr=!!CEFR[lev.code];
-    var sum = isCefr ? sumLevel(lev) : sumMod(mod);
-    if(!(sum>0)) return;
-    var disc=Math.round(sum*90)/100;                         // sum x 0.9, 2 decimals
-    var buyId = isCefr ? (lev.code.toLowerCase()+'-all') : mod.id;
-    var ttl   = isCefr ? ('General English \u2014 Level '+lev.code) : mod.title;
-    var sub   = isCefr ? ('Livello completo \u00b7 '+(lev.modules||[]).length+' moduli')
-                       : ('Corso completo \u00b7 '+(mod.situations||[]).length+' situazioni');
-    var owned=(typeof isPurchased==='function')&&isPurchased(buyId);
-    var row=document.createElement('div');
-    row.id='whole-course-row'; row.className='sit-card';
-    row.style.cssText='cursor:pointer;border:1.5px solid var(--gold);background:rgba(245,197,24,.06);display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px';
-    var left='<div style="min-width:0">'
-      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
-      +'<span style="font-weight:800">'+ttl+'</span>'
-      +'<span style="background:var(--gold);color:#0A143C;font-weight:800;font-size:.7rem;padding:2px 7px;border-radius:20px">\u221210%</span>'
-      +'</div>'
-      +'<div style="font-size:.72rem;color:var(--muted);margin-top:2px">'+sub+'</div>'
-      +'</div>';
-    var right= owned
-      ? '<span style="color:var(--gold);font-weight:800;font-size:.8rem">\u2713 acquistato</span>'
-      : '<div style="text-align:right;white-space:nowrap">'
-        +'<div style="font-size:.72rem;color:var(--muted);text-decoration:line-through">'+money(sum)+'</div>'
-        +'<div style="font-weight:900;color:var(--gold);font-family:\'Playfair Display\',serif">'+money(disc)+'</div>'
-        +'</div>';
-    row.innerHTML=left+right;
-    if(!owned){
-      row.onclick=function(){
-        try{
-          if(typeof inCart==='function'&&inCart(buyId)){ if(typeof showView==='function')showView('cart'); return; }
-          var cov=coveredSet(lev,mod,isCefr), c=(window.cart||cart);
-          for(var i=c.length-1;i>=0;i--){ if(cov[c[i].id]) c.splice(i,1); }   // drop redundant singles of this course
-          c.push({ id:buyId, title:ttl, icon:mod.icon, levelCode:lev.code, price:disc });
-          if(typeof saveCart==='function')saveCart();
-          if(typeof updateCartBadge==='function')updateCartBadge();
-          if(typeof showToast==='function')showToast(isCefr?'Livello completo aggiunto al carrello':'Corso completo aggiunto al carrello');
-        }catch(e){}
-      };
-    }
-    list.insertBefore(row, list.firstChild);
-  }
-  function hook(){
-    if(typeof window.openModule!=='function'){ return setTimeout(hook,300); }
-    if(window.__wholeCourseWrapped) return; window.__wholeCourseWrapped=true;
-    var _o=window.openModule;
-    window.openModule=function(levelCode,modId){
-      var r=_o.apply(this,arguments);
-      try{
-        var LV=(typeof LEVELS!=='undefined')?LEVELS:[];
-        var lev=LV.find(function(l){return l.code===levelCode;});
-        var mod=lev&&(lev.modules||[]).find(function(m){return m.id===modId;});
-        if(lev&&mod) setTimeout(function(){ addRow(lev,mod); },0);
-      }catch(e){}
-      return r;
-    };
-  }
-  hook();
-})();
-</script>
 </body>
 </html>
