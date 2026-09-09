@@ -334,7 +334,7 @@ html,body{height:100%;overflow:hidden}
 
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.4</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.5</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
@@ -799,15 +799,47 @@ function decorateCDLevelGrid(){
   }
 }
 
-// CD module page: hide module total + buy-bar, sell each situation individually
+// ── CD full-module bundle: buy every situation at 10% off ───────────────────
+var CD_BUNDLE_DISCOUNT = 0.10; // 10% off when buying the whole module
+
+function _cdNotOwned(mod){
+  return (mod.situations||[]).filter(function(s){ return !isPurchased(s.id); });
+}
+function _cdNotOwnedSum(mod){
+  return _cdNotOwned(mod).reduce(function(a,s){ return a + parseFloat(s.priceEur||0); }, 0);
+}
+function _cdBundlePrice(mod){
+  return _cdNotOwnedSum(mod) * (1 - CD_BUNDLE_DISCOUNT);
+}
+
+// Add every not-yet-owned situation of the module to the cart at the 10% bundle price.
+function addWholeModuleDiscounted(mod, lev){
+  var notOwned = _cdNotOwned(mod);
+  if(!notOwned.length){ showView('cart'); return; }
+  notOwned.forEach(function(sit){
+    var disc = Math.round(parseFloat(sit.priceEur||0) * (1 - CD_BUNDLE_DISCOUNT) * 100) / 100;
+    var existing = cart.find(function(c){ return c.id === sit.id; });
+    if(existing){ existing.price = disc; existing.bundle = true; }
+    else { cart.push({ id: sit.id, title: mod.title + ' — ' + sit.title, icon: mod.icon, levelCode: lev.code, price: disc, bundle: true }); }
+  });
+  saveCart();
+  showToast('🛒 Modulo completo aggiunto · −10%');
+  showView('cart');
+}
+
+// CD module page: sell each situation individually, PLUS a "whole module −10%" bundle
 function decorateCDModuleDetail(){
   if(!currentLevel || currentLevel.code !== 'CD' || !currentModule) return;
   var mod = currentModule, lev = currentLevel;
   var bar = document.getElementById('module-buy-bar'); if(bar) bar.style.display = 'none';
   var sub = document.getElementById('module-subtitle');
-  if(sub){ sub.textContent = (mod.titleItalian||'') + ' · ' + (mod.situations||[]).length + ' situazioni · prezzo per situazione'; }
+  if(sub){ sub.textContent = (mod.titleItalian||'') + ' · ' + (mod.situations||[]).length + ' situazioni · a situazione, o tutto il modulo −10%'; }
   var list = document.getElementById('situations-list'); if(!list) return;
-  var cards = list.children, sits = mod.situations || [];
+
+  // Drop any previous bundle banner, then decorate only the real situation cards.
+  var oldBar = document.getElementById('cd-bundle-bar'); if(oldBar && oldBar.parentNode) oldBar.parentNode.removeChild(oldBar);
+  var cards = Array.prototype.slice.call(list.children).filter(function(c){ return c.id !== 'cd-bundle-bar'; });
+  var sits = mod.situations || [];
   for(var i=0; i<cards.length && i<sits.length; i++){
     (function(card, sit, idx){
       var owned = isPurchased(sit.id), inC = inCart(sit.id);
@@ -835,9 +867,24 @@ function decorateCDModuleDetail(){
       };
     })(cards[i], sits[i], i);
   }
-}
 
-// Wrap the original renderers so CD gets decorated after each render
+  // Prepend the "whole module −10%" bundle banner (only when 2+ situations remain to buy).
+  var notOwned = _cdNotOwned(mod);
+  if(notOwned.length >= 2){
+    var full = _cdNotOwnedSum(mod), disc = _cdBundlePrice(mod);
+    var banner = document.createElement('div');
+    banner.id = 'cd-bundle-bar';
+    banner.style.cssText = 'margin:0 0 12px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,var(--navy),#0d1a4a);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow)';
+    banner.innerHTML = '<div style="text-align:left">' +
+      '<div style="font-size:.8rem;font-weight:800;letter-spacing:.4px;color:var(--gold)">💎 TUTTO IL MODULO · −10%</div>' +
+      '<div style="font-size:.74rem;opacity:.9;margin-top:2px">Tutte le ' + notOwned.length + ' situazioni · <span style="text-decoration:line-through;opacity:.7">€' + full.toFixed(2) + '</span> <b>€' + disc.toFixed(2) + '</b></div>' +
+      '</div>' +
+      '<button class="btn btn-gold btn-sm" id="cd-bundle-btn" style="white-space:nowrap">Acquista tutto</button>';
+    list.insertBefore(banner, list.firstChild);
+    var bb = document.getElementById('cd-bundle-btn');
+    if(bb) bb.onclick = function(){ addWholeModuleDiscounted(mod, lev); };
+  }
+}
 (function(){
   if(typeof openModule === 'function'){
     var _om = openModule;
