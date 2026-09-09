@@ -338,7 +338,7 @@ html,body{height:100%;overflow:hidden}
 
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.2</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.3</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
@@ -1039,7 +1039,7 @@ console.log('✅ Customer Design — per-situation sales active');
 <script>
 /* v1.0.9 — cart hardening + build check (additive, safe; does not alter working paths) */
 (function(){
-  try{ console.log('\u2705 Modular English build v1.1.2 \u2014 email OTP verification active'); }catch(e){}
+  try{ console.log('\u2705 Modular English build v1.1.3'); }catch(e){}
   function levelCodeFor(item, level){
     if(level && level.code) return level.code;
     try{
@@ -1076,7 +1076,7 @@ console.log('✅ Customer Design — per-situation sales active');
 })();
 </script>
 <script>
-/* v1.1.1 — inline add-to-cart button for A1..C2 (always reachable; mirrors CD/VC) */
+/* v1.1.3 — inline add-to-cart button for A1..C2 (always reachable; mirrors CD/VC) */
 (function(){
   function curLevel(){ try{ return (typeof currentLevel!=='undefined')?currentLevel:null; }catch(e){ return null; } }
   function curModule(){ try{ return (typeof currentModule!=='undefined')?currentModule:null; }catch(e){ return null; } }
@@ -1284,7 +1284,9 @@ console.log('✅ Customer Design — per-situation sales active');
       <div class="note">Non hai ricevuto il codice? <a href="#" id="me-resend" style="color:#7CFF5A">Invia di nuovo</a> &middot; controlla anche lo spam.</div>
     </div>
 
-    <div class="card">
+    <!-- Purchase-ID login removed from the door. Redemption via txn is still
+         supported by the Worker and this hidden markup keeps the handler alive. -->
+    <div class="card" id="me-txn-card" style="display:none">
       <h2>Gi&agrave; cliente <small>Returning customer &mdash; ID transazione</small></h2>
       <input id="me-txn" type="text" placeholder="Incolla un tuo ID transazione / acquisto">
       <div class="err" id="me-txn-e"></div>
@@ -1400,28 +1402,20 @@ console.log('✅ Customer Design — per-situation sales active');
       $('me-email').classList.toggle('bad',!okE); $('me-email-e').textContent=okE?'':'Usa un provider email noto (gmail, libero, ...).';
       if(!$('me-consent').checked){ msg($('me-reg-msg'),'Spunta il consenso per continuare.',false); return; }
       if(!(okN&&okP&&okE)) return;
-      var b=this; b.disabled=true; msg($('me-reg-msg'),'Invio codice...',true);
+      var b=this; b.disabled=true; msg($('me-reg-msg'),'Accesso in corso...',true);
+      var w=playWelcome();
       try{
         var r=await fetch(WK+'/enter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'register',fullName:n,phone:p,email:e})});
         var d=await r.json();
-        if(d.ok&&d.pending){
-          pendingEmail=e.trim().toLowerCase();
-          $('me-reg-card').style.display='none';
-          $('me-code-card').style.display='block';
-          $('me-code-to').textContent='Codice inviato a '+pendingEmail;
-          msg($('me-reg-msg'),'',true);
-          startResendCd(60);
-          $('me-code').focus();
-        } else {
-          msg($('me-reg-msg'),
+        if(d.ok&&d.token){ store(d.token,false); msg($('me-reg-msg'),'Accesso consentito.',true); w.approve(); }
+        else { w.reject(); msg($('me-reg-msg'),
             d.error==='name'?'Nome non valido.':
-            d.error==='phone'?'Telefono non valido.':
-            d.error==='email'?'Email non valida.':
+            d.error==='phone'?'Numero di cellulare italiano non valido.':
+            d.error==='email'?'Usa un provider email noto (gmail, libero, ...).':
             d.error==='toomany'?'Troppe richieste. Riprova tra un\u2019ora.':
-            d.error==='send'?'Invio email non riuscito. Riprova pi\u00F9 tardi.':
             'Dati non validi.', false);
         }
-      }catch(err){ msg($('me-reg-msg'),'Errore di rete. Riprova.',false); }
+      }catch(err){ w.reject(); msg($('me-reg-msg'),'Errore di rete. Riprova.',false); }
       b.disabled=false;
     });
     // New-user register — STEP 2: verify the code (welcome video plays here, inside the tap, so it has sound)
