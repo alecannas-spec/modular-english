@@ -31,7 +31,10 @@ h1,h2,h3{font-family:'Playfair Display',serif}
 nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:fixed;top:0;left:0;right:0;z-index:100;box-shadow:0 2px 20px rgba(10,20,60,.3);ixed;top:0;left:0;right:0;}
 .nav-brand{color:var(--gold);font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;letter-spacing:-0.5px;cursor:pointer}
 .nav-brand span{color:var(--white);font-weight:300}
-.nav-links{display:flex;gap:4px}
+.nav-links{display:flex;gap:4px;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{flex:0 0 auto}
+.nav-ico{display:none}
 .nav-link{color:rgba(255,255,255,.7);background:none;border:none;padding:7px 12px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;transition:var(--transition)}
 .nav-link:hover,.nav-link.active{color:var(--gold);background:rgba(245,197,24,.1)}
 .cart-badge{background:var(--gold);color:var(--navy);border-radius:50%;width:18px;height:18px;font-size:.65rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-left:5px}
@@ -226,7 +229,12 @@ nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justif
 .explore-mod-sub{font-size:.72rem;color:var(--muted)}
 
 @media(max-width:480px){
-  .nav-links .nav-link span{display:none}
+  nav{padding:0 10px}
+  .nav-links{gap:2px}
+  .nav-link{padding:7px 8px}
+  .nav-links .nav-link span:not(.nav-ico):not(.cart-badge){display:none}
+  .nav-ico{display:inline}
+  #nav-cart{position:sticky;right:0;background:var(--navy)}
   .levels-grid{grid-template-columns:repeat(3,1fr);gap:10px}
   .modules-grid{grid-template-columns:1fr}
 }
@@ -391,7 +399,7 @@ html,body{height:100%;overflow:hidden}
     <button class="nav-link" onclick="showView('mycourses')" id="nav-mycourses">📚 <span>My</span></button>
     <button class="nav-link" onclick="window.location.href='https://www.okmodularenglish.com/test'" id="nav-test">🧪 <span>Test</span></button>
     <button class="nav-link" onclick="window.location.href='mailto:support@gilo-international.com?subject=Richiesta%20di%20supporto%20Modular%20English'" id="nav-support">✉️ <span>Support</span></button>
-    <button class="nav-link" onclick="showView('cart')" id="nav-cart">🛒 <span>Cart</span><span class="cart-badge" id="cart-count" style="display:none">0</span></button>
+    <button class="nav-link" onclick="showView('cart')" id="nav-cart"><span class="nav-ico" aria-hidden="true">🛒</span><span>Cart</span><span class="cart-badge" id="cart-count" style="display:none">0</span></button>
   </div>
 </nav>
 
