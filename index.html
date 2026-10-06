@@ -1684,6 +1684,12 @@ window.adminPinGo=adminPinGo;
     };
   }
   NAV.forEach(wrap);
+  // Lift pop-ups to <body> so their z-index beats the fixed nav bar (iOS Safari
+  // traps them below the nav otherwise, hiding the grammar tabs).
+  ['grammar-modal-overlay','intro-modal-overlay','modal-overlay'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el && el.parentElement!==document.body){ try{ document.body.appendChild(el); }catch(e){} }
+  });
   // Pop-ups (grammar / disclaimer / payment): opening one adds a history entry
   // so the next back press closes the pop-up instead of leaving the app.
   ['openGrammarModal','openIntroModal','openPaymentModal'].forEach(function(nm){
