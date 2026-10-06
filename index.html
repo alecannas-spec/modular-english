@@ -1656,13 +1656,48 @@ window.adminPinGo=adminPinGo;
   hook();
 })();
 </script>
-<footer style="text-align:center;padding:22px 16px 26px;font:13px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#8b93a7;background:#0A143C;border-top:1px solid rgba(255,255,255,.08)">
-  <div style="max-width:720px;margin:0 auto">
-    <a href="privacy.html" style="color:#F5C518;text-decoration:none;margin:0 10px;font-weight:600">Privacy</a>
-    <span style="opacity:.35">&middot;</span>
-    <a href="delete-account.html" style="color:#F5C518;text-decoration:none;margin:0 10px;font-weight:600">Delete account</a>
-    <div style="margin-top:8px;opacity:.7">&copy; 2026 Modular English &middot; GILO International</div>
-  </div>
-</footer>
+<button id="me-back-btn" onclick="history.back()" aria-label="Indietro"
+  style="display:none;position:fixed;left:12px;bottom:16px;z-index:9000;background:#0A143C;color:#F5C518;border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:10px 16px;font:600 14px/1 -apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 6px 16px rgba(0,0,0,.28);cursor:pointer">&larr; Indietro</button>
+<script>
+/* Back-navigation: step through visited pages (and honour the phone's back
+   button) instead of exiting the app. Wraps the global navigation functions. */
+(function(){
+  var NAV=['showView','openLevel','openModule','openSituation'];
+  var stack=[];                       // previous states
+  var current={name:'showView',args:['home']};
+  var suppress=false;                 // true while rendering internally (no push)
+  function backBtn(){ return document.getElementById('me-back-btn'); }
+  function syncBtn(){ var b=backBtn(); if(b) b.style.display = stack.length ? 'inline-block' : 'none'; }
+  function wrap(name){
+    var orig=window[name];
+    if(typeof orig!=='function') return;
+    window[name]=function(){
+      var args=[].slice.call(arguments);
+      if(suppress){ return orig.apply(this,args); }
+      // top-level user navigation: remember where we were, then go
+      stack.push(current);
+      current={name:name,args:args};
+      try{ history.pushState({me:stack.length},''); }catch(e){}
+      syncBtn();
+      suppress=true;
+      try{ return orig.apply(this,args); } finally { suppress=false; }
+    };
+  }
+  NAV.forEach(wrap);
+  window.addEventListener('popstate',function(){
+    var prev=stack.pop();
+    syncBtn();
+    if(!prev){ current={name:'showView',args:['home']}; return; }
+    suppress=true;
+    try{ var fn=window[prev.name]; if(typeof fn==='function') fn.apply(null,prev.args); }
+    catch(e){}
+    finally{ suppress=false; }
+    current=prev;
+  });
+  // Seed one history entry so the first back press is caught by us, not the OS.
+  try{ history.replaceState({me:0},''); }catch(e){}
+  syncBtn();
+})();
+</script>
 </body>
 </html>
