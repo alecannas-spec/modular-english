@@ -1684,7 +1684,26 @@ window.adminPinGo=adminPinGo;
     };
   }
   NAV.forEach(wrap);
+  // Pop-ups (grammar / disclaimer / payment): opening one adds a history entry
+  // so the next back press closes the pop-up instead of leaving the app.
+  ['openGrammarModal','openIntroModal','openPaymentModal'].forEach(function(nm){
+    var o=window[nm];
+    if(typeof o!=='function') return;
+    window[nm]=function(){ var r=o.apply(this,arguments); try{ history.pushState({meModal:1},''); }catch(e){} return r; };
+  });
+  var MODALS=['grammar-modal-overlay','intro-modal-overlay','modal-overlay','pdf-modal-overlay','disclaimer-modal-overlay'];
+  function closeOpenModals(){
+    var any=false;
+    MODALS.forEach(function(id){
+      var el=document.getElementById(id);
+      if(el){ var d=(el.style&&el.style.display)||''; if(d!=='none' && d!==''){ el.style.display='none'; any=true; } }
+    });
+    return any;
+  }
   window.addEventListener('popstate',function(){
+    // A back press first closes any open pop-up (grammar, disclaimer, payment),
+    // keeping the user in the app; history depth is restored so nothing desyncs.
+    if(closeOpenModals()){ return; }
     var prev=stack.pop();
     syncBtn();
     if(!prev){ current={name:'showView',args:['home']}; return; }
