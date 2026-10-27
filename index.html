@@ -441,7 +441,7 @@ html,body{height:100%;overflow:hidden}
   </div>
   <div class="levels-grid" id="home-levels"></div>
   <div style="text-align:center;padding:10px 20px 30px;color:var(--muted);font-size:.75rem">
-    <a href="https://www.tiktok.com/@ok_modularenglish" target="_blank" rel="noopener" aria-label="TikTok" style="display:inline-block;vertical-align:middle;margin-right:7px;color:var(--muted)"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.33 2.02 1.6 3.53 3.9 3.86v2.6c-1.36 0-2.62-.35-3.9-1.03v6.06c0 3.2-2.6 5.8-5.8 5.8s-5.8-2.6-5.8-5.8 2.6-5.8 5.8-5.8c.3 0 .6.02.9.07v2.68c-.29-.1-.59-.15-.9-.15-1.68 0-3.05 1.37-3.05 3.05s1.37 3.05 3.05 3.05 3.05-1.37 3.05-3.05V3h2.7z"/></svg></a><a href="https://www.instagram.com/ok_modularenglish" target="_blank" rel="noopener" aria-label="Instagram" style="display:inline-block;vertical-align:middle;margin-right:8px;color:var(--muted)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></a>@ok_modularenglish · 25 anni di esperienza · 148 moduli · 6 livelli CEFR
+    <a href="https://www.tiktok.com/@ok_modularenglish" target="_blank" rel="noopener" aria-label="TikTok" style="display:inline-block;vertical-align:middle;margin-right:7px;color:var(--muted)"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.33 2.02 1.6 3.53 3.9 3.86v2.6c-1.36 0-2.62-.35-3.9-1.03v6.06c0 3.2-2.6 5.8-5.8 5.8s-5.8-2.6-5.8-5.8 2.6-5.8 5.8-5.8c.3 0 .6.02.9.07v2.68c-.29-.1-.59-.15-.9-.15-1.68 0-3.05 1.37-3.05 3.05s1.37 3.05 3.05 3.05 3.05-1.37 3.05-3.05V3h2.7z"/></svg></a><a href="https://www.instagram.com/ok_modularenglish" target="_blank" rel="noopener" aria-label="Instagram" style="display:inline-block;vertical-align:middle;margin-right:8px;color:var(--muted)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></a>@ok_modularenglish · 25 anni di esperienza · 152 moduli · 6 livelli CEFR
     <div style="margin-top:16px;">
       <input id="admin-pin-input" type="password" inputmode="numeric" maxlength="6"
         style="width:80px;border:none;border-bottom:1px solid #E2E8F0;background:transparent;text-align:center;font-size:.75rem;color:var(--muted);outline:none;letter-spacing:3px;"
@@ -456,7 +456,7 @@ html,body{height:100%;overflow:hidden}
 <div class="view" id="view-explore">
   <div class="page-header">
     <h2>📚 Esplora i Corsi</h2>
-    <p>148 moduli · A1 → C2 · Dialoghi bilingui autentici</p>
+    <p>152 moduli · A1 → C2 · Dialoghi bilingui autentici</p>
   </div>
   <div class="explore-search">
     <input class="search-input" type="text" placeholder="🔍 Cerca moduli..." oninput="filterExplore(this.value)" id="explore-search">
@@ -929,6 +929,8 @@ function decorateCDModuleDetail(){
         ms.forEach(function(s){ words += (parseInt(s.wordCount, 10) || 0); });
       });
     });
+    // University (exam-prep, A1–B2): 4 teaching modules, 60 situations, dialogue words.
+    mods += 4; sits += 60; words += 19014;
     var em = document.getElementById('stat-modules'); if(em) em.textContent = mods;
     var es = document.getElementById('stat-situations'); if(es) es.textContent = sits;
     var ew = document.getElementById('stat-words'); if(ew) ew.textContent = words.toLocaleString('en-US');
@@ -1806,18 +1808,34 @@ window.adminPinGo=adminPinGo;
 })();
 </script>
 <script>
-/* ─── Modular English · Customer Account (optional) ─────────────────────────
-   Server-side account (email + password) via the worker. The access token is
-   stored in localStorage 'me_entry' — the same slot the app already reads — so
-   logging in unlocks purchased content on any device. Legacy Purchase-ID /
-   device access keeps working untouched. */
+/* ─── Modular English · Customer Account + access gate ──────────────────────
+   Server-side account (name/surname + email + password) via the worker. The
+   access token is stored in localStorage 'me_entry' (the slot the app reads),
+   so logging in unlocks content on any device. Content now REQUIRES an account
+   (or admin, or an existing purchase) — see the gate at the bottom. Admin can
+   still open everything via the admin PIN, with no account. */
 (function(){
   if (window.__meAccLoaded) return; window.__meAccLoaded = true;
   var WK = window.__ME_WK || 'https://modular-english.ale-cannas.workers.dev';
   var LS = { tok:'me_entry', acc:'me_account' };
+  var gateMode = false;
+
   function getAcc(){ try{ return JSON.parse(localStorage.getItem(LS.acc)||'null'); }catch(e){ return null; } }
+  function getTok(){ try{ return localStorage.getItem(LS.tok)||sessionStorage.getItem(LS.tok)||''; }catch(e){ return ''; } }
+  function decodeTok(t){ try{ return JSON.parse(atob(String(t).split('.')[0])); }catch(e){ return null; } }
   function setSession(t, name, email){ try{ localStorage.setItem(LS.tok, t); localStorage.setItem(LS.acc, JSON.stringify({name:name,email:email})); }catch(e){} }
   function clearSession(){ try{ localStorage.removeItem(LS.tok); localStorage.removeItem(LS.acc); sessionStorage.removeItem(LS.tok); }catch(e){} }
+  function adminActive(){
+    try{ if(window._adminUnlocked===true) return true; }catch(e){}
+    try{ if(/(?:^|;\s*)me_token=/.test(document.cookie)) return true; }catch(e){}
+    var p=decodeTok(getTok()); return !!(p && p.admin);
+  }
+  function hasAccess(){
+    if (getAcc()) return true;
+    if (adminActive()) return true;
+    var p = decodeTok(getTok());
+    return !!(p && (p.acct || p.admin || (Array.isArray(p.purchased) && p.purchased.length)));
+  }
   async function api(path, body, headers){
     var r = await fetch(WK+path, { method:'POST', headers: Object.assign({'Content-Type':'application/json'}, headers||{}), body: body?JSON.stringify(body):undefined });
     var j=null; try{ j=await r.json(); }catch(e){} return { status:r.status, j:j||{} };
@@ -1838,11 +1856,13 @@ window.adminPinGo=adminPinGo;
   + '#meacc-btn:hover{background:#0c2a66}'
   + '#meacc-ov{position:fixed;inset:0;z-index:2147482100;background:rgba(6,12,30,.55);display:none;align-items:center;justify-content:center;padding:16px}'
   + '#meacc-ov.on{display:flex}'
-  + '#meacc-card{background:#fff;color:#0a1f4a;border-radius:16px;max-width:420px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);padding:22px}'
+  + '#meacc-ov.gate{background:rgba(6,12,30,.92)}'
+  + '#meacc-card{background:#fff;color:#0a1f4a;border-radius:16px;max-width:430px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);padding:22px}'
   + '@media(prefers-color-scheme:dark){#meacc-card{background:#0e1630;color:#e9eefc}}'
   + '.meacc-h{font:800 19px system-ui;margin:0 0 4px}'
   + '.meacc-sub{font:400 13px system-ui;color:#6b7280;margin:0 0 16px}'
   + '@media(prefers-color-scheme:dark){.meacc-sub{color:#9aa6c0}}'
+  + '.meacc-two{display:flex;gap:10px}.meacc-two>.meacc-f{flex:1}'
   + '.meacc-f{display:block;width:100%;box-sizing:border-box;font:15px system-ui;padding:11px 13px;margin:0 0 10px;border:1.5px solid #d7deea;border-radius:10px;background:#fff;color:#0a1f4a}'
   + '@media(prefers-color-scheme:dark){.meacc-f{background:#0b1226;color:#e9eefc;border-color:#2a3763}}'
   + '.meacc-btnp{width:100%;font:700 15px system-ui;background:#0a1f4a;color:#fff;border:0;border-radius:10px;padding:12px;cursor:pointer;margin-top:4px}'
@@ -1855,37 +1875,44 @@ window.adminPinGo=adminPinGo;
   + '.meacc-msg.ok{display:block;background:#e7f6ec;color:#1b7a3d}'
   + '.meacc-x{float:right;background:0;border:0;font-size:22px;line-height:1;cursor:pointer;color:#9aa6c0}'
   + '.meacc-pill{display:inline-block;background:#f0f3fa;border-radius:8px;padding:4px 9px;font:600 12px system-ui;margin:3px 4px 0 0;color:#0a1f4a}'
-  + '@media(prefers-color-scheme:dark){.meacc-pill{background:#17204a;color:#cdd8f5}}';
+  + '@media(prefers-color-scheme:dark){.meacc-pill{background:#17204a;color:#cdd8f5}}'
+  + '.meacc-brand{text-align:center;font:800 15px system-ui;color:#0a1f4a;margin:0 0 2px}'
+  + '@media(prefers-color-scheme:dark){.meacc-brand{color:#F5C518}}';
   document.head.appendChild(css);
 
-  // ---------- DOM ----------
   var btn = document.createElement('button'); btn.id='meacc-btn';
   var ov = document.createElement('div'); ov.id='meacc-ov';
   var card = document.createElement('div'); card.id='meacc-card'; ov.appendChild(card);
   document.body.appendChild(btn); document.body.appendChild(ov);
-  btn.onclick = function(){ render(); ov.classList.add('on'); };
-  ov.onclick = function(e){ if(e.target===ov) ov.classList.remove('on'); };
-  function refreshBtn(){ var a=getAcc(); btn.textContent = a ? ('👤 '+((a.name||a.email||'').split(' ')[0]||'Account')) : '👤 Account'; }
-  refreshBtn();
+  btn.onclick = function(){ gateMode=false; ov.classList.remove('gate'); render(); ov.classList.add('on'); };
+  ov.onclick = function(e){ if(e.target===ov && !gateMode) ov.classList.remove('on'); };
+  function refreshBtn(){ var a=getAcc(); btn.textContent = a ? ('👤 '+((a.name||a.email||'').split(' ')[0]||'Account')) : '👤 Account'; btn.style.display = gateMode ? 'none' : ''; }
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function val(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
   function msg(t, kind){ var m=document.getElementById('meacc-msg'); if(!m) return; m.textContent=t; m.className='meacc-msg '+(kind||'err'); }
-  function head(title, sub){ return '<button class="meacc-x" onclick="document.getElementById(\'meacc-ov\').classList.remove(\'on\')">×</button>'
-    + '<div class="meacc-h">'+title+'</div><div class="meacc-sub">'+sub+'</div><div id="meacc-msg" class="meacc-msg"></div>'; }
+  function head(title, sub){
+    var x = gateMode ? '' : '<button class="meacc-x" onclick="document.getElementById(\'meacc-ov\').classList.remove(\'on\')">×</button>';
+    var brand = gateMode ? '<div class="meacc-brand">Modular English</div>' : '';
+    return x + brand + '<div class="meacc-h">'+title+'</div><div class="meacc-sub">'+sub+'</div><div id="meacc-msg" class="meacc-msg"></div>';
+  }
   function busy(b){ var el=document.getElementById('meacc-go'); if(el){ el.disabled=b; el.textContent=b?'Attendi…':el.getAttribute('data-l'); } }
+  function adminLinkRow(extra){ return '<div class="meacc-row">'+(extra||'')+'<button class="meacc-link" id="meacc-toadmin" style="color:#8a8f9c">Accesso amministratore</button></div>'; }
+  function wireAdminLink(){ var a=document.getElementById('meacc-toadmin'); if(a) a.onclick=viewAdmin; }
 
   function render(){ getAcc() ? viewAccount() : viewLogin(); }
 
   function viewLogin(){
-    card.innerHTML = head('Accedi','Accedi al tuo account per ritrovare i tuoi acquisti su qualsiasi dispositivo.')
+    card.innerHTML = head('Accedi', gateMode ? 'Per accedere ai contenuti serve un account. Accedi o creane uno.' : 'Accedi al tuo account per ritrovare i tuoi acquisti su qualsiasi dispositivo.')
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
       + '<button class="meacc-btnp" id="meacc-go" data-l="Accedi">Accedi</button>'
       + '<div class="meacc-row"><button class="meacc-link" id="meacc-toreg">Crea un account</button>'
-      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>';
+      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>'
+      + adminLinkRow();
     document.getElementById('meacc-toreg').onclick=viewRegister;
     document.getElementById('meacc-tofg').onclick=viewForgot;
+    wireAdminLink();
     document.getElementById('meacc-go').onclick=async function(){
       var email=val('meacc-email'), pw=val('meacc-pw');
       if(!email||!pw){ msg('Inserisci email e password.'); return; }
@@ -1897,15 +1924,20 @@ window.adminPinGo=adminPinGo;
 
   function viewRegister(){
     card.innerHTML = head('Crea un account','Con un account i tuoi acquisti restano salvati e non si perdono se cancelli i cookie.')
-      + '<input class="meacc-f" id="meacc-name" placeholder="Nome e cognome" autocomplete="name">'
+      + '<div class="meacc-two"><input class="meacc-f" id="meacc-first" placeholder="Nome" autocomplete="given-name">'
+      + '<input class="meacc-f" id="meacc-last" placeholder="Cognome" autocomplete="family-name"></div>'
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password (min 8 caratteri)" autocomplete="new-password">'
       + '<button class="meacc-btnp" id="meacc-go" data-l="Continua">Continua</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>';
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>'
+      + adminLinkRow();
     document.getElementById('meacc-tolog').onclick=viewLogin;
+    wireAdminLink();
     document.getElementById('meacc-go').onclick=async function(){
-      var name=val('meacc-name'), email=val('meacc-email'), pw=val('meacc-pw');
-      if(!name||!email||!pw){ msg('Compila tutti i campi.'); return; }
+      var first=val('meacc-first'), last=val('meacc-last'), email=val('meacc-email'), pw=val('meacc-pw');
+      if(!first||!last){ msg('Inserisci nome e cognome.'); return; }
+      if(!email||!pw){ msg('Compila tutti i campi.'); return; }
+      var name = first+' '+last;
       busy(true); var r=await api('/register',{name:name,email:email,password:pw}); busy(false);
       if(r.status===200 && r.j.ok){ viewVerify(email,'register'); }
       else msg(em(r.j.error));
@@ -1948,6 +1980,25 @@ window.adminPinGo=adminPinGo;
     };
   }
 
+  // Admin PIN — explores every dialogue/function without an account.
+  function viewAdmin(){
+    card.innerHTML = head('Accesso amministratore','Inserisci il PIN amministratore per esplorare tutti i contenuti senza account.')
+      + '<input class="meacc-f" id="meacc-pin" type="password" inputmode="numeric" placeholder="PIN amministratore" autocomplete="off">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Entra">Entra</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">← Indietro</button></div>';
+    document.getElementById('meacc-back').onclick=viewLogin;
+    document.getElementById('meacc-go').onclick=async function(){
+      var pin=val('meacc-pin'); if(!pin){ msg('Inserisci il PIN.'); return; }
+      busy(true); var r=await api('/admin',{pin:pin}); busy(false);
+      if(r.status===200 && r.j.ok && r.j.token){
+        try{ localStorage.setItem(LS.tok, r.j.token); }catch(e){}
+        try{ document.cookie='me_token='+r.j.token+';path=/;max-age=86400'; }catch(e){}
+        try{ window._adminUnlocked=true; }catch(e){}
+        msg('Accesso amministratore eseguito.','ok'); setTimeout(function(){ location.reload(); }, 700);
+      } else msg('PIN non valido.');
+    };
+  }
+
   async function viewAccount(){
     var a=getAcc()||{};
     card.innerHTML = head('Il tuo account','')
@@ -1960,10 +2011,8 @@ window.adminPinGo=adminPinGo;
     document.getElementById('meacc-priv').onclick=function(){ location.href='/privacy3.html'; };
     document.getElementById('meacc-logout').onclick=function(){ clearSession(); refreshBtn(); location.reload(); };
     document.getElementById('meacc-del').onclick=function(){ viewDelete(a.email); };
-    // refresh purchases + token
     try{
-      var tok=localStorage.getItem(LS.tok)||'';
-      var r=await fetch(WK+'/account',{headers:{'Authorization':'Bearer '+tok}});
+      var r=await fetch(WK+'/account',{headers:{'Authorization':'Bearer '+getTok()}});
       var j=await r.json();
       if(j && j.ok){ if(j.token){ setSession(j.token, j.name, j.email); }
         var owned=document.getElementById('meacc-owned');
@@ -1990,6 +2039,17 @@ window.adminPinGo=adminPinGo;
   }
 
   function done(text){ msg(text,'ok'); refreshBtn(); setTimeout(function(){ location.reload(); }, 900); }
+
+  // ── Access gate: require an account (or admin / existing purchase) ──
+  function openGate(){
+    gateMode = true;
+    ov.classList.add('gate'); render(); ov.classList.add('on'); refreshBtn();
+  }
+  function maybeGate(){ try{ if(!hasAccess()) openGate(); else refreshBtn(); }catch(e){} }
+  // run after the app has had a moment to restore any existing session/token
+  if (document.readyState === 'complete') setTimeout(maybeGate, 600);
+  else window.addEventListener('load', function(){ setTimeout(maybeGate, 600); });
+  refreshBtn();
 })();
 </script>
 
