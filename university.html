@@ -411,12 +411,15 @@ function uniRipeti(btn){
   function msg(t, kind){ var m=document.getElementById('meacc-msg'); if(!m) return; m.textContent=t; m.className='meacc-msg '+(kind||'err'); }
   function head(title, sub){
     var x = gateMode ? '' : '<button class="meacc-x" onclick="document.getElementById(\'meacc-ov\').classList.remove(\'on\')">×</button>';
-    var brand = gateMode ? '<div class="meacc-brand">Modular English</div>' : '';
+    var brand = gateMode ? '<div class="meacc-brand" id="meacc-brand" style="cursor:default;user-select:none">Modular English</div>' : '';
     return x + brand + '<div class="meacc-h">'+title+'</div><div class="meacc-sub">'+sub+'</div><div id="meacc-msg" class="meacc-msg"></div>';
   }
   function busy(b){ var el=document.getElementById('meacc-go'); if(el){ el.disabled=b; el.textContent=b?'Attendi…':el.getAttribute('data-l'); } }
-  function adminLinkRow(extra){ return '<div class="meacc-row">'+(extra||'')+'<button class="meacc-link" id="meacc-toadmin" style="color:#8a8f9c">Accesso amministratore</button></div>'; }
-  function wireAdminLink(){ var a=document.getElementById('meacc-toadmin'); if(a) a.onclick=viewAdmin; }
+  // Hidden admin entry: tap the "Modular English" title 5× (within 2.5s) to open the admin PIN.
+  var _brandTaps=0, _brandT=0;
+  function wireBrand(){ var el=document.getElementById('meacc-brand'); if(!el) return;
+    el.onclick=function(){ _brandTaps++; clearTimeout(_brandT); _brandT=setTimeout(function(){ _brandTaps=0; },2500);
+      if(_brandTaps>=5){ _brandTaps=0; viewAdmin(); } }; }
 
   function render(){ getAcc() ? viewAccount() : viewLogin(); }
 
@@ -426,11 +429,10 @@ function uniRipeti(btn){
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
       + '<button class="meacc-btnp" id="meacc-go" data-l="Accedi">Accedi</button>'
       + '<div class="meacc-row"><button class="meacc-link" id="meacc-toreg">Crea un account</button>'
-      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>'
-      + adminLinkRow();
+      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>';
     document.getElementById('meacc-toreg').onclick=viewRegister;
     document.getElementById('meacc-tofg').onclick=viewForgot;
-    wireAdminLink();
+    wireBrand();
     document.getElementById('meacc-go').onclick=async function(){
       var email=val('meacc-email'), pw=val('meacc-pw');
       if(!email||!pw){ msg('Inserisci email e password.'); return; }
@@ -447,10 +449,9 @@ function uniRipeti(btn){
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password (min 8 caratteri)" autocomplete="new-password">'
       + '<button class="meacc-btnp" id="meacc-go" data-l="Continua">Continua</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>'
-      + adminLinkRow();
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>';
     document.getElementById('meacc-tolog').onclick=viewLogin;
-    wireAdminLink();
+    wireBrand();
     document.getElementById('meacc-go').onclick=async function(){
       var first=val('meacc-first'), last=val('meacc-last'), email=val('meacc-email'), pw=val('meacc-pw');
       if(!first||!last){ msg('Inserisci nome e cognome.'); return; }
@@ -561,7 +562,9 @@ function uniRipeti(btn){
   // ── Access gate: require an account (or admin / existing purchase) ──
   function openGate(){
     gateMode = true;
-    ov.classList.add('gate'); render(); ov.classList.add('on'); refreshBtn();
+    ov.classList.add('gate');
+    getAcc() ? viewAccount() : viewRegister();   // new visitors land on registration (Nome, Cognome, Email, Password)
+    ov.classList.add('on'); refreshBtn();
   }
   function maybeGate(){ try{ if(!hasAccess()) openGate(); else refreshBtn(); }catch(e){} }
   // run after the app has had a moment to restore any existing session/token

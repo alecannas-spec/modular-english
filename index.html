@@ -1771,6 +1771,41 @@ window.adminPinGo=adminPinGo;
     window.__uniHomeCard=uCard;
     if(typeof renderHome==='function'){ var _rh=renderHome; renderHome=function(){ var r=_rh.apply(this,arguments); try{ uCard(); }catch(e){} return r; }; }
   })();
+  // ── University purchases shown in the "My Courses" tab ──
+  (function(){
+    var UNI_LV=['A1','A2','B1','B2'];
+    var UNI_ITEMS=[['mod','Modulo'],['map','Matrice di copertura'],['test','Simulazione esame'],['key','Soluzioni e script audio'],['all','Livello completo']];
+    function owned(id){ try{ return typeof isPurchased==='function' && isPurchased(id); }catch(e){ return false; } }
+    function uOwnedRows(){
+      var rows=[];
+      UNI_LV.forEach(function(l){
+        var all=owned('uni-'+l+'-all');
+        UNI_ITEMS.forEach(function(it){
+          if(it[0]==='all'){ if(all) rows.push({l:l,label:'Livello completo'}); }
+          else if(all || owned('uni-'+l+'-'+it[0])){ rows.push({l:l,label:it[1]}); }
+        });
+      });
+      return rows;
+    }
+    function nativeOwnedCount(){ var n=0; try{ LEVELS.forEach(function(L){ L.modules.forEach(function(m){ if(owned(m.id)) n++; }); }); }catch(e){} return n; }
+    function uMyRender(){
+      var list=document.getElementById('my-courses-list'); if(!list) return;
+      var old=document.getElementById('uni-my-section'); if(old) old.remove();
+      var rows=uOwnedRows(); if(!rows.length) return;
+      if(nativeOwnedCount()===0){ list.innerHTML=''; }   // drop the "no purchases" placeholder
+      var sec=document.createElement('div'); sec.id='uni-my-section'; sec.style.marginTop='18px';
+      var h='<div class="explore-level-title" style="margin-bottom:10px">🎓 University</div><div class="explore-mod-list">';
+      rows.forEach(function(r){
+        h+='<div class="explore-mod-row" onclick="location.href=\'/university.html\'">'
+         +'<div class="explore-mod-left"><span class="explore-mod-icon">🎓</span>'
+         +'<div><div class="explore-mod-name">'+r.l+' · '+r.label+'</div><div class="explore-mod-sub">Apri per studiare →</div></div></div>'
+         +'<span style="font:700 .82rem system-ui;color:var(--gold)">✓</span></div>';
+      });
+      h+='</div>'; sec.innerHTML=h; list.appendChild(sec);
+    }
+    window.__uniMyRender=uMyRender;
+    if(typeof renderMyCourses==='function'){ var _rm=renderMyCourses; renderMyCourses=function(){ var r=_rm.apply(this,arguments); try{ uMyRender(); }catch(e){} return r; }; }
+  })();
   // Deep-link: /?go=cart opens the cart view (used by the University page).
   try{ if(/[?&]go=cart(\b|=|&|$)/.test(location.search)){ setTimeout(function(){ try{ showView('cart'); }catch(e){} }, 350); } }catch(e){}
   // Pop-ups (grammar / disclaimer / payment): opening one adds a history entry
@@ -1893,12 +1928,15 @@ window.adminPinGo=adminPinGo;
   function msg(t, kind){ var m=document.getElementById('meacc-msg'); if(!m) return; m.textContent=t; m.className='meacc-msg '+(kind||'err'); }
   function head(title, sub){
     var x = gateMode ? '' : '<button class="meacc-x" onclick="document.getElementById(\'meacc-ov\').classList.remove(\'on\')">×</button>';
-    var brand = gateMode ? '<div class="meacc-brand">Modular English</div>' : '';
+    var brand = gateMode ? '<div class="meacc-brand" id="meacc-brand" style="cursor:default;user-select:none">Modular English</div>' : '';
     return x + brand + '<div class="meacc-h">'+title+'</div><div class="meacc-sub">'+sub+'</div><div id="meacc-msg" class="meacc-msg"></div>';
   }
   function busy(b){ var el=document.getElementById('meacc-go'); if(el){ el.disabled=b; el.textContent=b?'Attendi…':el.getAttribute('data-l'); } }
-  function adminLinkRow(extra){ return '<div class="meacc-row">'+(extra||'')+'<button class="meacc-link" id="meacc-toadmin" style="color:#8a8f9c">Accesso amministratore</button></div>'; }
-  function wireAdminLink(){ var a=document.getElementById('meacc-toadmin'); if(a) a.onclick=viewAdmin; }
+  // Hidden admin entry: tap the "Modular English" title 5× (within 2.5s) to open the admin PIN.
+  var _brandTaps=0, _brandT=0;
+  function wireBrand(){ var el=document.getElementById('meacc-brand'); if(!el) return;
+    el.onclick=function(){ _brandTaps++; clearTimeout(_brandT); _brandT=setTimeout(function(){ _brandTaps=0; },2500);
+      if(_brandTaps>=5){ _brandTaps=0; viewAdmin(); } }; }
 
   function render(){ getAcc() ? viewAccount() : viewLogin(); }
 
@@ -1908,11 +1946,10 @@ window.adminPinGo=adminPinGo;
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
       + '<button class="meacc-btnp" id="meacc-go" data-l="Accedi">Accedi</button>'
       + '<div class="meacc-row"><button class="meacc-link" id="meacc-toreg">Crea un account</button>'
-      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>'
-      + adminLinkRow();
+      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>';
     document.getElementById('meacc-toreg').onclick=viewRegister;
     document.getElementById('meacc-tofg').onclick=viewForgot;
-    wireAdminLink();
+    wireBrand();
     document.getElementById('meacc-go').onclick=async function(){
       var email=val('meacc-email'), pw=val('meacc-pw');
       if(!email||!pw){ msg('Inserisci email e password.'); return; }
@@ -1929,10 +1966,9 @@ window.adminPinGo=adminPinGo;
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password (min 8 caratteri)" autocomplete="new-password">'
       + '<button class="meacc-btnp" id="meacc-go" data-l="Continua">Continua</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>'
-      + adminLinkRow();
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>';
     document.getElementById('meacc-tolog').onclick=viewLogin;
-    wireAdminLink();
+    wireBrand();
     document.getElementById('meacc-go').onclick=async function(){
       var first=val('meacc-first'), last=val('meacc-last'), email=val('meacc-email'), pw=val('meacc-pw');
       if(!first||!last){ msg('Inserisci nome e cognome.'); return; }
@@ -2043,7 +2079,9 @@ window.adminPinGo=adminPinGo;
   // ── Access gate: require an account (or admin / existing purchase) ──
   function openGate(){
     gateMode = true;
-    ov.classList.add('gate'); render(); ov.classList.add('on'); refreshBtn();
+    ov.classList.add('gate');
+    getAcc() ? viewAccount() : viewRegister();   // new visitors land on registration (Nome, Cognome, Email, Password)
+    ov.classList.add('on'); refreshBtn();
   }
   function maybeGate(){ try{ if(!hasAccess()) openGate(); else refreshBtn(); }catch(e){} }
   // run after the app has had a moment to restore any existing session/token
