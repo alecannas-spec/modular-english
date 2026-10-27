@@ -1742,6 +1742,24 @@ window.adminPinGo=adminPinGo;
     window.__uniRenderSection=uRender;
     if(typeof renderExplore==='function'){ var _re=renderExplore; renderExplore=function(){ var r=_re.apply(this,arguments); try{ uRender(); }catch(e){} return r; }; }
   })();
+  // ── University — card in the Home grid, next to Video-Courses ──
+  (function(){
+    function uCard(){
+      var grid=document.getElementById('home-levels'); if(!grid) return;
+      if(document.getElementById('uni-home-card')) return;
+      var c=document.createElement('div');
+      c.id='uni-home-card'; c.className='level-card'; c.style.cursor='pointer';
+      c.onclick=function(){ location.href='/university.html'; };
+      c.innerHTML='<div class="level-emoji">🎓</div>'
+        + '<div class="level-name">University</div>'
+        + '<div class="level-code" style="color:#0a2a66">UNI — Exam Prep</div>'
+        + '<div class="level-desc">Preparazione esami linguistici ufficiali — Modulo, Matrice, Simulazione e Soluzioni.</div>'
+        + '<div class="level-meta">4 livelli · A1–B2</div>';
+      grid.appendChild(c);
+    }
+    window.__uniHomeCard=uCard;
+    if(typeof renderHome==='function'){ var _rh=renderHome; renderHome=function(){ var r=_rh.apply(this,arguments); try{ uCard(); }catch(e){} return r; }; }
+  })();
   // Deep-link: /?go=cart opens the cart view (used by the University page).
   try{ if(/[?&]go=cart(\b|=|&|$)/.test(location.search)){ setTimeout(function(){ try{ showView('cart'); }catch(e){} }, 350); } }catch(e){}
   // Pop-ups (grammar / disclaimer / payment): opening one adds a history entry
