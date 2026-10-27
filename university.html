@@ -36,7 +36,22 @@ button.act.g{background:var(--gold);color:var(--navy)}
 .ex li{margin:3px 0}.ans{display:none;color:var(--ok);font:13px system-ui}.showans .ans{display:inline}
 footer{padding:24px 16px;color:var(--mut);font:12px system-ui;text-align:center}
 </style></head><body>
-<header><div class="wrap"><span class="tag">University</span><h1>Preparazione agli esami di accreditamento linguistico</h1>
+<script>
+/* One-time cleanup of any stale service worker / cache from an earlier build,
+   so browsers (notably Chrome) always load the current version. */
+(function(){ try{
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(rs){
+      var had = rs && rs.length;
+      if(rs) rs.forEach(function(r){ try{ r.unregister(); }catch(e){} });
+      try{ if(window.caches && caches.keys){ caches.keys().then(function(ks){ ks.forEach(function(k){ try{ caches.delete(k); }catch(e){} }); }); } }catch(e){}
+      if(had && !sessionStorage.getItem('me_swcleared')){ try{ sessionStorage.setItem('me_swcleared','1'); }catch(e){} location.reload(); }
+    }).catch(function(){});
+  }
+}catch(e){} })();
+</script>
+
+<header><div class="wrap"><a href="/" id="uni-back" style="display:inline-block;margin-bottom:14px;color:#fff;text-decoration:none;font:700 14px system-ui;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);padding:8px 16px;border-radius:99px">← Indietro</a><br><span class="tag">University</span><h1>Preparazione agli esami di accreditamento linguistico</h1>
 <p>Inglese QCER A1 · A2 · B1 · B2 — moduli per situazioni e dialoghi, con simulazione d'esame (50 domande, 60 punti, soglia 36/60)</p>
 <nav class="lv" id="lv"></nav></div></header>
 <div class="wrap"><div class="tabs" id="tabs"></div><div id="view"></div></div>

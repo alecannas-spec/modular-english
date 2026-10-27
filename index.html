@@ -318,6 +318,21 @@ html,body{height:100%;overflow:hidden}
 
 </head>
 <body>
+<script>
+/* One-time cleanup of any stale service worker / cache from an earlier build,
+   so browsers (notably Chrome) always load the current version. */
+(function(){ try{
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(rs){
+      var had = rs && rs.length;
+      if(rs) rs.forEach(function(r){ try{ r.unregister(); }catch(e){} });
+      try{ if(window.caches && caches.keys){ caches.keys().then(function(ks){ ks.forEach(function(k){ try{ caches.delete(k); }catch(e){} }); }); } }catch(e){}
+      if(had && !sessionStorage.getItem('me_swcleared')){ try{ sessionStorage.setItem('me_swcleared','1'); }catch(e){} location.reload(); }
+    }).catch(function(){});
+  }
+}catch(e){} })();
+</script>
+
 <div id="me-guard" style="position:fixed;inset:0;background:#000;z-index:2147483000"></div>
 <script>
 (function(){
@@ -391,7 +406,7 @@ html,body{height:100%;overflow:hidden}
 
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.3</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.4</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
     <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
@@ -1095,7 +1110,7 @@ console.log('✅ Customer Design — per-situation sales active');
 <script>
 /* v1.0.9 — cart hardening + build check (additive, safe; does not alter working paths) */
 (function(){
-  try{ console.log('\u2705 Modular English build v1.1.3'); }catch(e){}
+  try{ console.log('\u2705 Modular English build v1.1.4'); }catch(e){}
   function levelCodeFor(item, level){
     if(level && level.code) return level.code;
     try{
@@ -1132,7 +1147,7 @@ console.log('✅ Customer Design — per-situation sales active');
 })();
 </script>
 <script>
-/* v1.1.3 — inline add-to-cart button for A1..C2 (always reachable; mirrors CD/VC) */
+/* v1.1.4 — inline add-to-cart button for A1..C2 (always reachable; mirrors CD/VC) */
 (function(){
   function curLevel(){ try{ return (typeof currentLevel!=='undefined')?currentLevel:null; }catch(e){ return null; } }
   function curModule(){ try{ return (typeof currentModule!=='undefined')?currentModule:null; }catch(e){ return null; } }
