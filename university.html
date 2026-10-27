@@ -325,4 +325,192 @@ function uniRipeti(btn){
 })();
 </script>
 
+<script>
+/* ─── Modular English · Customer Account (optional) ─────────────────────────
+   Server-side account (email + password) via the worker. The access token is
+   stored in localStorage 'me_entry' — the same slot the app already reads — so
+   logging in unlocks purchased content on any device. Legacy Purchase-ID /
+   device access keeps working untouched. */
+(function(){
+  if (window.__meAccLoaded) return; window.__meAccLoaded = true;
+  var WK = window.__ME_WK || 'https://modular-english.ale-cannas.workers.dev';
+  var LS = { tok:'me_entry', acc:'me_account' };
+  function getAcc(){ try{ return JSON.parse(localStorage.getItem(LS.acc)||'null'); }catch(e){ return null; } }
+  function setSession(t, name, email){ try{ localStorage.setItem(LS.tok, t); localStorage.setItem(LS.acc, JSON.stringify({name:name,email:email})); }catch(e){} }
+  function clearSession(){ try{ localStorage.removeItem(LS.tok); localStorage.removeItem(LS.acc); sessionStorage.removeItem(LS.tok); }catch(e){} }
+  async function api(path, body, headers){
+    var r = await fetch(WK+path, { method:'POST', headers: Object.assign({'Content-Type':'application/json'}, headers||{}), body: body?JSON.stringify(body):undefined });
+    var j=null; try{ j=await r.json(); }catch(e){} return { status:r.status, j:j||{} };
+  }
+  var ERR = {
+    name:'Inserisci nome e cognome.', email:'Email non valida.', weakpass:'La password deve avere almeno 8 caratteri.',
+    exists:'Esiste già un account con questa email. Accedi o recupera la password.', toomany:'Troppi tentativi, riprova tra poco.',
+    'email-send':'Invio email non riuscito. Riprova tra poco.', nopending:'Nessuna registrazione in sospeso. Ricomincia.',
+    expired:'Codice scaduto. Richiedine uno nuovo.', badcode:'Codice errato.', nouser:'Nessun account con questa email.',
+    badpass:'Password errata.', locked:'Troppi tentativi. Riprova tra 15 minuti.', input:'Compila tutti i campi.', noauth:'Sessione scaduta, accedi di nuovo.'
+  };
+  function em(e){ return ERR[e] || 'Errore. Riprova.'; }
+
+  // ---------- styles ----------
+  var css = document.createElement('style');
+  css.textContent =
+    '#meacc-btn{position:fixed;left:12px;bottom:12px;z-index:2147482000;background:#0a1f4a;color:#fff;border:0;border-radius:999px;font:700 13px system-ui;padding:9px 15px;box-shadow:0 4px 14px rgba(10,20,60,.35);cursor:pointer}'
+  + '#meacc-btn:hover{background:#0c2a66}'
+  + '#meacc-ov{position:fixed;inset:0;z-index:2147482100;background:rgba(6,12,30,.55);display:none;align-items:center;justify-content:center;padding:16px}'
+  + '#meacc-ov.on{display:flex}'
+  + '#meacc-card{background:#fff;color:#0a1f4a;border-radius:16px;max-width:420px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);padding:22px}'
+  + '@media(prefers-color-scheme:dark){#meacc-card{background:#0e1630;color:#e9eefc}}'
+  + '.meacc-h{font:800 19px system-ui;margin:0 0 4px}'
+  + '.meacc-sub{font:400 13px system-ui;color:#6b7280;margin:0 0 16px}'
+  + '@media(prefers-color-scheme:dark){.meacc-sub{color:#9aa6c0}}'
+  + '.meacc-f{display:block;width:100%;box-sizing:border-box;font:15px system-ui;padding:11px 13px;margin:0 0 10px;border:1.5px solid #d7deea;border-radius:10px;background:#fff;color:#0a1f4a}'
+  + '@media(prefers-color-scheme:dark){.meacc-f{background:#0b1226;color:#e9eefc;border-color:#2a3763}}'
+  + '.meacc-btnp{width:100%;font:700 15px system-ui;background:#0a1f4a;color:#fff;border:0;border-radius:10px;padding:12px;cursor:pointer;margin-top:4px}'
+  + '.meacc-btnp:hover{background:#0c2a66}'
+  + '.meacc-link{background:0;border:0;color:#0a1f4a;font:600 13px system-ui;cursor:pointer;padding:6px 2px;text-decoration:underline}'
+  + '@media(prefers-color-scheme:dark){.meacc-link{color:#cdd8f5}}'
+  + '.meacc-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}'
+  + '.meacc-msg{font:600 13px system-ui;margin:8px 0;padding:9px 11px;border-radius:9px;display:none}'
+  + '.meacc-msg.err{display:block;background:#fde8e8;color:#b02a2a}'
+  + '.meacc-msg.ok{display:block;background:#e7f6ec;color:#1b7a3d}'
+  + '.meacc-x{float:right;background:0;border:0;font-size:22px;line-height:1;cursor:pointer;color:#9aa6c0}'
+  + '.meacc-pill{display:inline-block;background:#f0f3fa;border-radius:8px;padding:4px 9px;font:600 12px system-ui;margin:3px 4px 0 0;color:#0a1f4a}'
+  + '@media(prefers-color-scheme:dark){.meacc-pill{background:#17204a;color:#cdd8f5}}';
+  document.head.appendChild(css);
+
+  // ---------- DOM ----------
+  var btn = document.createElement('button'); btn.id='meacc-btn';
+  var ov = document.createElement('div'); ov.id='meacc-ov';
+  var card = document.createElement('div'); card.id='meacc-card'; ov.appendChild(card);
+  document.body.appendChild(btn); document.body.appendChild(ov);
+  btn.onclick = function(){ render(); ov.classList.add('on'); };
+  ov.onclick = function(e){ if(e.target===ov) ov.classList.remove('on'); };
+  function refreshBtn(){ var a=getAcc(); btn.textContent = a ? ('👤 '+((a.name||a.email||'').split(' ')[0]||'Account')) : '👤 Account'; }
+  refreshBtn();
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function val(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
+  function msg(t, kind){ var m=document.getElementById('meacc-msg'); if(!m) return; m.textContent=t; m.className='meacc-msg '+(kind||'err'); }
+  function head(title, sub){ return '<button class="meacc-x" onclick="document.getElementById(\'meacc-ov\').classList.remove(\'on\')">×</button>'
+    + '<div class="meacc-h">'+title+'</div><div class="meacc-sub">'+sub+'</div><div id="meacc-msg" class="meacc-msg"></div>'; }
+  function busy(b){ var el=document.getElementById('meacc-go'); if(el){ el.disabled=b; el.textContent=b?'Attendi…':el.getAttribute('data-l'); } }
+
+  function render(){ getAcc() ? viewAccount() : viewLogin(); }
+
+  function viewLogin(){
+    card.innerHTML = head('Accedi','Accedi al tuo account per ritrovare i tuoi acquisti su qualsiasi dispositivo.')
+      + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
+      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Accedi">Accedi</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-toreg">Crea un account</button>'
+      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>';
+    document.getElementById('meacc-toreg').onclick=viewRegister;
+    document.getElementById('meacc-tofg').onclick=viewForgot;
+    document.getElementById('meacc-go').onclick=async function(){
+      var email=val('meacc-email'), pw=val('meacc-pw');
+      if(!email||!pw){ msg('Inserisci email e password.'); return; }
+      busy(true); var r=await api('/login',{email:email,password:pw}); busy(false);
+      if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email); done('Accesso eseguito.'); }
+      else msg(em(r.j.error));
+    };
+  }
+
+  function viewRegister(){
+    card.innerHTML = head('Crea un account','Con un account i tuoi acquisti restano salvati e non si perdono se cancelli i cookie.')
+      + '<input class="meacc-f" id="meacc-name" placeholder="Nome e cognome" autocomplete="name">'
+      + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
+      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password (min 8 caratteri)" autocomplete="new-password">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Continua">Continua</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>';
+    document.getElementById('meacc-tolog').onclick=viewLogin;
+    document.getElementById('meacc-go').onclick=async function(){
+      var name=val('meacc-name'), email=val('meacc-email'), pw=val('meacc-pw');
+      if(!name||!email||!pw){ msg('Compila tutti i campi.'); return; }
+      busy(true); var r=await api('/register',{name:name,email:email,password:pw}); busy(false);
+      if(r.status===200 && r.j.ok){ viewVerify(email,'register'); }
+      else msg(em(r.j.error));
+    };
+  }
+
+  function viewVerify(email, flow){
+    card.innerHTML = head('Verifica la tua email','Abbiamo inviato un codice a 6 cifre a <b>'+esc(email)+'</b>. Inseriscilo qui sotto.')
+      + '<input class="meacc-f" id="meacc-code" inputmode="numeric" maxlength="6" placeholder="Codice a 6 cifre">'
+      + (flow==='reset' ? '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Nuova password (min 8)" autocomplete="new-password">' : '')
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Conferma">Conferma</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-resend">Invia di nuovo il codice</button></div>';
+    document.getElementById('meacc-resend').onclick=async function(){
+      var p = flow==='reset' ? '/forgot' : '/register/resend';
+      await api(p,{email:email}); msg('Codice inviato di nuovo.','ok');
+    };
+    document.getElementById('meacc-go').onclick=async function(){
+      var code=val('meacc-code'); if(!/^\d{6}$/.test(code)){ msg('Inserisci il codice a 6 cifre.'); return; }
+      busy(true); var r;
+      if(flow==='reset'){ var pw=val('meacc-pw'); if(!pw){ busy(false); msg('Inserisci la nuova password.'); return; }
+        r=await api('/reset',{email:email,code:code,password:pw}); }
+      else { r=await api('/register-verify',{email:email,code:code}); }
+      busy(false);
+      if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email);
+        done((r.j.purchased&&r.j.purchased.length)? 'Account pronto — acquisti ripristinati!' : 'Account creato.'); }
+      else msg(em(r.j.error));
+    };
+  }
+
+  function viewForgot(){
+    card.innerHTML = head('Recupera la password','Inserisci la tua email: ti invieremo un codice per impostare una nuova password.')
+      + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Invia codice">Invia codice</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Torna all\'accesso</button></div>';
+    document.getElementById('meacc-tolog').onclick=viewLogin;
+    document.getElementById('meacc-go').onclick=async function(){
+      var email=val('meacc-email'); if(!email){ msg('Inserisci la tua email.'); return; }
+      busy(true); await api('/forgot',{email:email}); busy(false);
+      viewVerify(email,'reset'); msg('Se esiste un account, riceverai un codice.','ok');
+    };
+  }
+
+  async function viewAccount(){
+    var a=getAcc()||{};
+    card.innerHTML = head('Il tuo account','')
+      + '<div style="font:700 16px system-ui">'+esc(a.name||'')+'</div>'
+      + '<div class="meacc-sub" style="margin:2px 0 10px">'+esc(a.email||'')+'</div>'
+      + '<div id="meacc-owned" class="meacc-sub">Caricamento acquisti…</div>'
+      + '<button class="meacc-btnp" id="meacc-logout" style="margin-top:14px">Esci</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-priv">Privacy</button>'
+      + '<button class="meacc-link" id="meacc-del" style="color:#b02a2a">Elimina account</button></div>';
+    document.getElementById('meacc-priv').onclick=function(){ location.href='/privacy3.html'; };
+    document.getElementById('meacc-logout').onclick=function(){ clearSession(); refreshBtn(); location.reload(); };
+    document.getElementById('meacc-del').onclick=function(){ viewDelete(a.email); };
+    // refresh purchases + token
+    try{
+      var tok=localStorage.getItem(LS.tok)||'';
+      var r=await fetch(WK+'/account',{headers:{'Authorization':'Bearer '+tok}});
+      var j=await r.json();
+      if(j && j.ok){ if(j.token){ setSession(j.token, j.name, j.email); }
+        var owned=document.getElementById('meacc-owned');
+        if(owned){ var n=(j.purchased||[]).length;
+          owned.innerHTML = n ? ('<b>'+n+'</b> element'+(n===1?'o':'i')+' sbloccat'+(n===1?'o':'i')+':<div style="margin-top:6px">'
+            + j.purchased.map(function(id){return '<span class="meacc-pill">'+esc(id)+'</span>';}).join('') + '</div>')
+            : 'Nessun acquisto ancora associato a questo account.'; }
+      } else if (j && j.error==='noauth'){ clearSession(); refreshBtn(); viewLogin(); msg('Sessione scaduta, accedi di nuovo.'); }
+    }catch(e){ var o=document.getElementById('meacc-owned'); if(o) o.textContent='Impossibile aggiornare ora.'; }
+  }
+
+  function viewDelete(email){
+    card.innerHTML = head('Elimina account','Questa operazione è <b>irreversibile</b>. I tuoi dati personali verranno cancellati. Conferma con la password.')
+      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Elimina definitivamente" style="background:#b02a2a">Elimina definitivamente</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">Annulla</button></div>';
+    document.getElementById('meacc-back').onclick=viewAccount;
+    document.getElementById('meacc-go').onclick=async function(){
+      var pw=val('meacc-pw'); if(!pw){ msg('Inserisci la password.'); return; }
+      busy(true); var r=await api('/account/delete',{email:email,password:pw}); busy(false);
+      if(r.status===200 && r.j.ok){ clearSession(); refreshBtn(); msg('Account eliminato.','ok'); setTimeout(function(){ location.reload(); }, 1200); }
+      else msg(em(r.j.error));
+    };
+  }
+
+  function done(text){ msg(text,'ok'); refreshBtn(); setTimeout(function(){ location.reload(); }, 900); }
+})();
+</script>
+
 </body></html>
