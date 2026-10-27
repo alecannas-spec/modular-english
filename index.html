@@ -1749,7 +1749,13 @@ window.adminPinGo=adminPinGo;
       if(document.getElementById('uni-home-card')) return;
       var c=document.createElement('div');
       c.id='uni-home-card'; c.className='level-card'; c.style.cursor='pointer';
-      c.onclick=function(){ location.href='/university.html'; };
+      c.onclick=function(){ try{
+          if(typeof showView==='function') showView('explore');
+          if(typeof renderExplore==='function') renderExplore('');
+          if(typeof window.__uniRenderSection==='function') window.__uniRenderSection();
+          var sec=document.getElementById('uni-explore-section');
+          if(sec){ sec.scrollIntoView({behavior:'smooth',block:'start'}); }
+        }catch(e){ location.href='/university.html'; } };
       c.innerHTML='<div class="level-emoji">🎓</div>'
         + '<div class="level-name">University</div>'
         + '<div class="level-code" style="color:#0a2a66">UNI — Exam Prep</div>'
