@@ -212,7 +212,8 @@ function uniRipeti(btn){
   var NEED = { mod:['situations'], map:['matrix','test'], test:['test'], key:['test'] };
 
   function priceOf(l,t){ return t==='mod' ? MOD_PRICE[l] : FIX[t]; }
-  function levelTotal(l){ return +( MOD_PRICE[l]+FIX.map+FIX.test+FIX.key ).toFixed(2); }
+  function levelFull(l){ return +( MOD_PRICE[l]+FIX.map+FIX.test+FIX.key ).toFixed(2); }
+  function levelTotal(l){ return +( levelFull(l)*0.9 ).toFixed(2); }
   function pid(l,t){ return 'uni-'+l+'-'+t; }
   function allId(l){ return 'uni-'+l+'-all'; }
   function eur(n){ return '€'+Number(n).toFixed(2); }
@@ -276,7 +277,8 @@ function uniRipeti(btn){
       + '<p class="small">Acquista per sbloccare questo contenuto.</p>'
       + '<div>'+buyBtn(pid(l,t),'University '+l+' — '+TAB_NAME[t],p,false)+'</div>'
       + '<hr style="border:0;border-top:1px solid var(--line);margin:16px 0">'
-      + '<p class="small">Oppure sblocca <b>tutto il Livello '+l+'</b> — Modulo + Matrice + Simulazione + Soluzioni:</p>'
+      + '<p class="small">Oppure sblocca <b>tutto il Livello '+l+'</b> — Modulo + Matrice + Simulazione + Soluzioni <b style="color:var(--gold)">(−10%)</b>:</p>'
+      + '<p class="small" style="margin:2px 0">Invece di <span style="text-decoration:line-through">'+eur(levelFull(l))+'</span> → <b>'+eur(tot)+'</b> · risparmi '+eur(+(levelFull(l)-tot).toFixed(2))+'</p>'
       + '<div>'+buyBtn(allId(l),'University '+l+' — Livello completo',tot,true)+'</div>'
       + '<p class="small" style="margin-top:14px"><a href="/?go=cart" style="color:var(--navy2)">Vai al carrello per completare l\'acquisto →</a></p>'
       + '</div>';

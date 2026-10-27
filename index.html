@@ -1700,9 +1700,10 @@ window.adminPinGo=adminPinGo;
       ['map','Matrice di copertura','Programma ufficiale ↔ situazioni'],
       ['test','Simulazione esame','50 domande · 35 min · 60 punti'],
       ['key','Soluzioni e script audio','Chiave risposte + copione ascolto'],
-      ['all','Livello completo','Modulo + Matrice + Simulazione + Soluzioni']
+      ['all','Livello completo','Modulo + Matrice + Simulazione + Soluzioni — sconto 10%']
     ];
-    function uPrice(l,t){ return t==='all' ? +((UNI_MOD[l]+UNI_FIX.map+UNI_FIX.test+UNI_FIX.key).toFixed(2)) : (t==='mod'?UNI_MOD[l]:UNI_FIX[t]); }
+    function uFull(l){ return +((UNI_MOD[l]+UNI_FIX.map+UNI_FIX.test+UNI_FIX.key).toFixed(2)); }
+    function uPrice(l,t){ return t==='all' ? +((uFull(l)*0.9).toFixed(2)) : (t==='mod'?UNI_MOD[l]:UNI_FIX[t]); }
     function uId(l,t){ return 'uni-'+l+'-'+t; }
     function uEur(n){ return '€'+Number(n).toFixed(2); }
     function uOwned(id){ try{ if(typeof isPurchased==='function'){ if(isPurchased(id))return true; var m=id.match(/^uni-(A1|A2|B1|B2)-/); if(m&&isPurchased('uni-'+m[1]+'-all'))return true; } }catch(e){} return false; }
@@ -1721,7 +1722,9 @@ window.adminPinGo=adminPinGo;
       var right = owned
         ? '<span style="font:700 .8rem system-ui;color:var(--gold)">✓ Acquistato</span>'
         : (inc ? '<span style="font:700 .8rem system-ui;color:#27ae60">✓ Nel carrello</span>'
-               : '<span style="font:700 .82rem system-ui;color:var(--navy,#0a1f4a);margin-right:8px">'+uEur(price)+'</span>'
+               : (gold
+                   ? '<span style="text-decoration:line-through;color:#9aa2b0;font:600 .72rem system-ui;margin-right:6px">'+uEur(uFull(l))+'</span><span style="font:800 .82rem system-ui;color:#b8860b;margin-right:8px">'+uEur(price)+'</span>'
+                   : '<span style="font:700 .82rem system-ui;color:var(--navy,#0a1f4a);margin-right:8px">'+uEur(price)+'</span>')
                  +'<button onclick="event.stopPropagation();uniBuy(\''+l+'\',\''+t+'\')" style="font:700 .8rem system-ui;background:'+(gold?'var(--gold);color:var(--navy)':'var(--navy);color:#fff')+';border:0;border-radius:8px;padding:7px 12px;cursor:pointer">Aggiungi</button>');
       return '<div class="explore-mod-row" onclick="location.href=\'/university.html\'" style="'+(gold?'border-color:var(--gold)':'')+'">'
         + '<div class="explore-mod-left"><span class="explore-mod-icon">'+(gold?'🎓':'📘')+'</span>'
