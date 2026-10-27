@@ -227,8 +227,8 @@ function uniRipeti(btn){
   function ownedId(id){ var P=purchased(); if(P.indexOf('__admin__')>=0) return true; var m=id.match(/^uni-(A1|A2|B1|B2)-/); return P.indexOf(id)>=0 || (m && P.indexOf('uni-'+m[1]+'-all')>=0); }
   function unlocked(l,t){ return ownedId(pid(l,t)); }
 
-  function getCart(){ try{ return JSON.parse(localStorage.getItem('cart')||'[]'); }catch(e){ return []; } }
-  function setCart(c){ try{ localStorage.setItem('cart', JSON.stringify(c)); }catch(e){} syncBadge(); }
+  function getCart(){ try{ return JSON.parse(localStorage.getItem('me_cart')||'[]'); }catch(e){ return []; } }
+  function setCart(c){ try{ localStorage.setItem('me_cart', JSON.stringify(c)); }catch(e){} syncBadge(); }
   function inCart(id){ return getCart().some(function(x){ return x.id===id; }); }
 
   function toast(m){
