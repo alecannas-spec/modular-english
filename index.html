@@ -1690,6 +1690,33 @@ window.adminPinGo=adminPinGo;
     var el=document.getElementById(id);
     if(el && el.parentElement!==document.body){ try{ document.body.appendChild(el); }catch(e){} }
   });
+  // University entry: a card next to VC (Video-Courses) in the Explore grid.
+  if(typeof renderExplore==='function'){
+    var _re=renderExplore;
+    renderExplore=function(){
+      var r=_re.apply(this,arguments);
+      try{
+        var grid=document.getElementById('explore-levels');
+        if(grid && !document.getElementById('uni-explore-card') && grid.children.length){
+          var sample=grid.children[grid.children.length-1];   // VC card (last)
+          var c=document.createElement('div');
+          c.id='uni-explore-card';
+          c.className=sample.className;                        // match card styling
+          c.style.cursor='pointer';
+          c.setAttribute('onclick',"location.href='/university.html'");
+          c.innerHTML='<div style="display:flex;align-items:center;gap:12px">'
+            +'<div style="font-size:2rem;line-height:1">🎓</div>'
+            +'<div><div style="font-weight:800;font-size:1.05rem">University</div>'
+            +'<div style="font-size:.78rem;color:var(--muted,#5b6475)">Preparazione esami linguistici · A1–B2</div></div>'
+            +'<div style="margin-left:auto;font-size:1.3rem;opacity:.5">›</div></div>';
+          grid.appendChild(c);
+        }
+      }catch(e){}
+      return r;
+    };
+  }
+  // Deep-link: /?go=cart opens the cart view (used by the University page).
+  try{ if(/[?&]go=cart(\b|=|&|$)/.test(location.search)){ setTimeout(function(){ try{ showView('cart'); }catch(e){} }, 350); } }catch(e){}
   // Pop-ups (grammar / disclaimer / payment): opening one adds a history entry
   // so the next back press closes the pop-up instead of leaving the app.
   ['openGrammarModal','openIntroModal','openPaymentModal'].forEach(function(nm){

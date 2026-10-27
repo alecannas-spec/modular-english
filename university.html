@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Modular English – University</title>
+<style>
+:root{--navy:#0b1f3a;--navy2:#13305a;--gold:#d4a73a;--bg:#f6f4ee;--card:#fff;--ink:#1c2433;--mut:#5d6778;--ok:#1d8a4e;--bad:#c0392b;--line:#e3dfd3}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1524;--card:#14213a;--ink:#e8ebf2;--mut:#9aa6bd;--line:#26365a}}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:28px 16px 18px}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+header .tag{display:inline-block;background:var(--gold);color:var(--navy);font:700 12px system-ui;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:99px}
+header h1{margin:10px 0 4px;font-size:28px}header p{margin:0;color:#c9d4ea;font:14px system-ui}
+nav.lv{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+nav.lv button,.tabs button{font:600 14px system-ui;border:1px solid var(--gold);background:transparent;color:#fff;padding:8px 18px;border-radius:99px;cursor:pointer}
+nav.lv button.on{background:var(--gold);color:var(--navy)}
+.tabs{display:flex;gap:6px;margin:18px 0 10px;flex-wrap:wrap}
+.tabs button{color:var(--ink);border-color:var(--line);background:var(--card)}.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+h2{font-size:21px;margin:18px 0 6px}h3{font-size:17px;margin:14px 0 6px;color:var(--navy2)}@media(prefers-color-scheme:dark){h3{color:var(--gold)}}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:10px 0}
+summary{cursor:pointer;padding:12px 16px;font:600 16px system-ui;list-style:none}
+summary::before{content:"▸ ";color:var(--gold)}details[open]>summary::before{content:"▾ "}
+.in{padding:4px 18px 16px}
+.dlg p{margin:4px 0}.dlg b{color:var(--navy2)}@media(prefers-color-scheme:dark){.dlg b{color:var(--gold)}}
+.chips span{display:inline-block;font:12px system-ui;background:#eef1f8;color:#23365e;padding:2px 9px;border-radius:99px;margin:2px 3px 2px 0}
+@media(prefers-color-scheme:dark){.chips span{background:#1f3158;color:#cdd8f3}}
+.chips .f{background:#fbf2d9;color:#6b4e00}.chips .l{background:#e3f3ea;color:#145c36}
+table{border-collapse:collapse;width:100%;font:13px system-ui}th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}th{background:var(--navy);color:#fff}
+.small{font:13px system-ui;color:var(--mut)}
+button.act{font:600 14px system-ui;background:var(--navy);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;margin:4px 6px 4px 0}
+button.act.g{background:var(--gold);color:var(--navy)}
+.q{margin:12px 0;padding:10px 0;border-top:1px dashed var(--line)}.q label{display:block;margin:3px 0;cursor:pointer;padding:3px 6px;border-radius:6px}
+.q.ok label.sel{background:rgba(29,138,78,.15)}.q.no label.sel{background:rgba(192,57,43,.15)}.q.no label.cor,.q.ok label.cor{outline:1px solid var(--ok)}
+.why{font:13px system-ui;color:var(--mut);margin-top:4px}
+#timer{position:sticky;top:0;background:var(--navy);color:#fff;font:700 15px system-ui;padding:8px 16px;text-align:right;z-index:5;border-radius:0 0 10px 10px}
+.score{font:700 22px system-ui}.pass{color:var(--ok)}.fail{color:var(--bad)}
+.ex li{margin:3px 0}.ans{display:none;color:var(--ok);font:13px system-ui}.showans .ans{display:inline}
+footer{padding:24px 16px;color:var(--mut);font:12px system-ui;text-align:center}
+</style></head><body>
+<header><div class="wrap"><span class="tag">University</span><h1>Preparazione agli esami di accreditamento linguistico</h1>
+<p>Inglese QCER A1 · A2 · B1 · B2 — moduli per situazioni e dialoghi, con simulazione d'esame (50 domande, 60 punti, soglia 36/60)</p>
+<nav class="lv" id="lv"></nav></div></header>
+<div class="wrap"><div class="tabs" id="tabs"></div><div id="view"></div></div>
+<footer>Modular English · okmodularenglish.com — Contenuti conformi ai programmi ufficiali dei livelli A1–B2</footer>
+<script>
+var WK="https://modular-english.ale-cannas.workers.dev";
+var DATA={"A1":{},"A2":{},"B1":{},"B2":{}};
+var UNI_PREVIEW={"A1": {"objectives": "Gli obiettivi del corso mirano a fornire agli studenti le competenze grammatico-lessicali di base a livello A1 del Quadro Comune di Riferimento Europeo. In particolare, in riferimento ai Descrittori di Dublino, alla fine del corso lo studente è in grado di comprendere e utilizzare espressioni familiari di uso quotidiano e formule molto comuni per soddisfare bisogni di tipo concreto. Sa presentare se stesso e altri, fare e rispondere a domande semplici su dati personali (dove abita, le persone che conosce, le cose che possiede) e interagire in modo semplice, purché l’interlocutore parli lentamente e chiaramente e sia disposto a collaborare. È in grado di produrre brevi testi molto semplici su argomenti familiari, quali compilare un modulo con i propri dati, scrivere una cartolina o un breve messaggio, descrivere la propria famiglia, la propria casa e le proprie abitudini quotidiane.", "prereq": "Nessuno (livello di ingresso)", "nsit": 12}, "A2": {"objectives": "Gli obiettivi del corso mirano fornire agli studenti le competenze grammatico-lessicali a livello A2 del Quadro Comune di Riferimento Europeo (link). In particolare, in riferimento ai Descrittori di Dublino, alla fine del corso lo studente è in grado di comprendere e scambiare informazioni date su argomenti generali, sulla famiglia e la routine (shopping, geografia, lavoro, viaggi). Sa descrivere con semplici termini gli aspetti del suo background, sull’ambiente circostante e su questioni giornaliere. È in grado di produrre un breve testo su argomenti semplici e familiari, quali illustrare la propria giornata tipica, descrivere persone o cose, prenotare una stanza in un albergo, parlare dei propri piani per il futuro, ecc.).", "prereq": "Livello A1 QCER", "nsit": 14}, "B1": {"objectives": "Gli obiettivi del corso B1 mirano a migliorare le competenze a livello grammatico-lessicale degli studenti a livello B1 del Quadro Comune di Riferimento Europeo (link). In particolare, in riferimento ai Descrittori di Dublino, alla fine del corso lo studente è in grado di comprendere i punti chiave di argomenti familiari che riguardano la scuola, il tempo libero, gli interessi personali, etc., di interagire in inglese con disinvoltura, senza errori e incomprensioni, in situazioni che possono verificarsi mentre viaggia nei paesi anglosassoni. È in grado di produrre un testo inglese semplice relativo ad argomenti che siano familiari o di interesse personale e di esprimere in inglese esperienze ed avvenimenti, progetti, speranze e ambizioni, e di spiegare semplicemente le ragioni delle proprie opinioni e desideri.", "prereq": "Livello A2 QCER", "nsit": 16}, "B2": {"objectives": "Gli obiettivi del corso B2 mirano a migliorare le competenze a livello grammatico-lessicale degli studenti a livello B2 del Quadro Comune di Riferimento Europeo (link). In particolare, in riferimento ai Descrittori di Dublino, alla fine del corso lo studente è in grado di comprendere le idee fondamentali di testi complessi su argomenti sia concreti sia astratti, di interagire con relativa scioltezza e spontaneità, senza eccessiva fatica e tensione anche nell’interazione con un parlante nativo. Sa produrre testi chiari e articolati su un’ampia gamma di argomenti ed esprimere un’opinione su un argomento d’attualità, esponendo i pro e i contro delle diverse opzioni.", "prereq": "Livello B1 QCER", "nsit": 18}};
+const LV=["A1","A2","B1","B2"];let cur="A1",tab="mod",showAns=false;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function lvNav(){ $("#lv").innerHTML=LV.map(l=>`<button class="${l==cur?'on':''}" onclick="setLv('${l}')">Livello ${l}</button>`).join("");
+ const t=[["mod","Modulo"],["map","Matrice di copertura"],["test","Simulazione esame"],["key","Soluzioni e script audio"]];
+ $("#tabs").innerHTML=t.map(([k,n])=>`<button class="${k==tab?'on':''}" onclick="setTab('${k}')">${n}</button>`).join("");}
+function setLv(l){cur=l;stopT();speechSynthesis.cancel();render()}function setTab(t){tab=t;render()}
+function render(){lvNav();const D=DATA[cur];$("#view").innerHTML=({mod:vMod,map:vMap,test:vTest,key:vKey})[tab](D);window.scrollTo(0,0)}
+function vMod(D){let h=`<div class="card"><h2>Modulo di formazione – Inglese Livello ${cur} QCER</h2><p>${esc(D.objectives)}</p><p class="small"><b>Prerequisito:</b> ${esc(D.prereq)} · <b>Metodologia:</b> corso online in auto-apprendimento · <b>${D.situations.length} situazioni</b></p><p class="small">Ogni situazione contiene dialoghi (con audio), Grammar focus, Key vocabulary, Functions ed esercizi.</p></div>`;
+ D.situations.forEach(s=>{h+=`<details><summary>Situation ${s.n} — ${esc(s.title)}</summary><div class="in"><p class="small">${esc(s.setting)} · ${s.speakers.map(esc).join(", ")}</p>`;
+ s.dialogues.forEach((d,i)=>{h+=`<h3>${esc(d.title)}</h3><button class="act g" onclick="say(${DATA_IDX(s.n,i)})">▶ Ascolta</button><button class="act" onclick="speechSynthesis.cancel()">■ Stop</button><div class="card dlg">${d.turns.map(t=>uniLine(t)).join("")}</div>
+ <h3>Grammar focus</h3><div class="chips">${d.grammar_items.map(x=>`<span class="f">${esc(x)}</span>`).join("")}</div><p>${esc(d.grammar.rule_it)}</p><ul>${d.grammar.examples.map(x=>`<li><i>${esc(x)}</i></li>`).join("")}${d.grammar.contrast.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+ <h3>Key vocabulary</h3><div class="chips">${d.vocab_areas.map(x=>`<span>${esc(x)}</span>`).join("")}</div><table><tr><th>English</th><th>Italiano</th><th>Tipo</th><th>Esempio</th></tr>${d.vocab.map(v=>`<tr><td><b>${esc(v.en)}</b></td><td>${esc(v.it)}</td><td>${esc(v.pos)}</td><td>${esc(v.ex)}</td></tr>`).join("")}</table>
+ <h3>Functions</h3>${d.functions.map(f=>`<p><span class="chips"><span class="l">${esc(f.name)}</span></span><br>${f.chunks.map(esc).join(" · ")}</p>`).join("")}`});
+ h+=`<h3>Esercizi</h3>${s.exercises.map((e,k)=>`<div class="card"><b>${k+1}. ${esc(e.instruction_it)}</b><ol class="ex">${e.items.map((it,j)=>`<li>${esc(it)} <span class="ans">→ ${esc((e.answers||[])[j]||"")}</span></li>`).join("")}</ol></div>`).join("")}<button class="act" onclick="document.body.classList.toggle('showans')">Mostra / nascondi soluzioni</button></div></details>`});
+ return h}
+let FLAT=[];function DATA_IDX(n,i){return FLAT.findIndex(x=>x.l==cur&&x.n==n&&x.i==i)}
+function buildFlat(){FLAT=[];for(const l of LV){if(DATA[l]&&DATA[l].situations)DATA[l].situations.forEach(s=>s.dialogues.forEach((d,i)=>FLAT.push({l,n:s.n,i,d})))}}
+const FEM=new Set("Anna Chiara Chloe Clara Dana Elena Ella Emma Fatima Fiona Giulia Grandma Hannah Helen Ines Ingrid Jane Julia Karen Kate Laura Lucia Lucy Maggie Maria Marta Maya Mia Nadia Nina Priya Rachel Rosa Sara Sarah Sofia Sophie Sue Yuki".split(" "));
+const MAL=new Set("Ben Callum Carlos Dan Daniel Danny Dave Davide Frank Giorgio Ivan Jack Joe Jon Julian Karim Kenji Kofi Luca Luke Marco Marcus Mario Mark Omar Paolo Paul Pete Raj Roberto Tom".split(" "));
+function gender(n){const w=n.split(" ");if(/^(Mrs|Ms)$/.test(w[0]))return"f";if(/^Mr$/.test(w[0]))return"m";const f=w[w.length-1];if(FEM.has(n)||FEM.has(w[0]))return"f";if(MAL.has(n)||MAL.has(w[0]))return"m";return"?"}
+const VF=/(female|samantha|serena|kate|martha|fiona|karen|moira|tessa|victoria|susan|hazel|libby|sonia|zira|google uk english female|allison|ava|joanna|kendra|kimberly|salli|amy|emma|nicole)/i,VM=/(\bmale\b|daniel|oliver|arthur|alex|fred|ryan|george|thomas|guy|david|mark|google uk english male|matthew|joey|justin|brian|russell)/i;
+function voiceMap(speakers){const all=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));const gb=all.filter(v=>/en-GB/i.test(v.lang));const pool=gb.length>=2?gb.concat(all.filter(v=>!/en-GB/i.test(v.lang))):all;
+ const F=pool.filter(v=>VF.test(v.name)&&!/\bmale\b/i.test(v.name.replace(/female/i,""))),M=pool.filter(v=>VM.test(v.name)&&!VF.test(v.name)),O=pool.filter(v=>!F.includes(v)&&!M.includes(v));
+ const used=new Set(),map={};let last="";
+ speakers.forEach((s,i)=>{let g=gender(s);if(g=="?")g=last=="f"?"m":"f";last=g;
+  const order=g=="f"?[F,O,M]:[M,O,F];let v=null;
+  for(const L of order){v=L.find(x=>!used.has(x.name));if(v)break}
+  let pitch=1,rate=1;
+  if(!v){v=(order[0][0]||pool[0]||null);const n=Object.values(map).filter(m=>m.v===v).length;pitch=g=="f"?1.08+n*.06:0.92-n*.05}
+  else if(!VF.test(v.name)&&!VM.test(v.name)){pitch=g=="f"?1.1:0.9}
+  if(v)used.add(v.name);map[s]={v,pitch,rate}});return map}
+function say(k){const f=FLAT[k];if(!f)return;speechSynthesis.cancel();const sp=[...new Set(f.d.turns.map(t=>t.s))];const vm=voiceMap(sp);
+ f.d.turns.forEach(t=>{const u=new SpeechSynthesisUtterance(t.t);u.lang="en-GB";const m=vm[t.s];if(m.v)u.voice=m.v;u.pitch=m.pitch;u.rate=(f.l=="A1"?.8:f.l=="A2"?.88:.95);speechSynthesis.speak(u)})}
+function vMap(D){const m=D.matrix;let h=`<div class="card"><h2>Coverage Matrix – Livello ${cur}</h2><p class="small">Ogni voce del programma ufficiale con le situazioni in cui viene insegnata.</p></div>`;
+ [["Grammatica","grammar"],["Lessico e terminologia specifica","vocab"],["Contenuti specifici","funcs"]].forEach(([n,k])=>{h+=`<h3>${n}</h3><table><tr><th>Voce del programma</th><th>Situazioni</th></tr>${Object.entries(m[k]).map(([a,b])=>`<tr><td>${esc(a)}</td><td>${b.join(", ")}</td></tr>`).join("")}</table>`});return h}
+let T=null,tm=null;function stopT(){clearInterval(tm);tm=null}
+function secs(D){return[["listening","Ascolto",2],["reading","Lettura",2],["verbi","Verbi",1],["lessico","Lessico",1],["sintassi","Sintassi",1],["morfologia","Morfologia",1]]}
+function qs(D,k){return k=="listening"||k=="reading"?D.test[k].questions:D.test[k]}
+function vTest(D){const t=D.test;let n=0;let h=`<div class="card"><h2>Simulazione esame – Livello ${cur}</h2><p>50 domande · 35 minuti · 60 punti · soglia di superamento <b>36/60</b>. Risposta errata o mancante = 0 punti.</p>
+<p class="small">Ascolto 5×2 · Lettura 5×2 · Verbi 10×1 · Lessico 10×1 · Sintassi 10×1 · Morfologia 10×1</p><button class="act g" onclick="startT()">Avvia la simulazione</button><button class="act" onclick="resetT()">Azzera</button></div><div id="timer">35:00</div><form id="tf">`;
+ secs().forEach(([k,name,p])=>{h+=`<h2>${name} <span class="small">(${p} ${p>1?"punti":"punto"} per risposta)</span></h2>`;
+  if(k=="listening")h+=`<div class="card"><b>${esc(t.listening.title)}</b><p class="small">${esc(t.listening.speed_note_it)}</p><button type="button" class="act g" onclick="playL()">▶ Ascolta il brano</button><button type="button" class="act" onclick="speechSynthesis.cancel()">■ Stop</button><p class="small">Il testo non è visibile durante la prova (vedi “Soluzioni e script audio”).</p></div>`;
+  if(k=="reading")h+=`<div class="card"><b>${esc(t.reading.title)}</b>${t.reading.text.split(/\n+/).map(p=>`<p>${esc(p)}</p>`).join("")}</div>`;
+  qs(D,k).forEach((q,i)=>{n++;h+=`<div class="q" id="q${k}${i}"><b>${n}.</b> ${esc(q.q)}${q.options.map((o,j)=>`<label><input type="radio" name="${k}${i}" value="${j}"> ${"ABCD"[j]}. ${esc(o)}</label>`).join("")}<div class="why" style="display:none"></div></div>`})});
+ h+=`</form><button class="act g" onclick="grade()">Consegna e correggi</button><div class="card" id="res" style="display:none"></div>`;return h}
+function playL(){const D=DATA[cur];speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(D.test.listening.script.replace(/\n+/g," "));u.lang="en-GB";u.rate=cur=="A1"?.8:cur=="A2"?.88:cur=="B1"?.95:1;const v=speechSynthesis.getVoices().find(v=>/en-GB/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u)}
+function startT(){let s=35*60;stopT();tm=setInterval(()=>{s--;const m=Math.floor(s/60),r=s%60;$("#timer").textContent=m+":"+String(r).padStart(2,"0");if(s<=0){stopT();grade()}},1000)}
+function resetT(){stopT();render()}
+function grade(){stopT();const D=DATA[cur];let tot=0;const parts=[];secs().forEach(([k,name,p])=>{let ok=0;qs(D,k).forEach((q,i)=>{const sel=document.querySelector(`input[name="${k}${i}"]:checked`);const el=$("#q"+k+i);const good=sel&&+sel.value==q.answer;if(good)ok++;el.classList.add(good?"ok":"no");el.querySelectorAll("label").forEach((l,j)=>{if(sel&&+sel.value==j)l.classList.add("sel");if(j==q.answer)l.classList.add("cor")});const w=el.querySelector(".why");w.style.display="block";w.textContent=(good?"✔ ":"✘ ")+(q.why_it||"")});parts.push([name,ok,qs(D,k).length,ok*p,qs(D,k).length*p]);tot+=ok*p});
+ const r=$("#res");r.style.display="block";r.innerHTML=`<div class="score ${tot>=36?'pass':'fail'}">${tot}/60 — ${tot>=36?"Superato: accesso all'orale":"Non superato (soglia 36/60)"}</div><table><tr><th>Sezione</th><th>Corrette</th><th>Punti</th></tr>${parts.map(p=>`<tr><td>${p[0]}</td><td>${p[1]}/${p[2]}</td><td>${p[3]}/${p[4]}</td></tr>`).join("")}</table>`;r.scrollIntoView({behavior:"smooth"})}
+function vKey(D){const t=D.test;let h=`<div class="card"><h2>Script audio (Appendice A)</h2><p class="small">${t.listening.script.split(/\s+/).length} parole</p>${t.listening.script.split(/\n+/).map(p=>`<p>${esc(p)}</p>`).join("")}</div><h2>Chiave delle risposte (Appendice B)</h2><table><tr><th>#</th><th>Sezione</th><th>Risposta</th><th>Spiegazione</th></tr>`;let n=0;
+ secs().forEach(([k,name])=>qs(D,k).forEach(q=>{n++;h+=`<tr><td>${n}</td><td>${name}</td><td>${"ABCD"[q.answer]}</td><td>${esc(q.why_it||"")}</td></tr>`}));return h+"</table>"}
+speechSynthesis.onvoiceschanged=()=>{};
+</script><style>
+.uline{border-top:1px solid var(--line);padding:9px 0}
+.uline:first-child{border-top:0}
+.uline .uen{margin:0 0 5px}
+.uctrl{display:flex;gap:6px;flex-wrap:wrap}
+.uico{font:600 12px system-ui;background:var(--card);color:var(--navy2);border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}
+.uico:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.uico.rec{background:#c0392b;color:#fff;border-color:#c0392b}
+@media(prefers-color-scheme:dark){.uico{color:var(--gold)}}
+.uit{margin:6px 0 2px;color:var(--mut);font-style:italic}
+.uwrite,.urec{margin:6px 0}
+.uw-in{font:14px system-ui;padding:6px 10px;border:1px solid var(--line);border-radius:8px;width:60%;min-width:170px;max-width:420px;background:var(--card);color:var(--ink)}
+.uw-res{font:700 13px system-ui;margin-left:8px}
+.uw-brk{margin-top:6px;line-height:1.9}
+.uwword{font:600 13px system-ui;padding:1px 6px;border-radius:6px;margin:0 2px 2px 0;display:inline-block}
+.uwword.ok{background:rgba(39,174,96,.15);color:var(--ok)}
+.uwword.no{background:rgba(192,57,43,.15);color:var(--bad);text-decoration:line-through}
+.uw-score{font:800 13px system-ui;margin-top:4px}
+.uw-bar{height:7px;border-radius:5px;background:var(--line);overflow:hidden;margin:4px 0;max-width:260px}
+.uw-bar>i{display:block;height:100%;border-radius:5px}
+.urec .heard{font:13px system-ui;color:var(--mut);margin-top:3px}
+</style>
+<script>
+/* University dialogue line — mirrors the main app:
+   🔊 Ascolta (coach reads the line) · 🎤 Ripeti (mic: the student repeats) ·
+   ✍️ Scrivi (type & check) · 🇮🇹 Traduci (show the Italian). */
+function uniLine(t){
+  return '<div class="uline">'
+    + '<p class="uen"><b>'+esc(t.s)+':</b> <span class="uen-t">'+esc(t.t)+'</span></p>'
+    + '<div class="uctrl">'
+      + '<button class="uico" type="button" onclick="uniAscolta(this)">🔊 Ascolta</button>'
+      + '<button class="uico" type="button" onclick="uniRipeti(this)">🎤 Ripeti</button>'
+      + '<button class="uico" type="button" onclick="uniScrivi(this)">✍️ Scrivi</button>'
+      + '<button class="uico" type="button" onclick="uniTraduci(this)">🇮🇹 Traduci</button>'
+    + '</div>'
+    + '<div class="uit" style="display:none">'+esc(t.it||'')+'</div>'
+    + '<div class="uwrite" style="display:none"></div>'
+    + '<div class="urec" style="display:none"></div>'
+  + '</div>';
+}
+function uniLineText(btn){ var l=btn.closest('.uline'); var e=l&&l.querySelector('.uen-t'); return e?e.textContent:''; }
+function uniRate(){ return (typeof cur!=='undefined' && cur=='A1')?0.8:(cur=='A2'?0.85:0.9); }
+function uniSpeakText(txt,lang,rate){ try{ speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(txt); u.lang=lang||'en-GB'; u.rate=rate||0.9; speechSynthesis.speak(u); }catch(e){} }
+
+function uniAscolta(btn){ var txt=uniLineText(btn); if(!txt)return; uniSpeakText(txt,'en-GB',uniRate()); var o=btn.innerHTML; btn.innerHTML='🔊 …'; setTimeout(function(){ btn.innerHTML=o; }, 1200); }
+
+function uniTraduci(btn){ var l=btn.closest('.uline'); var it=l.querySelector('.uit'); var show=(it.style.display==='none'); it.style.display=show?'block':'none'; btn.innerHTML=show?'🇮🇹 Nascondi':'🇮🇹 Traduci'; }
+
+function uniScrivi(btn){
+  var l=btn.closest('.uline'); var w=l.querySelector('.uwrite');
+  if(w.style.display!=='none'){ w.style.display='none'; return; }
+  w.style.display='block';
+  if(!w.getAttribute('data-b')){ w.innerHTML='<input class="uw-in" placeholder="Scrivi la frase in inglese…" autocomplete="off" spellcheck="false"><button class="uico" type="button" onclick="uniScriviCheck(this)">Controlla</button><div class="uw-brk" style="display:none"></div>'; w.setAttribute('data-b','1'); var inp=w.querySelector('.uw-in'); inp.addEventListener('keydown',function(ev){ if(ev.key==='Enter') uniScriviCheck(w.querySelector('button')); }); inp.focus(); }
+}
+function uniNorm(s){ return (s||'').toLowerCase().replace(/[^a-z0-9'\s]/g,'').replace(/\s+/g,' ').trim(); }
+function uniSim(a,b){ a=uniNorm(a).split(' ').filter(Boolean); b=uniNorm(b).split(' ').filter(Boolean); if(!a.length||!b.length)return 0; var setB={}; b.forEach(function(w){setB[w]=1;}); var hit=0; a.forEach(function(w){ if(setB[w]){hit++;} }); return hit/Math.max(a.length,b.length); }
+/* Word-by-word scoring — aligns each target word to what was typed/heard (order-independent) and colours it. */
+function uniWordScore(got,want){
+  var g=uniNorm(got).split(' ').filter(Boolean);
+  var pool={}; g.forEach(function(x){ pool[x]=(pool[x]||0)+1; });
+  var words=(want||'').trim().split(/\s+/).filter(Boolean);
+  var hits=0; var chips=words.map(function(raw){
+    var k=uniNorm(raw); var ok=k&&pool[k]>0; if(ok){ pool[k]--; hits++; }
+    return '<span class="uwword '+(ok?'ok':'no')+'">'+esc(raw)+'</span>';
+  }).join('');
+  var total=words.length||1; var pct=Math.round(hits/total*100);
+  return { chips:chips, hits:hits, total:words.length, pct:pct };
+}
+function uniScoreHTML(sc){
+  var col = sc.pct>=80?'var(--ok)':(sc.pct>=50?'#c77d00':'var(--bad)');
+  var verdict = sc.pct===100?'✓ Perfetto!':(sc.pct>=80?'✓ Ottimo':(sc.pct>=50?'Quasi — correggi le parole in rosso':'✗ Riprova'));
+  return '<div>'+sc.chips+'</div>'
+       + '<div class="uw-bar"><i style="width:'+sc.pct+'%;background:'+col+'"></i></div>'
+       + '<div class="uw-score" style="color:'+col+'">'+verdict+' · '+sc.hits+'/'+sc.total+' parole · '+sc.pct+'%</div>';
+}
+function uniScriviCheck(btn){ var w=btn.closest('.uwrite'); var l=btn.closest('.uline'); var want=l.querySelector('.uen-t').textContent; var got=w.querySelector('.uw-in').value; var brk=w.querySelector('.uw-brk');
+  var sc=uniWordScore(got,want); brk.style.display='block'; brk.innerHTML=uniScoreHTML(sc);
+}
+
+function uniRipeti(btn){
+  var l=btn.closest('.uline'); var want=l.querySelector('.uen-t').textContent; var box=l.querySelector('.urec');
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  box.style.display='block';
+  if(!SR){ box.innerHTML='<span class="uw-res" style="color:var(--mut)">Il microfono non è supportato da questo browser. Prova con Chrome (Android o computer).</span>'; return; }
+  if(btn.classList.contains('rec')){ try{ if(window._uniRec) window._uniRec.stop(); }catch(e){} btn.classList.remove('rec'); btn.innerHTML='🎤 Ripeti'; return; }
+  try{ speechSynthesis.cancel(); }catch(e){}
+  btn.classList.add('rec'); btn.innerHTML='■ Stop';
+  box.innerHTML='<span class="uw-res" style="color:var(--navy2)">🎤 Parla adesso…</span>';
+  var r=new SR(); window._uniRec=r; r.lang='en-GB'; r.interimResults=false; r.continuous=false; r.maxAlternatives=3;
+  var done=false;
+  r.onresult=function(ev){ done=true; var alts=[]; var res0=ev.results[0]; for(var i=0;i<res0.length;i++) alts.push(res0[i].transcript);
+    var best=alts[0]||''; var sc=uniWordScore(best,want);
+    alts.forEach(function(a){ var s=uniWordScore(a,want); if(s.pct>sc.pct){ sc=s; best=a; } });
+    box.innerHTML='<div class="uw-brk" style="display:block">'+uniScoreHTML(sc)+'</div><div class="heard">Ho sentito: “'+esc(best)+'”</div>';
+  };
+  r.onerror=function(e){ box.innerHTML='<span class="uw-res" style="color:var(--bad)">Microfono non disponibile'+(e&&e.error?(' ('+e.error+')'):'')+'.</span>'; };
+  r.onend=function(){ btn.classList.remove('rec'); btn.innerHTML='🎤 Ripeti'; if(!done && box.innerHTML.indexOf('Parla')>=0){ box.innerHTML='<span class="uw-res" style="color:var(--mut)">Non ho sentito nulla. Riprova.</span>'; } };
+  try{ r.start(); }catch(e){ btn.classList.remove('rec'); btn.innerHTML='🎤 Ripeti'; box.innerHTML='<span class="uw-res" style="color:var(--bad)">Impossibile avviare il microfono.</span>'; }
+}
+</script>
+<script>
+/* ── University · server-gated access ──────────────────────────────────────
+   Paid content lives in the worker (KV, module:uni-<LVL>-<tab>) and is fetched
+   only when the signed token proves purchase. The page ships with no paid text.
+   Items ride the same cart as the main app; checkout/unlock use the existing
+   PayPal + token flow. ─────────────────────────────────────────────────────── */
+(function(){
+  var MOD_PRICE = { A1:200.40, A2:292.08, B1:369.96, B2:527.10 };
+  var FIX = { map:20.99, test:49.99, key:20.99 };
+  var TAB_NAME = { mod:'Modulo', map:'Matrice di copertura', test:'Simulazione esame', key:'Soluzioni e script audio' };
+  var NEED = { mod:['situations'], map:['matrix','test'], test:['test'], key:['test'] };
+
+  function priceOf(l,t){ return t==='mod' ? MOD_PRICE[l] : FIX[t]; }
+  function levelTotal(l){ return +( MOD_PRICE[l]+FIX.map+FIX.test+FIX.key ).toFixed(2); }
+  function pid(l,t){ return 'uni-'+l+'-'+t; }
+  function allId(l){ return 'uni-'+l+'-all'; }
+  function eur(n){ return '€'+Number(n).toFixed(2); }
+
+  function getTok(){ try{ return localStorage.getItem('me_entry') || sessionStorage.getItem('me_entry') || ''; }catch(e){ return ''; } }
+  function purchased(){
+    var out=[];
+    try{ var t=getTok(); if(t){ var p=JSON.parse(atob(t.split('.')[0])); if(Array.isArray(p.purchased)) out=out.concat(p.purchased); if(p.admin) out.push('__admin__'); } }catch(e){}
+    try{ var ls=JSON.parse(localStorage.getItem('purchased')||'[]'); if(Array.isArray(ls)) out=out.concat(ls); }catch(e){}
+    return out;
+  }
+  function ownedId(id){ var P=purchased(); if(P.indexOf('__admin__')>=0) return true; var m=id.match(/^uni-(A1|A2|B1|B2)-/); return P.indexOf(id)>=0 || (m && P.indexOf('uni-'+m[1]+'-all')>=0); }
+  function unlocked(l,t){ return ownedId(pid(l,t)); }
+
+  function getCart(){ try{ return JSON.parse(localStorage.getItem('cart')||'[]'); }catch(e){ return []; } }
+  function setCart(c){ try{ localStorage.setItem('cart', JSON.stringify(c)); }catch(e){} syncBadge(); }
+  function inCart(id){ return getCart().some(function(x){ return x.id===id; }); }
+
+  function toast(m){
+    var d=document.getElementById('uni-toast');
+    if(!d){ d=document.createElement('div'); d.id='uni-toast';
+      d.style.cssText='position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#0b1f3a;color:#fff;padding:10px 16px;border-radius:10px;font:600 14px system-ui;z-index:99999;box-shadow:0 6px 20px rgba(0,0,0,.3);transition:opacity .3s;opacity:0';
+      document.body.appendChild(d); }
+    d.textContent=m; d.style.opacity='1'; clearTimeout(d._t); d._t=setTimeout(function(){ d.style.opacity='0'; }, 1800);
+  }
+
+  function addItem(id,title,price){
+    if(ownedId(id)){ toast('Già acquistato'); return; }
+    var c=getCart();
+    if(c.some(function(x){ return x.id===id; })){ toast('Già nel carrello'); render(); return; }
+    var m=id.match(/^uni-(A1|A2|B1|B2)-(all|mod|map|test|key)$/);
+    if(m){ var l=m[1], kind=m[2];
+      if(kind==='all'){ c=c.filter(function(x){ return x.id.indexOf('uni-'+l+'-')!==0; }); }
+      else if(c.some(function(x){ return x.id==='uni-'+l+'-all'; })){ toast('Già incluso nel livello completo'); return; }
+    }
+    c.push({ id:id, title:title, icon:'🎓', levelCode:'UNI', price:+Number(price).toFixed(2) });
+    setCart(c); toast('Aggiunto al carrello'); render();
+  }
+  window.__uniAdd = addItem;
+
+  function syncBadge(){ var b=document.getElementById('uni-cart-btn'); if(b){ var n=getCart().length; b.textContent='🛒 Carrello'+(n?(' ('+n+')'):''); } }
+  function mountCartBtn(){
+    var wrap=document.querySelector('header .wrap'); if(!wrap || document.getElementById('uni-cart-btn')) return;
+    var a=document.createElement('a'); a.id='uni-cart-btn'; a.href='/?go=cart';
+    a.style.cssText='display:inline-block;margin-top:12px;margin-left:8px;background:var(--gold);color:var(--navy);font:700 13px system-ui;padding:8px 14px;border-radius:99px;text-decoration:none';
+    wrap.appendChild(a); syncBadge();
+  }
+
+  function buyBtn(id,label,price,gold){
+    var inC=inCart(id), owned=ownedId(id);
+    var txt = owned ? '✓ Acquistato' : (inC ? '✓ Nel carrello' : (label+' · '+eur(price)));
+    var extra = owned ? 'opacity:.6;cursor:default' : 'cursor:pointer';
+    var bg = gold ? 'background:var(--gold);color:var(--navy)' : 'background:var(--navy);color:#fff';
+    return '<button '+(owned?'disabled ':'')+'onclick="__uniAdd(\''+id+'\',\''+label.replace(/'/g,"\\'")+'\','+price+')" style="font:700 14px system-ui;'+bg+';border:0;border-radius:10px;padding:10px 16px;margin:6px 8px 0 0;'+extra+'">'+txt+'</button>';
+  }
+  function paywall(l,t){
+    var p=priceOf(l,t), tot=levelTotal(l);
+    return '<div class="card" style="text-align:center">'
+      + '<div style="font:700 12px system-ui;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)">Contenuto riservato</div>'
+      + '<h2 style="margin:8px 0">'+TAB_NAME[t]+' — Livello '+l+'</h2>'
+      + '<p class="small">Acquista per sbloccare questo contenuto.</p>'
+      + '<div>'+buyBtn(pid(l,t),'University '+l+' — '+TAB_NAME[t],p,false)+'</div>'
+      + '<hr style="border:0;border-top:1px solid var(--line);margin:16px 0">'
+      + '<p class="small">Oppure sblocca <b>tutto il Livello '+l+'</b> — Modulo + Matrice + Simulazione + Soluzioni:</p>'
+      + '<div>'+buyBtn(allId(l),'University '+l+' — Livello completo',tot,true)+'</div>'
+      + '<p class="small" style="margin-top:14px"><a href="/?go=cart" style="color:var(--navy2)">Vai al carrello per completare l\'acquisto →</a></p>'
+      + '</div>';
+  }
+  function previewCard(l){
+    var P=(typeof UNI_PREVIEW!=='undefined' && UNI_PREVIEW[l]) || {};
+    return '<div class="card"><h2>Modulo di formazione – Inglese Livello '+l+' QCER</h2>'
+      + '<p>'+esc(P.objectives||'')+'</p>'
+      + '<p class="small"><b>Prerequisito:</b> '+esc(P.prereq||'')+' · <b>'+(P.nsit||'')+' situazioni</b> con dialoghi, audio ed esercizi. <b>Anteprima gratuita.</b></p></div>';
+  }
+
+  function haveData(l,t){ return NEED[t].every(function(k){ return DATA[l] && DATA[l][k]; }); }
+  function ensureData(l,t){
+    if(haveData(l,t)) return Promise.resolve(true);
+    var tok=getTok(); if(!tok) return Promise.resolve(false);
+    return fetch(WK+'/content/'+pid(l,t), { headers:{ 'Authorization':'Bearer '+tok } })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){ if(d && d.ok && d.module){ DATA[l]=Object.assign(DATA[l]||{}, d.module); try{ buildFlat(); }catch(e){} return true; } return false; })
+      .catch(function(){ return false; });
+  }
+
+  var VIEWS = { mod:vMod, map:vMap, test:vTest, key:vKey };
+  function newRender(){
+    lvNav();
+    var view=document.getElementById('view'); if(!view) return;
+    try{ if(typeof stopT==='function') stopT(); }catch(e){}
+    if(!unlocked(cur,tab)){
+      view.innerHTML = (tab==='mod'? previewCard(cur) : '') + paywall(cur,tab);
+      syncBadge(); window.scrollTo(0,0); return;
+    }
+    view.innerHTML = '<div class="card"><p class="small">Caricamento del contenuto…</p></div>';
+    var l=cur, t=tab;
+    ensureData(l,t).then(function(ok){
+      if(l!==cur || t!==tab) return;          // user navigated away
+      if(!ok){ view.innerHTML = paywall(l,t) + '<p class="small" style="text-align:center">Se hai già acquistato, apri prima l\'app principale per sincronizzare l\'accesso.</p>'; return; }
+      try{ view.innerHTML = VIEWS[t](DATA[l]); }catch(e){ view.innerHTML='<div class="card">Errore nel caricamento.</div>'; }
+      syncBadge(); window.scrollTo(0,0);
+    });
+  }
+  render = newRender;   // override the page's renderer
+
+  mountCartBtn();
+  render();
+})();
+</script>
+
+</body></html>
