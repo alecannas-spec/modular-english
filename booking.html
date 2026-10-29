@@ -642,6 +642,7 @@ function showScreen(id){
   flag.style.display = ['screen-pin','screen-teacherpw','screen-calendar','screen-customer'].includes(id) ? 'block' : 'none';
   if(id==='screen-calendar') renderCalendar();
   if(id==='screen-admin') renderAdmin();
+  var hb=document.getElementById('me-home-back'); if(hb) hb.style.display=(id==='screen-pin')?'inline-flex':'none';
 }
 
 // ============================================================
@@ -1803,17 +1804,24 @@ updatePinDots();
 document.getElementById('flagBg').style.display='block';
 
 // ---- Admin pass-through from the Modular English main site ----
-// If the visitor already unlocked admin on okmodularenglish.com (token in the
-// me_token cookie carries admin:true), open the dashboard with no PIN.
+// Stay on the access page; if the visitor already unlocked admin on
+// okmodularenglish.com (me_token cookie carries admin:true), show a one-tap
+// "Dashboard admin" button so no PIN/password is needed.
 (function(){
   function getCk(n){ try{ var m=document.cookie.match(new RegExp('(?:^|;\\s*)'+n+'=([^;]+)')); return m?decodeURIComponent(m[1]):''; }catch(e){ return ''; } }
   function decodeTok(t){ try{ return JSON.parse(atob(String(t).split('.')[0])); }catch(e){ return null; } }
   try{
     var p = decodeTok(getCk('me_token'));
     if(p && p.admin===true && (!p.expires || Date.now()<p.expires)){
-      isTeacherLoggedIn=true;
-      calendarMode='teacher';
-      showScreen('screen-admin');
+      var host=document.getElementById('btn-prenota');
+      if(host && !document.getElementById('btn-admin-dash')){
+        var a=document.createElement('button');
+        a.id='btn-admin-dash';
+        a.textContent='⚙️ Dashboard admin';
+        a.style.cssText='width:100%;padding:13px;font-size:15px;font-weight:700;background:#1c1c1c;color:#F5C518;border:1px solid #F5C518;border-radius:12px;cursor:pointer;margin-bottom:18px;';
+        a.onclick=function(){ isTeacherLoggedIn=true; calendarMode='teacher'; showScreen('screen-admin'); };
+        host.insertAdjacentElement('afterend', a);
+      }
     }
   }catch(e){}
 })();
