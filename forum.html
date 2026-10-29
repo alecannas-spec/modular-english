@@ -50,7 +50,7 @@
 <header><div class="wrap">
   <a class="back" href="/">← Indietro</a>
   <h1>💬 Forum</h1>
-  <p>Fai domande e interagisci. Ogni messaggio è approvato prima di essere pubblicato.</p>
+  <p>Fai domande e interagisci con la community. I messaggi sono pubblicati subito — rispetta il codice di condotta.</p>
 </div></header>
 
 <main class="wrap">
@@ -70,15 +70,16 @@
     var j=null; try{ j=await r.json(); }catch(e){} return { status:r.status, j:j||{} };
   }
   var root = document.getElementById('forum-root');
-  var STATE = { isAdmin:false, myNick:null, posts:[] };
+  var STATE = { isAdmin:false, myNick:null, posts:[], banned:[] };
 
   async function load(){
     var r = await api('/forum/feed', null, 'GET');
     if(r.status!==200 || !r.j.ok){
       if(r.status===401){ root.innerHTML='<div class="card">Accedi con il tuo account per vedere il forum.</div>'; return; }
+      if(r.status===403 && r.j.error==='banned'){ root.innerHTML='<div class="card" style="border-color:var(--bad)"><b style="color:var(--bad)">Sei stato bloccato dal forum</b><p style="color:var(--mut);margin-top:6px">Il tuo accesso al forum è stato sospeso per violazione del codice di condotta. Per informazioni scrivi a <a href="mailto:support@gilo-international.com">support@gilo-international.com</a>.</p></div>'; return; }
       root.innerHTML='<div class="card">Impossibile caricare il forum.</div>'; return;
     }
-    STATE.isAdmin=!!r.j.isAdmin; STATE.myNick=r.j.myNick||null; STATE.posts=r.j.posts||[]; STATE.pending=r.j.pending||0;
+    STATE.isAdmin=!!r.j.isAdmin; STATE.myNick=r.j.myNick||null; STATE.posts=r.j.posts||[]; STATE.banned=r.j.banned||[];
     render();
   }
 
@@ -90,15 +91,13 @@
   }
 
   function postHTML(p, depth){
-    var canReply = (p.status==='approved') || STATE.isAdmin;
     var h='<div class="post" style="margin-left:'+Math.min(depth,6)*14+'px">'
-      + '<div class="meta"><b>'+esc(p.nick)+'</b>'+(p.staff?'<span class="staff">Staff</span>':'')
-      + ' · '+when(p.createdAt)+(p.status!=='approved'?'<span class="pend">'+(p.status==='rejected'?'Rifiutato':'In attesa')+'</span>':'')+'</div>'
+      + '<div class="meta"><b>'+esc(p.nick)+'</b>'+(p.staff?'<span class="staff">Staff</span>':'')+' · '+when(p.createdAt)+'</div>'
       + '<div class="txt">'+esc(p.text)+'</div>'
       + '<div class="act">'
-      + (canReply?'<button class="btn ghost sm" onclick="FORUM.reply(\''+p.id+'\')">Rispondi</button>':'')
-      + (STATE.isAdmin && p.status==='pending'?'<button class="btn gold sm" onclick="FORUM.mod(\''+p.id+'\',\'approve\')">Approva</button><button class="btn ghost sm" onclick="FORUM.mod(\''+p.id+'\',\'reject\')">Rifiuta</button>':'')
+      + '<button class="btn ghost sm" onclick="FORUM.reply(\''+p.id+'\')">Rispondi</button>'
       + ((p.mine || STATE.isAdmin)?'<button class="btn ghost sm" style="color:var(--bad)" onclick="FORUM.del(\''+p.id+'\')">Elimina</button>':'')
+      + ((STATE.isAdmin && !p.staff && p.email)?'<button class="btn ghost sm" style="color:var(--bad)" onclick="FORUM.ban(\''+p.id+'\',\''+esc(p.nick)+'\')">Blocca utente</button>':'')
       + '</div>'
       + '<div id="reply-'+p.id+'"></div>';
     p._kids.sort(function(a,b){ return a.createdAt-b.createdAt; });
@@ -106,10 +105,28 @@
     return h+'</div>';
   }
 
+  function conductHTML(){
+    return '<details class="card" style="border-color:var(--gold)"><summary style="cursor:pointer;font:800 15px system-ui;color:var(--navy2)">📜 Codice di condotta</summary>'
+      + '<div style="font-size:.92rem;margin-top:8px;color:var(--ink)">'
+      + '<p>Questo è uno spazio per imparare insieme, con rispetto. Partecipando accetti queste regole:</p>'
+      + '<ul style="padding-left:18px">'
+      + '<li>Niente linguaggio volgare, offensivo, abusivo, discriminatorio o d\'odio, in nessuna lingua.</li>'
+      + '<li>Niente molestie, minacce, insulti personali o incitamento all\'odio.</li>'
+      + '<li>Niente spam, pubblicità, truffe o link dannosi.</li>'
+      + '<li>Niente dati personali o riservati (tuoi o altrui).</li>'
+      + '<li>Rispetta gli altri utenti e lo staff.</li>'
+      + '</ul>'
+      + '<p style="font-weight:700;color:var(--bad)">Un filtro automatico blocca il linguaggio inappropriato. Chi non rispetta il codice di condotta può essere <b>bloccato dal forum</b> in via definitiva, a insindacabile giudizio dello staff.</p>'
+      + '</div></details>';
+  }
+
   function render(){
     var h='';
-    // admin pending banner
-    if(STATE.isAdmin && STATE.pending){ h+='<div class="banner">🛠️ '+STATE.pending+' messaggio/i in attesa di approvazione.</div>'; }
+    h+=conductHTML();
+    // admin: banned-users panel
+    if(STATE.isAdmin && STATE.banned && STATE.banned.length){
+      h+='<div class="banner">🚫 Utenti bloccati: '+STATE.banned.map(function(e){ return esc(e)+' <button class="btn ghost sm" onclick="FORUM.unban(\''+e.replace(/'/g,"")+'\')">Sblocca</button>'; }).join(' · ')+'</div>';
+    }
     // nickname setup
     if(!STATE.isAdmin && !STATE.myNick){
       h+='<div class="card"><b>Scegli un nickname</b><p style="color:var(--mut);font-size:.9rem;margin:4px 0 10px">Serve un nickname per partecipare al forum. Sarà visibile agli altri utenti.</p>'
@@ -119,7 +136,7 @@
       // composer
       h+='<div class="card"><textarea id="new-text" maxlength="2000" placeholder="Scrivi un messaggio…"></textarea>'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:10px">'
-        +'<span style="color:var(--mut);font-size:.82rem">'+(STATE.isAdmin?'Pubblichi come <b>Staff</b> (subito visibile).':'Visibile dopo l\'approvazione · come <b>'+esc(STATE.myNick)+'</b>')+'</span>'
+        +'<span style="color:var(--mut);font-size:.82rem">'+(STATE.isAdmin?'Pubblichi come <b>Staff</b>.':'Pubblicato subito · come <b>'+esc(STATE.myNick)+'</b>')+'</span>'
         +'<button class="btn gold" onclick="FORUM.post(null,\'new-text\')">Pubblica</button></div>'
         +'<div id="new-msg" class="msg"></div></div>';
     }
@@ -136,7 +153,7 @@
       if(nick.length<3){ m.className='msg err'; m.textContent='Il nickname deve avere almeno 3 caratteri.'; return; }
       var r=await api('/forum/nick',{nick:nick});
       if(r.status===200&&r.j.ok){ STATE.myNick=r.j.nick; render(); }
-      else { m.className='msg err'; m.textContent = r.j.error==='taken'?'Nickname già in uso.':'Nickname non valido (3-20 caratteri).'; }
+      else { m.className='msg err'; m.textContent = r.j.error==='banned'?'Sei stato bloccato dal forum.':(r.j.error==='taken'?'Nickname già in uso o non consentito.':'Nickname non valido (3-20 caratteri).'); }
     },
     async post(parent, areaId){
       var el=document.getElementById(areaId); var text=(el.value||'').trim();
@@ -144,7 +161,11 @@
       if(!text){ if(m){m.className='msg err';m.textContent='Scrivi un messaggio.';} return; }
       var r=await api('/forum/post',{text:text, parent:parent||undefined});
       if(r.status===200&&r.j.ok){ await load(); }
-      else if(m){ m.className='msg err'; m.textContent = r.j.error==='toomany'?'Troppi messaggi, riprova tra poco.':(r.j.error==='nonick'?'Imposta prima un nickname.':'Invio non riuscito.'); }
+      else if(m){ m.className='msg err';
+        m.textContent = r.j.error==='badwords' ? 'Il messaggio contiene linguaggio non consentito. Rispetta il codice di condotta.'
+          : r.j.error==='banned' ? 'Sei stato bloccato dal forum.'
+          : r.j.error==='toomany' ? 'Troppi messaggi, riprova tra poco.'
+          : r.j.error==='nonick' ? 'Imposta prima un nickname.' : 'Invio non riuscito.'; }
     },
     reply(id){
       var box=document.getElementById('reply-'+id); if(!box) return;
@@ -155,8 +176,13 @@
         +'<button class="btn ghost sm" onclick="FORUM.reply(\''+id+'\')">Annulla</button></div><div id="rmsg-'+id+'" class="msg"></div></div>';
       var ta=document.getElementById('rt-'+id); if(ta) ta.focus();
     },
-    async mod(id, action){
-      var r=await api('/forum/moderate',{id:id,action:action}); if(r.status===200){ await load(); }
+    async ban(id, nick){
+      if(!confirm('Bloccare definitivamente "'+nick+'"? Tutti i suoi messaggi verranno rimossi.')) return;
+      var r=await api('/forum/moderate',{action:'ban',id:id}); if(r.status===200){ await load(); }
+    },
+    async unban(email){
+      if(!confirm('Sbloccare '+email+'?')) return;
+      var r=await api('/forum/moderate',{action:'unban',email:email}); if(r.status===200){ await load(); }
     },
     async del(id){
       if(!confirm('Eliminare questo messaggio?')) return;
