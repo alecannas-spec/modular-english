@@ -2135,18 +2135,22 @@ window.adminPinGo=adminPinGo;
     var links=document.querySelector('.nav-links'); if(!links) return;
     if(document.getElementById('nav-menu')) return;
     var home=document.getElementById('nav-home');
-    var ids=['nav-explore','nav-ftt','nav-mycourses','nav-test','nav-support'];
-    var items=[];
-    ids.forEach(function(id){ var b=document.getElementById(id); if(!b) return;
-      var sp=b.querySelector('span');
-      var label=(sp?sp.textContent:b.textContent).trim();
-      var emoji=(b.textContent.trim().match(/^\S+/)||[''])[0];
-      items.push({emoji:emoji,label:label,act:function(){ b.click(); }});
-      b.style.display='none';
-    });
-    items.push({emoji:'📖',label:'Metodo',act:function(){ location.href='/method.html'; }});
-    items.push({emoji:'💬',label:'Forum',act:function(){ location.href='/forum.html'; }});
-    items.push({emoji:'📱',label:'App',act:function(){ location.href='/apps.html'; }});
+    // Collapse these from the bar (Home and Cart stay visible as icons).
+    ['nav-explore','nav-ftt','nav-mycourses','nav-test','nav-support'].forEach(function(id){ var b=document.getElementById(id); if(b) b.style.display='none'; });
+    function navItem(id, emoji, label){ var b=document.getElementById(id); return { emoji:emoji, label:label, act:function(){ if(b) b.click(); } }; }
+    // Desired order: Home, Metodo, Explore, Free, Test, Cart, My, Forum, Apps, Support.
+    var items=[
+      navItem('nav-home','🏠','Home'),
+      { emoji:'📖', label:'Metodo', act:function(){ location.href='/method.html'; } },
+      navItem('nav-explore','🔍','Explore'),
+      navItem('nav-ftt','✨','Free'),
+      navItem('nav-test','🧪','Test'),
+      navItem('nav-cart','🛒','Cart'),
+      navItem('nav-mycourses','📚','My'),
+      { emoji:'💬', label:'Forum', act:function(){ location.href='/forum.html'; } },
+      { emoji:'📱', label:'App', act:function(){ location.href='/apps.html'; } },
+      navItem('nav-support','✉️','Support')
+    ];
 
     var btn=document.createElement('button');
     btn.className='nav-link'; btn.id='nav-menu'; btn.type='button';
