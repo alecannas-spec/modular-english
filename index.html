@@ -439,6 +439,7 @@ html,body{height:100%;overflow:hidden}
           <button class="btn btn-outline" onclick="showView('ftt')">✨ Try for Free</button>
           <button class="btn btn-outline" onclick="openIntroModal()">📖 Disclaimer</button>
           <button class="btn btn-outline" onclick="openGrammarModal()">📖 Grammar</button>
+          <button class="btn btn-outline" id="svela-pin-btn" onclick="(function(b){ b.innerHTML='🔑 PIN Prenotazioni: <b>63574</b>'; try{ b.style.borderColor='var(--gold)'; b.style.color='var(--gold)'; }catch(e){} })(this)">🔑 Svela PIN</button>
         </div>
         <div class="stats-row">
           <div class="stat"><div class="stat-num" id="stat-modules">73</div><div class="stat-label">Modules</div></div>
@@ -2156,6 +2157,7 @@ window.adminPinGo=adminPinGo;
       navItem('nav-mycourses','📚','My'),
       { emoji:'💬', label:'Forum', act:function(){ location.href='/forum.html'; } },
       { emoji:'📱', label:'App', act:function(){ location.href='/apps.html'; } },
+      { emoji:'📅', label:'Bookings', act:function(){ location.href='/booking.html'; } },
       navItem('nav-support','✉️','Support')
     ];
     // small Account icon in the top bar, next to Cart
