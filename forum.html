@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forum — Modular English</title>
+<style>
+  :root{ --navy:#0a1f4a; --navy2:#13346b; --gold:#C8A227; --ink:#1a2233; --mut:#5b6475; --line:#e3e8f2; --card:#fff; --bg:#f6f8fc; --ok:#1b7a3d; --bad:#b02a2a; }
+  @media(prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --ink:#e9eefc; --mut:#9aa6c0; --line:#243356; --card:#0e1630; --bg:#070c1e; --navy2:#9fb4e6; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:22px 16px 18px}
+  .wrap{max-width:720px;margin:0 auto;padding:0 16px}
+  .back{display:inline-block;margin-bottom:12px;color:#fff;text-decoration:none;font:700 14px system-ui;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);padding:7px 15px;border-radius:99px}
+  h1{margin:6px 0 4px;font-size:1.5rem}
+  header p{margin:0;color:#c9d4ea;font:14px system-ui}
+  main{padding:18px 0 90px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+  .banner{background:#fff7ed;border:1px solid #f0c994;color:#7c2d12;border-radius:10px;padding:10px 13px;font:600 13px system-ui;margin:12px 0}
+  @media(prefers-color-scheme:dark){.banner{background:#2a1c0c;color:#f6c48a;border-color:#6b4e1f}}
+  textarea{width:100%;min-height:70px;font:15px system-ui;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);resize:vertical}
+  input.nick{font:15px system-ui;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);width:60%;max-width:260px}
+  .btn{font:700 14px system-ui;background:var(--navy);color:#fff;border:0;border-radius:9px;padding:10px 16px;cursor:pointer}
+  .btn.gold{background:var(--gold);color:var(--navy)}
+  .btn.sm{font:700 12px system-ui;padding:6px 11px;border-radius:8px}
+  .btn.ghost{background:transparent;color:var(--navy2);border:1px solid var(--line)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .post{border-left:2px solid var(--line);padding:8px 0 2px 12px;margin:8px 0}
+  .post .meta{font:13px system-ui;color:var(--mut)}
+  .post .meta b{color:var(--ink);font-weight:800}
+  .staff{display:inline-block;background:var(--gold);color:var(--navy);font:800 10px system-ui;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;margin-left:5px}
+  .pend{display:inline-block;background:#fdecc8;color:#8a5a00;font:700 10px system-ui;padding:1px 7px;border-radius:999px;margin-left:5px}
+  @media(prefers-color-scheme:dark){.pend{background:#3a2c0c;color:#f0c982}}
+  .post .txt{margin:4px 0 6px;white-space:pre-wrap;word-break:break-word}
+  .post .act{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 4px}
+  .msg{font:600 13px system-ui;margin:8px 0;padding:9px 11px;border-radius:9px;display:none}
+  .msg.err{display:block;background:#fde8e8;color:var(--bad)}
+  .msg.ok{display:block;background:#e7f6ec;color:var(--ok)}
+  .empty{text-align:center;color:var(--mut);padding:30px 10px}
+  footer{text-align:center;padding:18px;color:var(--mut);font:.82rem system-ui}
+  footer a{color:var(--navy2)}
+</style>
+</head>
+<body>
+<script>
+/* stale-cache cleanup (same as the other pages) */
+(function(){ try{ if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistrations().then(function(rs){ var had=rs&&rs.length; if(rs) rs.forEach(function(r){try{r.unregister();}catch(e){}}); try{ if(window.caches&&caches.keys){ caches.keys().then(function(ks){ks.forEach(function(k){try{caches.delete(k);}catch(e){}});}); } }catch(e){} if(had&&!sessionStorage.getItem('me_swcleared')){ try{sessionStorage.setItem('me_swcleared','1');}catch(e){} location.reload(); } }).catch(function(){}); } }catch(e){} })();
+</script>
+
+<header><div class="wrap">
+  <a class="back" href="/">← Indietro</a>
+  <h1>💬 Forum</h1>
+  <p>Fai domande e interagisci. Ogni messaggio è approvato prima di essere pubblicato.</p>
+</div></header>
+
+<main class="wrap">
+  <div id="forum-root"><div class="empty">Caricamento…</div></div>
+</main>
+
+<footer>Modular English · <a href="/">Sito</a> · <a href="/privacy3.html">Privacy</a></footer>
+
+<script>
+(function(){
+  var WK = window.__ME_WK || 'https://modular-english.ale-cannas.workers.dev';
+  function tok(){ try{ return localStorage.getItem('me_entry')||sessionStorage.getItem('me_entry')||''; }catch(e){ return ''; } }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function when(ms){ try{ var d=new Date(ms); return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+  async function api(path, body, method){
+    var r = await fetch(WK+path, { method: method||'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok()}, body: body?JSON.stringify(body):undefined });
+    var j=null; try{ j=await r.json(); }catch(e){} return { status:r.status, j:j||{} };
+  }
+  var root = document.getElementById('forum-root');
+  var STATE = { isAdmin:false, myNick:null, posts:[] };
+
+  async function load(){
+    var r = await api('/forum/feed', null, 'GET');
+    if(r.status!==200 || !r.j.ok){
+      if(r.status===401){ root.innerHTML='<div class="card">Accedi con il tuo account per vedere il forum.</div>'; return; }
+      root.innerHTML='<div class="card">Impossibile caricare il forum.</div>'; return;
+    }
+    STATE.isAdmin=!!r.j.isAdmin; STATE.myNick=r.j.myNick||null; STATE.posts=r.j.posts||[]; STATE.pending=r.j.pending||0;
+    render();
+  }
+
+  function tree(){
+    var byId={}, roots=[];
+    STATE.posts.forEach(function(p){ p._kids=[]; byId[p.id]=p; });
+    STATE.posts.forEach(function(p){ if(p.parent && byId[p.parent]) byId[p.parent]._kids.push(p); else roots.push(p); });
+    return roots;
+  }
+
+  function postHTML(p, depth){
+    var canReply = (p.status==='approved') || STATE.isAdmin;
+    var h='<div class="post" style="margin-left:'+Math.min(depth,6)*14+'px">'
+      + '<div class="meta"><b>'+esc(p.nick)+'</b>'+(p.staff?'<span class="staff">Staff</span>':'')
+      + ' · '+when(p.createdAt)+(p.status!=='approved'?'<span class="pend">'+(p.status==='rejected'?'Rifiutato':'In attesa')+'</span>':'')+'</div>'
+      + '<div class="txt">'+esc(p.text)+'</div>'
+      + '<div class="act">'
+      + (canReply?'<button class="btn ghost sm" onclick="FORUM.reply(\''+p.id+'\')">Rispondi</button>':'')
+      + (STATE.isAdmin && p.status==='pending'?'<button class="btn gold sm" onclick="FORUM.mod(\''+p.id+'\',\'approve\')">Approva</button><button class="btn ghost sm" onclick="FORUM.mod(\''+p.id+'\',\'reject\')">Rifiuta</button>':'')
+      + ((p.mine || STATE.isAdmin)?'<button class="btn ghost sm" style="color:var(--bad)" onclick="FORUM.del(\''+p.id+'\')">Elimina</button>':'')
+      + '</div>'
+      + '<div id="reply-'+p.id+'"></div>';
+    p._kids.sort(function(a,b){ return a.createdAt-b.createdAt; });
+    p._kids.forEach(function(k){ h+=postHTML(k, depth+1); });
+    return h+'</div>';
+  }
+
+  function render(){
+    var h='';
+    // admin pending banner
+    if(STATE.isAdmin && STATE.pending){ h+='<div class="banner">🛠️ '+STATE.pending+' messaggio/i in attesa di approvazione.</div>'; }
+    // nickname setup
+    if(!STATE.isAdmin && !STATE.myNick){
+      h+='<div class="card"><b>Scegli un nickname</b><p style="color:var(--mut);font-size:.9rem;margin:4px 0 10px">Serve un nickname per partecipare al forum. Sarà visibile agli altri utenti.</p>'
+        +'<input class="nick" id="nick-in" maxlength="20" placeholder="Es. MarioR"> <button class="btn" onclick="FORUM.setNick()">Salva</button>'
+        +'<div id="nick-msg" class="msg"></div></div>';
+    } else {
+      // composer
+      h+='<div class="card"><textarea id="new-text" maxlength="2000" placeholder="Scrivi un messaggio…"></textarea>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:10px">'
+        +'<span style="color:var(--mut);font-size:.82rem">'+(STATE.isAdmin?'Pubblichi come <b>Staff</b> (subito visibile).':'Visibile dopo l\'approvazione · come <b>'+esc(STATE.myNick)+'</b>')+'</span>'
+        +'<button class="btn gold" onclick="FORUM.post(null,\'new-text\')">Pubblica</button></div>'
+        +'<div id="new-msg" class="msg"></div></div>';
+    }
+    // thread
+    var roots=tree();
+    if(!roots.length){ h+='<div class="empty">Ancora nessun messaggio. Scrivi il primo!</div>'; }
+    else { roots.sort(function(a,b){ return b.createdAt-a.createdAt; }); roots.forEach(function(p){ h+=postHTML(p,0); }); }
+    root.innerHTML=h;
+  }
+
+  window.FORUM = {
+    async setNick(){
+      var el=document.getElementById('nick-in'); var m=document.getElementById('nick-msg'); var nick=(el.value||'').trim();
+      if(nick.length<3){ m.className='msg err'; m.textContent='Il nickname deve avere almeno 3 caratteri.'; return; }
+      var r=await api('/forum/nick',{nick:nick});
+      if(r.status===200&&r.j.ok){ STATE.myNick=r.j.nick; render(); }
+      else { m.className='msg err'; m.textContent = r.j.error==='taken'?'Nickname già in uso.':'Nickname non valido (3-20 caratteri).'; }
+    },
+    async post(parent, areaId){
+      var el=document.getElementById(areaId); var text=(el.value||'').trim();
+      var mId = parent? 'rmsg-'+parent : 'new-msg'; var m=document.getElementById(mId);
+      if(!text){ if(m){m.className='msg err';m.textContent='Scrivi un messaggio.';} return; }
+      var r=await api('/forum/post',{text:text, parent:parent||undefined});
+      if(r.status===200&&r.j.ok){ await load(); }
+      else if(m){ m.className='msg err'; m.textContent = r.j.error==='toomany'?'Troppi messaggi, riprova tra poco.':(r.j.error==='nonick'?'Imposta prima un nickname.':'Invio non riuscito.'); }
+    },
+    reply(id){
+      var box=document.getElementById('reply-'+id); if(!box) return;
+      if(box.getAttribute('data-open')){ box.innerHTML=''; box.removeAttribute('data-open'); return; }
+      box.setAttribute('data-open','1');
+      box.innerHTML='<div style="margin:6px 0 4px"><textarea id="rt-'+id+'" maxlength="2000" placeholder="La tua risposta…" style="min-height:56px"></textarea>'
+        +'<div style="margin-top:6px"><button class="btn gold sm" onclick="FORUM.post(\''+id+'\',\'rt-'+id+'\')">Rispondi</button> '
+        +'<button class="btn ghost sm" onclick="FORUM.reply(\''+id+'\')">Annulla</button></div><div id="rmsg-'+id+'" class="msg"></div></div>';
+      var ta=document.getElementById('rt-'+id); if(ta) ta.focus();
+    },
+    async mod(id, action){
+      var r=await api('/forum/moderate',{id:id,action:action}); if(r.status===200){ await load(); }
+    },
+    async del(id){
+      if(!confirm('Eliminare questo messaggio?')) return;
+      var r=await api('/forum/delete',{id:id}); if(r.status===200){ await load(); }
+    }
+  };
+
+  // wait a moment so the account gate (if shown) resolves; then load
+  if(document.readyState!=='loading') setTimeout(load, 300); else document.addEventListener('DOMContentLoaded', function(){ setTimeout(load,300); });
+})();
+</script>
+<script>
+/* ─── Modular English · Customer Account + access gate ──────────────────────
+   Server-side account (name/surname + email + password) via the worker. The
+   access token is stored in localStorage 'me_entry' (the slot the app reads),
+   so logging in unlocks content on any device. Content now REQUIRES an account
+   (or admin, or an existing purchase) — see the gate at the bottom. Admin can
+   still open everything via the admin PIN, with no account. */
+(function(){
+  if (window.__meAccLoaded) return; window.__meAccLoaded = true;
+  var WK = window.__ME_WK || 'https://modular-english.ale-cannas.workers.dev';
+  var LS = { tok:'me_entry', acc:'me_account' };
+  var gateMode = false;
+
+  function getAcc(){ try{ return JSON.parse(localStorage.getItem(LS.acc)||'null'); }catch(e){ return null; } }
+  function getTok(){ try{ return localStorage.getItem(LS.tok)||sessionStorage.getItem(LS.tok)||''; }catch(e){ return ''; } }
+  function decodeTok(t){ try{ return JSON.parse(atob(String(t).split('.')[0])); }catch(e){ return null; } }
+  function setSession(t, name, email){ try{ localStorage.setItem(LS.tok, t); localStorage.setItem(LS.acc, JSON.stringify({name:name,email:email})); }catch(e){} }
+  function clearSession(){ try{ localStorage.removeItem(LS.tok); localStorage.removeItem(LS.acc); sessionStorage.removeItem(LS.tok); }catch(e){} }
+  function adminActive(){
+    try{ if(window._adminUnlocked===true) return true; }catch(e){}
+    try{ if(/(?:^|;\s*)me_token=/.test(document.cookie)) return true; }catch(e){}
+    var p=decodeTok(getTok()); return !!(p && p.admin);
+  }
+  function hasAccess(){
+    if (getAcc()) return true;
+    if (adminActive()) return true;
+    var p = decodeTok(getTok());
+    return !!(p && (p.acct || p.admin || (Array.isArray(p.purchased) && p.purchased.length)));
+  }
+  async function api(path, body, headers){
+    var r = await fetch(WK+path, { method:'POST', headers: Object.assign({'Content-Type':'application/json'}, headers||{}), body: body?JSON.stringify(body):undefined });
+    var j=null; try{ j=await r.json(); }catch(e){} return { status:r.status, j:j||{} };
+  }
+  var ERR = {
+    name:'Inserisci nome e cognome.', email:'Email non valida.', weakpass:'La password deve avere almeno 8 caratteri.',
+    exists:'Esiste già un account con questa email. Accedi o recupera la password.', toomany:'Troppi tentativi, riprova tra poco.',
+    'email-send':'Invio email non riuscito. Riprova tra poco.', nopending:'Nessuna registrazione in sospeso. Ricomincia.',
+    expired:'Codice scaduto. Richiedine uno nuovo.', badcode:'Codice errato.', nouser:'Nessun account con questa email.',
+    badpass:'Password errata.', locked:'Troppi tentativi. Riprova tra 15 minuti.', input:'Compila tutti i campi.', noauth:'Sessione scaduta, accedi di nuovo.'
+  };
+  function em(e){ return ERR[e] || 'Errore. Riprova.'; }
+
+  // ---------- styles ----------
+  var css = document.createElement('style');
+  css.textContent =
+    '#meacc-btn{position:fixed;right:12px;bottom:12px;z-index:2147482000;background:#0a1f4a;color:#fff;border:0;border-radius:999px;font:700 13px system-ui;padding:9px 15px;box-shadow:0 4px 14px rgba(10,20,60,.35);cursor:pointer}'
+  + '#meacc-btn:hover{background:#0c2a66}'
+  + '#meacc-ov{position:fixed;inset:0;z-index:2147483600;background:rgba(6,12,30,.55);display:none;align-items:center;justify-content:center;padding:16px}'
+  + '#meacc-ov.on{display:flex}'
+  + '#meacc-ov.gate{background:#0a1430}'
+  + 'html.meacc-gated{overflow:hidden}'
+  + 'html.meacc-gated body>*:not(#meacc-ov){display:none !important}'
+  + '#meacc-ov{flex-direction:column}'
+  + '#meacc-title{display:none;color:#fff;font-weight:800;white-space:nowrap;text-align:center;line-height:1.05;letter-spacing:.3px;margin:0 0 20px;text-shadow:0 2px 10px rgba(0,0,0,.45)}'
+  + '#meacc-card{position:relative;background:#fff;color:#0a1f4a;border-radius:16px;max-width:430px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);padding:22px}'
+  + '#meacc-gear{position:absolute;top:12px;right:14px;font-size:17px;line-height:1;opacity:.3;cursor:pointer;user-select:none;background:0;border:0;padding:4px}'
+  + '#meacc-gear:hover{opacity:.75}'
+  + '@media(prefers-color-scheme:dark){#meacc-card{background:#0e1630;color:#e9eefc}}'
+  + '.meacc-h{font:800 19px system-ui;margin:0 0 4px}'
+  + '.meacc-sub{font:400 13px system-ui;color:#6b7280;margin:0 0 16px}'
+  + '@media(prefers-color-scheme:dark){.meacc-sub{color:#9aa6c0}}'
+  + '.meacc-two{display:flex;gap:10px}.meacc-two>.meacc-f{flex:1}'
+  + '.meacc-f{display:block;width:100%;box-sizing:border-box;font:15px system-ui;padding:11px 13px;margin:0 0 10px;border:1.5px solid #d7deea;border-radius:10px;background:#fff;color:#0a1f4a}'
+  + '@media(prefers-color-scheme:dark){.meacc-f{background:#0b1226;color:#e9eefc;border-color:#2a3763}}'
+  + '.meacc-btnp{width:100%;font:700 15px system-ui;background:#0a1f4a;color:#fff;border:0;border-radius:10px;padding:12px;cursor:pointer;margin-top:4px}'
+  + '.meacc-btnp:hover{background:#0c2a66}'
+  + '.meacc-link{background:0;border:0;color:#0a1f4a;font:600 13px system-ui;cursor:pointer;padding:6px 2px;text-decoration:underline}'
+  + '@media(prefers-color-scheme:dark){.meacc-link{color:#cdd8f5}}'
+  + '.meacc-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}'
+  + '.meacc-msg{font:600 13px system-ui;margin:8px 0;padding:9px 11px;border-radius:9px;display:none}'
+  + '.meacc-msg.err{display:block;background:#fde8e8;color:#b02a2a}'
+  + '.meacc-msg.ok{display:block;background:#e7f6ec;color:#1b7a3d}'
+  + '.meacc-x{float:right;background:0;border:0;font-size:22px;line-height:1;cursor:pointer;color:#9aa6c0}'
+  + '.meacc-pill{display:inline-block;background:#f0f3fa;border-radius:8px;padding:4px 9px;font:600 12px system-ui;margin:3px 4px 0 0;color:#0a1f4a}'
+  + '@media(prefers-color-scheme:dark){.meacc-pill{background:#17204a;color:#cdd8f5}}'
+  + '.meacc-brand{text-align:center;font:800 15px system-ui;color:#0a1f4a;margin:0 0 2px}'
+  + '@media(prefers-color-scheme:dark){.meacc-brand{color:#F5C518}}';
+  document.head.appendChild(css);
+
+  var btn = document.createElement('button'); btn.id='meacc-btn';
+  var ov = document.createElement('div'); ov.id='meacc-ov';
+  var title = document.createElement('div'); title.id='meacc-title'; title.textContent='Learn English the Natural Way';
+  var card = document.createElement('div'); card.id='meacc-card';
+  ov.appendChild(title); ov.appendChild(card);
+  document.body.appendChild(btn); document.body.appendChild(ov);
+  // Fit the headline to the largest font that stays on one line (portrait/9:16 aware).
+  function fitTitle(){
+    if(!gateMode){ title.style.display='none'; return; }
+    title.style.display='block';
+    var avail = Math.min(window.innerWidth, 560) - 32;
+    var size = 72; title.style.fontSize = size+'px';
+    while(size>16 && title.scrollWidth>avail){ size-=1; title.style.fontSize=size+'px'; }
+  }
+  window.addEventListener('resize', fitTitle);
+  card.addEventListener('click', function(e){ if(e.target && e.target.id==='meacc-gear') viewAdmin(); });
+  btn.onclick = function(){ gateMode=false; ov.classList.remove('gate'); render(); ov.classList.add('on'); fitTitle(); };
+  ov.onclick = function(e){ if(e.target===ov && !gateMode) ov.classList.remove('on'); };
+  function refreshBtn(){ var a=getAcc(); btn.textContent = a ? ('👤 '+((a.name||a.email||'').split(' ')[0]||'Account')) : '👤 Account'; btn.style.display = gateMode ? 'none' : ''; }
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function val(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
+  function msg(t, kind){ var m=document.getElementById('meacc-msg'); if(!m) return; m.textContent=t; m.className='meacc-msg '+(kind||'err'); }
+  function head(title, sub){
+    var x = gateMode ? '' : '<button class="meacc-x" onclick="document.getElementById(\'meacc-ov\').classList.remove(\'on\')">×</button>';
+    var gear = gateMode ? '<button id="meacc-gear" title="Accesso amministratore">⚙</button>' : '';
+    var brand = gateMode ? '<div class="meacc-brand" style="user-select:none">Modular English</div>' : '';
+    return x + gear + brand + '<div class="meacc-h">'+title+'</div><div class="meacc-sub">'+sub+'</div><div id="meacc-msg" class="meacc-msg"></div>';
+  }
+  function busy(b){ var el=document.getElementById('meacc-go'); if(el){ el.disabled=b; el.textContent=b?'Attendi…':el.getAttribute('data-l'); } }
+  // Hidden admin entry: the small ⚙ gear in the top-right corner of the box.
+  function wireBrand(){ var g=document.getElementById('meacc-gear'); if(g) g.onclick=viewAdmin; }
+
+  function render(){ getAcc() ? viewAccount() : viewLogin(); }
+
+  function viewLogin(){
+    card.innerHTML = head('Accedi', gateMode ? 'Per accedere ai contenuti serve un account. Accedi o creane uno.' : 'Accedi al tuo account per ritrovare i tuoi acquisti su qualsiasi dispositivo.')
+      + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
+      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Accedi">Accedi</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-toreg">Crea un account</button>'
+      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>';
+    document.getElementById('meacc-toreg').onclick=viewRegister;
+    document.getElementById('meacc-tofg').onclick=viewForgot;
+    wireBrand();
+    document.getElementById('meacc-go').onclick=async function(){
+      var email=val('meacc-email'), pw=val('meacc-pw');
+      if(!email||!pw){ msg('Inserisci email e password.'); return; }
+      busy(true); var r=await api('/login',{email:email,password:pw}); busy(false);
+      if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email); done('Accesso eseguito.'); }
+      else msg(em(r.j.error));
+    };
+  }
+
+  function viewRegister(){
+    card.innerHTML = head('Crea un account','Con un account i tuoi acquisti restano salvati e non si perdono se cancelli i cookie.')
+      + '<div class="meacc-two"><input class="meacc-f" id="meacc-first" placeholder="Nome" autocomplete="given-name">'
+      + '<input class="meacc-f" id="meacc-last" placeholder="Cognome" autocomplete="family-name"></div>'
+      + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
+      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password (min 8 caratteri)" autocomplete="new-password">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Continua">Continua</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>';
+    document.getElementById('meacc-tolog').onclick=viewLogin;
+    wireBrand();
+    document.getElementById('meacc-go').onclick=async function(){
+      var first=val('meacc-first'), last=val('meacc-last'), email=val('meacc-email'), pw=val('meacc-pw');
+      if(!first||!last){ msg('Inserisci nome e cognome.'); return; }
+      if(!email||!pw){ msg('Compila tutti i campi.'); return; }
+      var name = first+' '+last;
+      busy(true); var r=await api('/register',{name:name,email:email,password:pw}); busy(false);
+      if(r.status===200 && r.j.ok){ viewVerify(email,'register'); }
+      else msg(em(r.j.error));
+    };
+  }
+
+  function viewVerify(email, flow){
+    card.innerHTML = head('Verifica la tua email','Abbiamo inviato un codice a 6 cifre a <b>'+esc(email)+'</b>. Inseriscilo qui sotto.')
+      + '<input class="meacc-f" id="meacc-code" inputmode="numeric" maxlength="6" placeholder="Codice a 6 cifre">'
+      + (flow==='reset' ? '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Nuova password (min 8)" autocomplete="new-password">' : '')
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Conferma">Conferma</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-resend">Invia di nuovo il codice</button></div>';
+    document.getElementById('meacc-resend').onclick=async function(){
+      var p = flow==='reset' ? '/forgot' : '/register/resend';
+      await api(p,{email:email}); msg('Codice inviato di nuovo.','ok');
+    };
+    document.getElementById('meacc-go').onclick=async function(){
+      var code=val('meacc-code'); if(!/^\d{6}$/.test(code)){ msg('Inserisci il codice a 6 cifre.'); return; }
+      busy(true); var r;
+      if(flow==='reset'){ var pw=val('meacc-pw'); if(!pw){ busy(false); msg('Inserisci la nuova password.'); return; }
+        r=await api('/reset',{email:email,code:code,password:pw}); }
+      else { r=await api('/register-verify',{email:email,code:code}); }
+      busy(false);
+      if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email);
+        done((r.j.purchased&&r.j.purchased.length)? 'Account pronto — acquisti ripristinati!' : 'Account creato.'); }
+      else msg(em(r.j.error));
+    };
+  }
+
+  function viewForgot(){
+    card.innerHTML = head('Recupera la password','Inserisci la tua email: ti invieremo un codice per impostare una nuova password.')
+      + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Invia codice">Invia codice</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Torna all\'accesso</button></div>';
+    document.getElementById('meacc-tolog').onclick=viewLogin;
+    document.getElementById('meacc-go').onclick=async function(){
+      var email=val('meacc-email'); if(!email){ msg('Inserisci la tua email.'); return; }
+      busy(true); await api('/forgot',{email:email}); busy(false);
+      viewVerify(email,'reset'); msg('Se esiste un account, riceverai un codice.','ok');
+    };
+  }
+
+  // Admin PIN — explores every dialogue/function without an account.
+  function viewAdmin(){
+    card.innerHTML = head('Accesso amministratore','Inserisci il PIN amministratore per esplorare tutti i contenuti senza account.')
+      + '<input class="meacc-f" id="meacc-pin" type="password" inputmode="numeric" placeholder="PIN amministratore" autocomplete="off">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Entra">Entra</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">← Indietro</button></div>';
+    document.getElementById('meacc-back').onclick=viewLogin;
+    document.getElementById('meacc-go').onclick=async function(){
+      var pin=val('meacc-pin'); if(!pin){ msg('Inserisci il PIN.'); return; }
+      busy(true); var r=await api('/admin',{pin:pin}); busy(false);
+      if(r.status===200 && r.j.ok && r.j.token){
+        try{ localStorage.setItem(LS.tok, r.j.token); }catch(e){}
+        try{ document.cookie='me_token='+r.j.token+';path=/;max-age=86400'; }catch(e){}
+        try{ window._adminUnlocked=true; }catch(e){}
+        msg('Accesso amministratore eseguito.','ok'); setTimeout(function(){ location.reload(); }, 700);
+      } else msg('PIN non valido.');
+    };
+  }
+
+  async function viewAccount(){
+    var a=getAcc()||{};
+    card.innerHTML = head('Il tuo account','')
+      + '<div style="font:700 16px system-ui">'+esc(a.name||'')+'</div>'
+      + '<div class="meacc-sub" style="margin:2px 0 10px">'+esc(a.email||'')+'</div>'
+      + '<div id="meacc-owned" class="meacc-sub">Caricamento acquisti…</div>'
+      + '<button class="meacc-btnp" id="meacc-logout" style="margin-top:14px">Esci</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-priv">Privacy</button>'
+      + '<button class="meacc-link" id="meacc-del" style="color:#b02a2a">Elimina account</button></div>';
+    document.getElementById('meacc-priv').onclick=function(){ location.href='/privacy3.html'; };
+    document.getElementById('meacc-logout').onclick=function(){ clearSession(); refreshBtn(); location.reload(); };
+    document.getElementById('meacc-del').onclick=function(){ viewDelete(a.email); };
+    try{
+      var r=await fetch(WK+'/account',{headers:{'Authorization':'Bearer '+getTok()}});
+      var j=await r.json();
+      if(j && j.ok){ if(j.token){ setSession(j.token, j.name, j.email); }
+        var owned=document.getElementById('meacc-owned');
+        if(owned){ var n=(j.purchased||[]).length;
+          owned.innerHTML = n ? ('<b>'+n+'</b> element'+(n===1?'o':'i')+' sbloccat'+(n===1?'o':'i')+':<div style="margin-top:6px">'
+            + j.purchased.map(function(id){return '<span class="meacc-pill">'+esc(id)+'</span>';}).join('') + '</div>')
+            : 'Nessun acquisto ancora associato a questo account.'; }
+      } else if (j && j.error==='noauth'){ clearSession(); refreshBtn(); viewLogin(); msg('Sessione scaduta, accedi di nuovo.'); }
+    }catch(e){ var o=document.getElementById('meacc-owned'); if(o) o.textContent='Impossibile aggiornare ora.'; }
+  }
+
+  function viewDelete(email){
+    card.innerHTML = head('Elimina account','Questa operazione è <b>irreversibile</b>. I tuoi dati personali verranno cancellati. Conferma con la password.')
+      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Elimina definitivamente" style="background:#b02a2a">Elimina definitivamente</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">Annulla</button></div>';
+    document.getElementById('meacc-back').onclick=viewAccount;
+    document.getElementById('meacc-go').onclick=async function(){
+      var pw=val('meacc-pw'); if(!pw){ msg('Inserisci la password.'); return; }
+      busy(true); var r=await api('/account/delete',{email:email,password:pw}); busy(false);
+      if(r.status===200 && r.j.ok){ clearSession(); refreshBtn(); msg('Account eliminato.','ok'); setTimeout(function(){ location.reload(); }, 1200); }
+      else msg(em(r.j.error));
+    };
+  }
+
+  function done(text){ msg(text,'ok'); refreshBtn(); setTimeout(function(){ location.reload(); }, 900); }
+
+  // ── Access gate: require an account (or admin / existing purchase) ──
+  function openGate(){
+    gateMode = true;
+    ov.classList.add('gate');
+    getAcc() ? viewAccount() : viewRegister();   // new visitors land on registration (Nome, Cognome, Email, Password)
+    ov.classList.add('on'); refreshBtn(); fitTitle();
+  }
+  function maybeGate(){ try{
+    if(!hasAccess()){ document.documentElement.classList.add('meacc-gated'); openGate(); }
+    else { document.documentElement.classList.remove('meacc-gated'); refreshBtn(); }
+  }catch(e){} }
+  maybeGate();                              // immediate: hide the app before any content shows
+  window.addEventListener('load', maybeGate);
+  document.addEventListener('DOMContentLoaded', maybeGate);
+  refreshBtn();
+})();
+</script>
+</body>
+</html>
