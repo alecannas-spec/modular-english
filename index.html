@@ -1952,9 +1952,14 @@ window.adminPinGo=adminPinGo;
   }
   window.addEventListener('resize', fitTitle);
   card.addEventListener('click', function(e){ if(e.target && e.target.id==='meacc-gear') viewAdmin(); });
-  btn.onclick = function(){ gateMode=false; ov.classList.remove('gate'); render(); ov.classList.add('on'); fitTitle(); };
+  function openPanel(){ gateMode=false; ov.classList.remove('gate'); render(); ov.classList.add('on'); fitTitle(); }
+  window.__meOpenAccount = openPanel;   // lets the top-bar menu open the account panel
+  btn.onclick = openPanel;
   ov.onclick = function(e){ if(e.target===ov && !gateMode) ov.classList.remove('on'); };
-  function refreshBtn(){ var a=getAcc(); btn.textContent = a ? ('👤 '+((a.name||a.email||'').split(' ')[0]||'Account')) : '👤 Account'; btn.style.display = gateMode ? 'none' : ''; }
+  // On the main app (which has its own top nav + bottom action bars) the floating
+  // button would clash, so hide it there and open the panel from the ☰ menu instead.
+  var hasNav = !!document.querySelector('.nav-links');
+  function refreshBtn(){ var a=getAcc(); btn.textContent = a ? ('👤 '+((a.name||a.email||'').split(' ')[0]||'Account')) : '👤 Account'; btn.style.display = (gateMode || hasNav) ? 'none' : ''; }
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function val(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
@@ -2139,8 +2144,10 @@ window.adminPinGo=adminPinGo;
     ['nav-explore','nav-ftt','nav-mycourses','nav-test','nav-support'].forEach(function(id){ var b=document.getElementById(id); if(b) b.style.display='none'; });
     function navItem(id, emoji, label){ var b=document.getElementById(id); return { emoji:emoji, label:label, act:function(){ if(b) b.click(); } }; }
     // Desired order: Home, Metodo, Explore, Free, Test, Cart, My, Forum, Apps, Support.
+    function openAcct(){ if(window.__meOpenAccount) window.__meOpenAccount(); }
     var items=[
       navItem('nav-home','🏠','Home'),
+      { emoji:'👤', label:'Account', act:openAcct },
       { emoji:'📖', label:'Method', act:function(){ location.href='/method.html'; } },
       navItem('nav-explore','🔍','Explore'),
       navItem('nav-ftt','✨','Free'),
@@ -2151,6 +2158,15 @@ window.adminPinGo=adminPinGo;
       { emoji:'📱', label:'App', act:function(){ location.href='/apps.html'; } },
       navItem('nav-support','✉️','Support')
     ];
+    // small Account icon in the top bar, next to Cart
+    (function(){ var cart=document.getElementById('nav-cart');
+      if(cart && !document.getElementById('nav-account')){
+        var a=document.createElement('button'); a.className='nav-link'; a.id='nav-account'; a.type='button';
+        a.innerHTML='<span class="nav-ico" aria-hidden="true">👤</span><span>Account</span>';
+        a.onclick=openAcct;
+        if(cart.nextSibling) links.insertBefore(a, cart.nextSibling); else links.appendChild(a);
+      }
+    })();
 
     var btn=document.createElement('button');
     btn.className='nav-link'; btn.id='nav-menu'; btn.type='button';
