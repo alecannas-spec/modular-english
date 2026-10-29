@@ -1909,6 +1909,8 @@ window.adminPinGo=adminPinGo;
   + '#meacc-ov.gate{background:#0a1430}'
   + 'html.meacc-gated{overflow:hidden}'
   + 'html.meacc-gated body>*:not(#meacc-ov){display:none !important}'
+  + '#meacc-ov{flex-direction:column}'
+  + '#meacc-title{display:none;color:#fff;font-weight:800;white-space:nowrap;text-align:center;line-height:1.05;letter-spacing:.3px;margin:0 0 20px;text-shadow:0 2px 10px rgba(0,0,0,.45)}'
   + '#meacc-card{position:relative;background:#fff;color:#0a1f4a;border-radius:16px;max-width:430px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);padding:22px}'
   + '#meacc-gear{position:absolute;top:12px;right:14px;font-size:17px;line-height:1;opacity:.3;cursor:pointer;user-select:none;background:0;border:0;padding:4px}'
   + '#meacc-gear:hover{opacity:.75}'
@@ -1936,10 +1938,21 @@ window.adminPinGo=adminPinGo;
 
   var btn = document.createElement('button'); btn.id='meacc-btn';
   var ov = document.createElement('div'); ov.id='meacc-ov';
-  var card = document.createElement('div'); card.id='meacc-card'; ov.appendChild(card);
+  var title = document.createElement('div'); title.id='meacc-title'; title.textContent='Learn English the Natural Way';
+  var card = document.createElement('div'); card.id='meacc-card';
+  ov.appendChild(title); ov.appendChild(card);
   document.body.appendChild(btn); document.body.appendChild(ov);
+  // Fit the headline to the largest font that stays on one line (portrait/9:16 aware).
+  function fitTitle(){
+    if(!gateMode){ title.style.display='none'; return; }
+    title.style.display='block';
+    var avail = Math.min(window.innerWidth, 560) - 32;
+    var size = 72; title.style.fontSize = size+'px';
+    while(size>16 && title.scrollWidth>avail){ size-=1; title.style.fontSize=size+'px'; }
+  }
+  window.addEventListener('resize', fitTitle);
   card.addEventListener('click', function(e){ if(e.target && e.target.id==='meacc-gear') viewAdmin(); });
-  btn.onclick = function(){ gateMode=false; ov.classList.remove('gate'); render(); ov.classList.add('on'); };
+  btn.onclick = function(){ gateMode=false; ov.classList.remove('gate'); render(); ov.classList.add('on'); fitTitle(); };
   ov.onclick = function(e){ if(e.target===ov && !gateMode) ov.classList.remove('on'); };
   function refreshBtn(){ var a=getAcc(); btn.textContent = a ? ('👤 '+((a.name||a.email||'').split(' ')[0]||'Account')) : '👤 Account'; btn.style.display = gateMode ? 'none' : ''; }
 
@@ -2099,7 +2112,7 @@ window.adminPinGo=adminPinGo;
     gateMode = true;
     ov.classList.add('gate');
     getAcc() ? viewAccount() : viewRegister();   // new visitors land on registration (Nome, Cognome, Email, Password)
-    ov.classList.add('on'); refreshBtn();
+    ov.classList.add('on'); refreshBtn(); fitTitle();
   }
   function maybeGate(){ try{
     if(!hasAccess()){ document.documentElement.classList.add('meacc-gated'); openGate(); }
