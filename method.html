@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Il Metodo — Modular English</title>
+<meta name="description" content="Il metodo Modular English: imparare l'inglese per situazioni reali in 5 passi — ascolto, parlato, lettura, scrittura e traduzione. Qualità ingegneristica. Video, lezioni one-to-one, audio e app.">
+<style>
+  :root{ --navy:#0a1f4a; --navy2:#13346b; --gold:#C8A227; --ink:#1a2233; --mut:#5b6475; --line:#e3e8f2; --card:#fff; --bg:#f6f8fc; }
+  @media(prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --ink:#e9eefc; --mut:#9aa6c0; --line:#243356; --card:#0e1630; --bg:#070c1e; --navy2:#9fb4e6; } }
+  :root[data-theme="dark"]{ --ink:#e9eefc; --mut:#9aa6c0; --line:#243356; --card:#0e1630; --bg:#070c1e; --navy2:#9fb4e6; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:30px 20px 26px}
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px}
+  .back{display:inline-block;margin-bottom:14px;color:#fff;text-decoration:none;font:700 14px system-ui;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);padding:7px 15px;border-radius:99px}
+  .tag{display:inline-block;background:var(--gold);color:var(--navy);font:800 11px system-ui;letter-spacing:.12em;text-transform:uppercase;padding:4px 11px;border-radius:999px}
+  h1{font-size:2rem;margin:12px 0 6px}
+  header .sub{color:#c7d3ef;font-size:1.05rem;margin:0;max-width:640px}
+  main{padding:26px 0 64px}
+  .toggle{display:flex;gap:8px;margin:0 0 22px}
+  .toggle button{font:700 13px system-ui;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer}
+  .toggle button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  section.lang{display:none} section.lang.on{display:block}
+  h2{font-size:1.3rem;margin:30px 0 8px}
+  .lead{font-size:1.05rem}
+  p{margin:9px 0}
+  .stat{display:flex;flex-wrap:wrap;gap:14px;margin:16px 0 6px}
+  .stat .n{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .stat .n b{display:block;font:800 2rem/1 'Playfair Display',Georgia,serif;color:var(--gold)}
+  .stat .n span{color:var(--mut);font-size:.9rem}
+  .src{color:var(--mut);font-size:.8rem;margin:0 0 6px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+  .card.gold{border-color:var(--gold)}
+  ul{margin:10px 0;padding-left:20px} li{margin:6px 0}
+  .steps{display:grid;grid-template-columns:1fr;gap:12px;margin:14px 0}
+  @media(min-width:620px){.steps{grid-template-columns:1fr 1fr}}
+  .step{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .step .k{flex:0 0 36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;font:800 16px system-ui;display:flex;align-items:center;justify-content:center}
+  .step h3{margin:0 0 2px;font-size:1rem}
+  .step p{margin:0;color:var(--mut);font-size:.9rem}
+  .methods{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:14px 0}
+  @media(min-width:620px){.methods{grid-template-columns:repeat(4,1fr)}}
+  .m{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+  .m .ico{font-size:1.9rem}
+  .m h3{margin:8px 0 4px;font-size:1rem}
+  .m p{color:var(--mut);font-size:.85rem;margin:0}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin:26px 0 0}
+  .btn{display:inline-block;text-decoration:none;font:700 15px system-ui;padding:12px 22px;border-radius:11px}
+  .btn.gold{background:var(--gold);color:var(--navy)}
+  .foot{color:var(--mut);font-size:.85rem;margin-top:30px;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="back" href="/">← Indietro</a>
+  <span class="tag">Modular English</span>
+  <h1>Il Metodo</h1>
+  <p class="sub">Imparare l'inglese come si impara la lingua madre: per situazioni reali, non per regole di grammatica.</p>
+</div></header>
+
+<main class="wrap">
+  <div class="toggle">
+    <button id="bt-it" class="on" type="button" onclick="setLang('it')">🇮🇹 Italiano</button>
+    <button id="bt-en" type="button" onclick="setLang('en')">🇬🇧 English</button>
+  </div>
+
+  <!-- ─────────────── ITALIANO ─────────────── -->
+  <section id="it" class="lang on">
+    <h2>Il problema</h2>
+    <p class="lead">In Italia qualcosa non funziona. Nonostante decenni di studio e una fitta rete di scuole, pochissimi arrivano a parlare davvero.</p>
+    <div class="stat">
+      <div class="n"><b>9%</b><span>degli italiani parla inglese in modo fluente</span></div>
+      <div class="n"><b>1.600+</b><span>scuole di inglese certificate nel Paese</span></div>
+    </div>
+    <p class="src">Fonte: dati pubblici disponibili online (open internet).</p>
+    <p>Il motivo non è la mancanza di scuole o di impegno. È il <b>metodo</b>. Anni passati su regole, tabelle di verbi ed eccezioni grammaticali producono persone che <i>conoscono</i> l'inglese ma non riescono a <i>parlarlo</i>. La grammatica, da sola, non insegna a comunicare.</p>
+
+    <h2>Un approccio diverso: non la grammatica, ma le situazioni</h2>
+    <p>Modular English ribalta il punto di partenza. Non si parte dalle regole, ma dalle <b>situazioni reali</b>: all'aeroporto, al ristorante, in riunione, dal medico, in viaggio. Ogni modulo è un pezzo di vita reale, con i dialoghi e le espressioni che servono davvero. Si impara come fa un bambino con la lingua madre: la grammatica si assorbe naturalmente, dall'uso, senza diventare un ostacolo.</p>
+
+    <h2>Il metodo in 5 passi</h2>
+    <p>Ogni frase si impara attraversando cinque passi, sempre nello stesso ordine naturale:</p>
+    <div class="steps">
+      <div class="step"><div class="k">1</div><div><h3>Ascolto</h3><p>Ascolti la frase da una voce madrelingua, al ritmo giusto per il tuo livello.</p></div></div>
+      <div class="step"><div class="k">2</div><div><h3>Parlato</h3><p>La ripeti al microfono e ricevi un riscontro sulla tua pronuncia.</p></div></div>
+      <div class="step"><div class="k">3</div><div><h3>Lettura</h3><p>Leggi il testo e i dialoghi, associando suono e scrittura.</p></div></div>
+      <div class="step"><div class="k">4</div><div><h3>Scrittura</h3><p>Scrivi la frase e la verifichi parola per parola.</p></div></div>
+      <div class="step"><div class="k">5</div><div><h3>Traduzione</h3><p>Confronti con l'italiano, a portata di tocco, per fissare il significato.</p></div></div>
+    </div>
+
+    <h2>La ricerca dietro il metodo</h2>
+    <p>Il programma è costruito sulle liste di parole di <b>Oxford University</b>: per ogni livello, dall'<b>A1 al C2</b>, è definito l'insieme delle parole più utili e frequenti da conoscere. La ricerca stabilisce <b>quante e quali parole servono</b> a ciascun livello — da un nucleo di poche centinaia di parole sufficiente per affermare di conoscere l'inglese almeno a livello base, fino alle circa 3.000 parole che coprono la comunicazione quotidiana.</p>
+    <p>Modular English segue questa logica: insegna prima le parole che contano di più, nelle situazioni in cui si usano davvero. Impari ciò che serve, nell'ordine in cui serve.</p>
+
+    <h2>Qualità ingegneristica</h2>
+    <div class="card gold">
+      <p>Modular English nasce dalla mente di <b>Alex Cannas</b> — MBA alla London School of Economics and Political Science, PhD in Ingegneria Aerospaziale all'Università di Bristol (UK), laurea in Ingegneria Meccanica all'Università di Cagliari (ITA) e all'Università di Sheffield (UK) — con oltre <b>25 anni di esperienza internazionale nel settore aerospaziale</b>.</p>
+      <p>Nel settore aerospaziale nulla è lasciato al caso: ogni elemento è progettato, verificato e controllato secondo standard di qualità altissimi. <b>Lo stesso rigore è applicato a ogni modulo del corso</b> — strutturato, controllato e costruito come un sistema, non improvvisato. Precisione, coerenza e affidabilità, al servizio del tuo inglese.</p>
+    </div>
+
+    <h2>Come si impara: i metodi di erogazione</h2>
+    <div class="methods">
+      <div class="m"><div class="ico">🎥</div><h3>Video-corsi</h3><p>Corsi completi in video per situazione, al tuo ritmo.</p></div>
+      <div class="m"><div class="ico">👥</div><h3>Lezioni one-to-one</h3><p>Lezioni individuali, in presenza e online.</p></div>
+      <div class="m"><div class="ico">🎧</div><h3>Lezioni audio</h3><p>Dialoghi e audio-corsi da ascoltare e ripetere.</p></div>
+      <div class="m"><div class="ico">📱</div><h3>App</h3><p>Impara ovunque dall'app, su tutti i tuoi dispositivi.</p></div>
+    </div>
+    <p>Modi complementari, un unico metodo: scegli come preferisci imparare, o combinali tutti.</p>
+
+    <div class="cta"><a class="btn gold" href="/">Inizia ora</a></div>
+    <p class="foot">Modular English · Impara l'inglese in modo naturale. · <a href="/privacy3.html">Privacy</a></p>
+  </section>
+
+  <!-- ─────────────── ENGLISH ─────────────── -->
+  <section id="en" class="lang">
+    <h2>The problem</h2>
+    <p class="lead">In Italy, something isn't working. After decades of study and a dense network of schools, very few people actually end up speaking.</p>
+    <div class="stat">
+      <div class="n"><b>9%</b><span>of Italians speak English fluently</span></div>
+      <div class="n"><b>1,600+</b><span>certified English schools in the country</span></div>
+    </div>
+    <p class="src">Source: publicly available data online (open internet).</p>
+    <p>The reason isn't a shortage of schools or effort. It's the <b>method</b>. Years spent on rules, verb tables and grammar exceptions produce people who <i>know</i> English but can't <i>speak</i> it. Grammar alone does not teach you to communicate.</p>
+
+    <h2>A different approach: situations, not grammar</h2>
+    <p>Modular English flips the starting point. You don't begin with rules — you begin with <b>real situations</b>: at the airport, at a restaurant, in a meeting, at the doctor's, while travelling. Each module is a slice of real life, with the dialogues and expressions you actually need. You learn the way a child learns their mother tongue: grammar is absorbed naturally, through use, instead of becoming an obstacle.</p>
+
+    <h2>The method in 5 steps</h2>
+    <p>Every sentence is learned through five steps, always in the same natural order:</p>
+    <div class="steps">
+      <div class="step"><div class="k">1</div><div><h3>Listening</h3><p>You hear the sentence from a native voice, at the right pace for your level.</p></div></div>
+      <div class="step"><div class="k">2</div><div><h3>Speaking</h3><p>You repeat it into the microphone and get feedback on your pronunciation.</p></div></div>
+      <div class="step"><div class="k">3</div><div><h3>Reading</h3><p>You read the text and dialogues, linking sound to spelling.</p></div></div>
+      <div class="step"><div class="k">4</div><div><h3>Writing</h3><p>You write the sentence and check it word by word.</p></div></div>
+      <div class="step"><div class="k">5</div><div><h3>Translating</h3><p>You compare with Italian, one tap away, to lock in the meaning.</p></div></div>
+    </div>
+
+    <h2>The research behind the method</h2>
+    <p>The curriculum is built on <b>Oxford University</b>'s word lists: for each level, from <b>A1 to C2</b>, the set of the most useful and frequent words to know is defined. The research establishes <b>how many and which words</b> you need at each level — from a core of a few hundred words, enough to claim a basic command of English, up to the roughly 3,000 words that cover everyday communication.</p>
+    <p>Modular English follows this logic: it teaches the words that matter most first, in the situations where they are actually used. You learn what you need, in the order you need it.</p>
+
+    <h2>Engineering-grade quality</h2>
+    <div class="card gold">
+      <p>Modular English was created by <b>Alex Cannas</b> — MBA from the London School of Economics and Political Science, PhD in Aerospace Engineering from the University of Bristol (UK), and a degree in Mechanical Engineering from the University of Cagliari (Italy) and the University of Sheffield (UK) — with over <b>25 years of international experience in the aerospace field</b>.</p>
+      <p>In aerospace nothing is left to chance: every element is designed, verified and checked to the highest quality standards. <b>The same rigour goes into every module of the course</b> — structured, checked and built like a system, never improvised. Precision, consistency and reliability, applied to your English.</p>
+    </div>
+
+    <h2>How you learn: delivery methods</h2>
+    <div class="methods">
+      <div class="m"><div class="ico">🎥</div><h3>Video courses</h3><p>Full video courses by situation, at your own pace.</p></div>
+      <div class="m"><div class="ico">👥</div><h3>One-to-one lessons</h3><p>Individual lessons, in person and online.</p></div>
+      <div class="m"><div class="ico">🎧</div><h3>Audio lessons</h3><p>Dialogues and audio courses to listen to and repeat.</p></div>
+      <div class="m"><div class="ico">📱</div><h3>Apps</h3><p>Learn anywhere from the app, on all your devices.</p></div>
+    </div>
+    <p>Complementary ways, one method: choose how you prefer to learn, or combine them all.</p>
+
+    <div class="cta"><a class="btn gold" href="/">Get started</a></div>
+    <p class="foot">Modular English · Learn English the natural way. · <a href="/privacy3.html">Privacy</a></p>
+  </section>
+</main>
+
+<script>
+  function setLang(l){
+    document.getElementById('it').classList.toggle('on', l==='it');
+    document.getElementById('en').classList.toggle('on', l==='en');
+    document.getElementById('bt-it').classList.toggle('on', l==='it');
+    document.getElementById('bt-en').classList.toggle('on', l==='en');
+    try{ document.documentElement.lang=l; }catch(e){}
+  }
+  try{ if((navigator.language||'').slice(0,2)==='en') setLang('en'); }catch(e){}
+</script>
+</body>
+</html>
