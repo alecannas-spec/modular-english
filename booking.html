@@ -192,6 +192,9 @@ input,textarea{background:#0d0d0d;border:1px solid #2a2a2a;color:#e5e5e5;padding
 </head>
 <body>
 
+<!-- Back to Modular English home -->
+<a href="/" id="me-home-back" style="position:fixed;top:14px;left:14px;z-index:99999;display:inline-flex;align-items:center;gap:6px;color:#fff;text-decoration:none;font:700 13px system-ui,-apple-system,sans-serif;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:99px;backdrop-filter:blur(6px);">← Indietro</a>
+
 <!-- UK Flag (shared) -->
 <div class="flag-bg" id="flagBg">
   <svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
@@ -1798,6 +1801,22 @@ function saveCustEdit(safeGk){
 // ============================================================
 updatePinDots();
 document.getElementById('flagBg').style.display='block';
+
+// ---- Admin pass-through from the Modular English main site ----
+// If the visitor already unlocked admin on okmodularenglish.com (token in the
+// me_token cookie carries admin:true), open the dashboard with no PIN.
+(function(){
+  function getCk(n){ try{ var m=document.cookie.match(new RegExp('(?:^|;\\s*)'+n+'=([^;]+)')); return m?decodeURIComponent(m[1]):''; }catch(e){ return ''; } }
+  function decodeTok(t){ try{ return JSON.parse(atob(String(t).split('.')[0])); }catch(e){ return null; } }
+  try{
+    var p = decodeTok(getCk('me_token'));
+    if(p && p.admin===true && (!p.expires || Date.now()<p.expires)){
+      isTeacherLoggedIn=true;
+      calendarMode='teacher';
+      showScreen('screen-admin');
+    }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
