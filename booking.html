@@ -216,7 +216,10 @@ input,textarea{background:#0d0d0d;border:1px solid #2a2a2a;color:#e5e5e5;padding
   <div class="pin-wrap">
     <div class="card" id="pinCard">
       <div class="pin-title">Modular English Booking <span style="font-size:11px;opacity:0.5;">v1.0.1</span></div>
-      <div class="pin-sub">Enter your access PIN</div>
+      <div class="pin-sub">Prenota la tua lezione</div>
+      <button id="btn-prenota" onclick="goCalendar('student')" style="width:100%;padding:16px;font-size:18px;font-weight:800;background:#F5C518;color:#0a0a0a;border:none;border-radius:12px;cursor:pointer;margin-bottom:18px;">📅 Prenota</button>
+      <div id="staffPinArea" style="display:none">
+      <div class="pin-sub" style="margin-top:4px">Accesso riservato — inserisci il PIN</div>
       <div class="pin-dots" id="pinDots"></div>
       <div class="pin-error" id="pinError"></div>
       <div class="numpad">
@@ -232,6 +235,10 @@ input,textarea{background:#0d0d0d;border:1px solid #2a2a2a;color:#e5e5e5;padding
         <button class="num-btn empty"></button>
         <button class="num-btn" onclick="pinPress('0')">0</button>
         <button class="num-btn del" onclick="pinDel()">DEL</button>
+      </div>
+      </div><!-- /staffPinArea -->
+      <div class="teacher-link">
+        <button onclick="var a=document.getElementById('staffPinArea'); if(a){a.style.display='block';} this.parentNode.style.display='none';">Accesso insegnante / admin</button>
       </div>
       <div class="teacher-link">
         <button onclick="showScreen('screen-teacherpw')">Teacher access</button>
