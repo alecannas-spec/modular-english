@@ -2112,5 +2112,56 @@ window.adminPinGo=adminPinGo;
 })();
 </script>
 
+<script>
+/* Collapse Explore/Free/My/Test/Support into a ☰ menu; keep Home and Cart in the
+   bar. Adds an "App" entry linking to the stores page. Reuses the original
+   buttons' actions, so nothing about navigation logic changes. */
+(function(){
+  if(window.__meMenu) return; window.__meMenu=true;
+  function init(){
+    var links=document.querySelector('.nav-links'); if(!links) return;
+    if(document.getElementById('nav-menu')) return;
+    var home=document.getElementById('nav-home');
+    var ids=['nav-explore','nav-ftt','nav-mycourses','nav-test','nav-support'];
+    var items=[];
+    ids.forEach(function(id){ var b=document.getElementById(id); if(!b) return;
+      var sp=b.querySelector('span');
+      var label=(sp?sp.textContent:b.textContent).trim();
+      var emoji=(b.textContent.trim().match(/^\S+/)||[''])[0];
+      items.push({emoji:emoji,label:label,act:function(){ b.click(); }});
+      b.style.display='none';
+    });
+    items.push({emoji:'📱',label:'App',act:function(){ location.href='/apps.html'; }});
+
+    var btn=document.createElement('button');
+    btn.className='nav-link'; btn.id='nav-menu'; btn.type='button';
+    btn.innerHTML='☰ <span>Menu</span>';
+    if(home && home.nextSibling) links.insertBefore(btn, home.nextSibling); else links.appendChild(btn);
+
+    var dd=document.createElement('div'); dd.id='me-menu-dd';
+    dd.style.cssText='position:fixed;z-index:2147481200;display:none;min-width:210px;background:#0a1f4a;border:1px solid #22305f;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.5);padding:6px';
+    items.forEach(function(it){
+      var row=document.createElement('button'); row.type='button';
+      row.style.cssText='display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;color:#fff;font:600 15px system-ui;padding:11px 14px;border-radius:8px;cursor:pointer;text-align:left';
+      row.onmouseover=function(){ row.style.background='#13346b'; };
+      row.onmouseout=function(){ row.style.background='transparent'; };
+      row.innerHTML='<span style="font-size:1.1rem;width:22px;text-align:center">'+it.emoji+'</span><span>'+it.label+'</span>';
+      row.onclick=function(){ closeMenu(); it.act(); };
+      dd.appendChild(row);
+    });
+    document.body.appendChild(dd);
+
+    function openMenu(){ var r=btn.getBoundingClientRect();
+      dd.style.top=(r.bottom+6)+'px';
+      var left=r.left; if(left+220>window.innerWidth) left=window.innerWidth-220-8;
+      dd.style.left=Math.max(8,left)+'px'; dd.style.display='block'; btn.classList.add('active'); }
+    function closeMenu(){ dd.style.display='none'; btn.classList.remove('active'); }
+    btn.onclick=function(e){ e.stopPropagation(); dd.style.display==='block'?closeMenu():openMenu(); };
+    document.addEventListener('click', function(e){ if(dd.style.display==='block' && !dd.contains(e.target) && !btn.contains(e.target)) closeMenu(); });
+    window.addEventListener('resize', closeMenu);
+  }
+  if(document.readyState!=='loading') setTimeout(init,60); else document.addEventListener('DOMContentLoaded', function(){ setTimeout(init,60); });
+})();
+</script>
 </body>
 </html>
