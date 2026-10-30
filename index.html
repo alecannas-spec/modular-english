@@ -2273,5 +2273,22 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
  #home-levels{grid-template-columns:1fr!important;padding-top:32px!important}
 }
 </style>
+<style>
+  /* Hide the floating back button on the My Courses list so it doesn't cover
+     the "restore purchase" info; the bottom nav still lets you leave. */
+  body[data-view="mycourses"] #me-back-btn{display:none !important;}
+</style>
+<script>
+(function(){
+  var NAV=['showView','openLevel','openModule','openSituation'];
+  function setAV(){ try{ var a=document.querySelector('.view.active'); document.body.setAttribute('data-view', a? a.id.replace('view-','') : ''); }catch(e){} }
+  NAV.forEach(function(name){
+    var orig=window[name];
+    if(typeof orig!=='function') return;
+    window[name]=function(){ var r=orig.apply(this,arguments); setAV(); return r; };
+  });
+  setAV();
+})();
+</script>
 </body>
 </html>
