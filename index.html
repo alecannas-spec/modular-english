@@ -428,7 +428,7 @@ html,body{height:100%;overflow:hidden}
       </div>
       <div class="hero-text">
         <h1 class="hero-brand">Modular English</h1>
-        <p class="hero-sub1">Learn English Naturally</p>
+        <p class="hero-sub1">Learn English the Natural Way</p>
         <p class="hero-sub2">Speak More · Worry Less</p>
         <a href="https://youtu.be/1aSUnTCHUw0" target="_blank" rel="noopener"
           style="display:inline-block;margin-top:14px;background:#FF0000;color:white;font-weight:700;font-size:1rem;padding:12px 24px;border-radius:12px;text-decoration:none;box-shadow:0 4px 15px rgba(255,0,0,.4);letter-spacing:.3px">
@@ -587,8 +587,8 @@ html,body{height:100%;overflow:hidden}
   <div style="background:white;border-radius:16px;width:100%;max-width:640px;height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #E2E8F0;flex-shrink:0">
       <div style="display:flex;gap:6px">
-        <button onclick="switchGrammarTab('vocab')" id="gtab-vocab" style="background:#1E3A5F;color:white;border:none;border-radius:8px;padding:6px 12px;font-size:.75rem;font-weight:600;cursor:pointer">📚 Vocabulary</button>
-        <button onclick="switchGrammarTab('grammar')" id="gtab-grammar" style="background:#E2E8F0;color:#1E3A5F;border:none;border-radius:8px;padding:6px 12px;font-size:.75rem;font-weight:600;cursor:pointer">📗 Grammar</button>
+        <button onclick="switchGrammarTab('vocab')" id="gtab-vocab" style="background:#1E3A5F;color:white;border:none;border-radius:8px;padding:6px 12px;font-size:.75rem;font-weight:600;cursor:pointer">📚 Spoken English</button>
+        <button onclick="switchGrammarTab('grammar')" id="gtab-grammar" style="background:#E2E8F0;color:#1E3A5F;border:none;border-radius:8px;padding:6px 12px;font-size:.75rem;font-weight:600;cursor:pointer">📗 Intermediate</button>
         <button onclick="switchGrammarTab('advanced')" id="gtab-advanced" style="background:#E2E8F0;color:#1E3A5F;border:none;border-radius:8px;padding:6px 12px;font-size:.75rem;font-weight:600;cursor:pointer">🎓 Advanced</button>
       </div>
       <button onclick="document.getElementById('grammar-modal-overlay').style.display='none'" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#94A3B8">✕</button>
@@ -2141,38 +2141,31 @@ window.adminPinGo=adminPinGo;
     if(document.getElementById('nav-menu')) return;
     var home=document.getElementById('nav-home');
     // Collapse these from the bar (Home and Cart stay visible as icons).
-    ['nav-explore','nav-ftt','nav-mycourses','nav-test','nav-support'].forEach(function(id){ var b=document.getElementById(id); if(b) b.style.display='none'; });
+    ['nav-ftt','nav-mycourses','nav-test','nav-support'].forEach(function(id){ var b=document.getElementById(id); if(b) b.style.display='none'; });
     function navItem(id, emoji, label){ var b=document.getElementById(id); return { emoji:emoji, label:label, act:function(){ if(b) b.click(); } }; }
     // Desired order: Home, Metodo, Explore, Free, Test, Cart, My, Forum, Apps, Support.
     function openAcct(){ if(window.__meOpenAccount) window.__meOpenAccount(); }
     var items=[
-      navItem('nav-home','🏠','Home'),
-      { emoji:'👤', label:'Account', act:openAcct },
-      { emoji:'📖', label:'Method', act:function(){ location.href='/method.html'; } },
-      navItem('nav-explore','🔍','Explore'),
-      navItem('nav-ftt','✨','Free'),
       navItem('nav-test','🧪','Test'),
-      navItem('nav-cart','🛒','Cart'),
-      navItem('nav-mycourses','📚','My'),
+      navItem('nav-ftt','✨','Free'),
       { emoji:'💬', label:'Forum', act:function(){ location.href='/forum.html'; } },
-      { emoji:'📱', label:'App', act:function(){ location.href='/apps.html'; } },
-      { emoji:'📅', label:'Bookings', act:function(){ location.href='/booking.html'; } },
-      navItem('nav-support','✉️','Support')
+      { emoji:'📱', label:'Apps', act:function(){ location.href='/apps.html'; } },
+      navItem('nav-support','✉️','Support'),
+      navItem('nav-mycourses','📚','My Courses')
     ];
-    // small Account icon in the top bar, next to Cart
-    (function(){ var cart=document.getElementById('nav-cart');
-      if(cart && !document.getElementById('nav-account')){
-        var a=document.createElement('button'); a.className='nav-link'; a.id='nav-account'; a.type='button';
-        a.innerHTML='<span class="nav-ico" aria-hidden="true">👤</span><span>Account</span>';
-        a.onclick=openAcct;
-        if(cart.nextSibling) links.insertBefore(a, cart.nextSibling); else links.appendChild(a);
-      }
-    })();
+    function mkBtn(id,emoji,label,fn){ var x=document.createElement('button'); x.className='nav-link'; x.id=id; x.type='button';
+      x.innerHTML='<span class="nav-ico" aria-hidden="true">'+emoji+'</span> <span>'+label+'</span>'; x.onclick=fn; return x; }
+    var methodBtn=mkBtn('nav-method','📖','Method',function(){ location.href='/method.html'; });
+    var bookBtn=mkBtn('nav-booking','📅','Booking',function(){ location.href='/booking.html'; });
+    var acctBtn=mkBtn('nav-account','👤','Account',openAcct);
+    var cartBtn=document.getElementById('nav-cart');
+    var exploreBtn=document.getElementById('nav-explore'); if(exploreBtn) exploreBtn.style.display='';
 
     var btn=document.createElement('button');
     btn.className='nav-link'; btn.id='nav-menu'; btn.type='button';
     btn.innerHTML='☰ <span>Menu</span>';
-    if(home && home.nextSibling) links.insertBefore(btn, home.nextSibling); else links.appendChild(btn);
+    // Bar order: Menu, Home, Method, Explore, Booking, Cart, Account
+    [btn,home,methodBtn,exploreBtn,bookBtn,cartBtn,acctBtn].forEach(function(el){ if(el) links.appendChild(el); });
 
     var dd=document.createElement('div'); dd.id='me-menu-dd';
     dd.style.cssText='position:fixed;z-index:2147481200;display:none;min-width:210px;background:#0a1f4a;border:1px solid #22305f;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.5);padding:6px';
@@ -2199,5 +2192,86 @@ window.adminPinGo=adminPinGo;
   if(document.readyState!=='loading') setTimeout(init,60); else document.addEventListener('DOMContentLoaded', function(){ setTimeout(init,60); });
 })();
 </script>
+<style id="me-design-v2">
+/* ═════ ME DESIGN v2 — solo stile, nessuna modifica a logica/paywall ═════ */
+:root{--navy2:#13216a;--ink:#0A143C;--line:rgba(10,20,60,.08);--shadow2:0 1px 2px rgba(10,20,60,.06),0 8px 28px rgba(10,20,60,.08);--shadow3:0 2px 4px rgba(10,20,60,.08),0 16px 40px rgba(10,20,60,.16)}
+body{background:#F4F6FD}
+nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(245,197,24,.18);box-shadow:none!important}
+.nav-link.active{background:rgba(245,197,24,.14)!important;color:var(--gold)!important}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;padding:56px 20px 44px!important;text-align:left!important;
+ background:radial-gradient(900px 420px at 85% -10%,rgba(245,197,24,.20),transparent 60%),radial-gradient(700px 380px at -10% 110%,rgba(80,110,255,.28),transparent 60%),linear-gradient(160deg,#0A143C 0%,#101d5a 100%)!important}
+.hero::after{content:"";position:absolute;inset:auto 0 0 0;height:4px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.8}
+.hero-inner{max-width:980px;margin:0 auto!important;display:flex;align-items:center;gap:44px!important;flex-wrap:nowrap!important;position:relative;z-index:1}
+.hero-logo{width:168px!important;height:168px!important;border-radius:36px!important;box-shadow:0 0 0 6px rgba(255,255,255,.06),0 20px 50px rgba(0,0,0,.45)!important;display:block}
+.hero-text{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.hero-brand{font-size:clamp(2.2rem,5.2vw,3.6rem)!important;letter-spacing:-.02em;margin:0 0 10px!important}
+.hero-sub1{font-size:clamp(1.05rem,2.4vw,1.35rem)!important;color:var(--gold)!important;margin:0!important}
+.hero-sub2{margin:4px 0 22px!important;letter-spacing:.04em}
+.hero-text>div[style*="display:flex"]{order:4;margin:0!important;gap:10px!important}
+.hero-text>a[href*="youtu"]{order:5;margin:16px 0 0!important;background:rgba(255,255,255,.07)!important;color:#fff!important;border:1.5px solid rgba(255,70,70,.7)!important;box-shadow:none!important;padding:9px 18px!important;border-radius:999px!important;font-size:.88rem!important;transition:.2s}
+.hero-text>a[href*="youtu"]:hover{background:#FF0000!important;border-color:#FF0000!important}
+.hero-text .btn{border-radius:12px;padding:13px 24px;font-size:.95rem}
+.hero-text .btn-gold{box-shadow:0 6px 22px rgba(245,197,24,.35)}
+.hero-text .btn-gold:hover{box-shadow:0 10px 28px rgba(245,197,24,.5)}
+.hero-text .btn-outline{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.35)}
+.hero-text .btn-outline:nth-child(n+3){padding:13px 16px;font-size:.82rem;font-weight:500;background:transparent;border-color:transparent;color:rgba(255,255,255,.65);text-decoration:underline;text-underline-offset:4px}
+.hero-text .btn-outline:nth-child(n+3):hover{color:var(--gold)}
+.stats-row{order:6;display:grid!important;grid-template-columns:repeat(5,auto);gap:0!important;margin-top:28px!important;padding:14px 4px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.05);width:100%;max-width:560px}
+.stat{text-align:center;padding:0 12px;border-left:1px solid rgba(255,255,255,.1)}
+.stat:first-child{border-left:0}
+.stat-num{font-size:clamp(18px,3.6vw,26px)!important}
+.stat-label{font-size:9.5px!important;letter-spacing:.8px!important}
+
+/* LEVELS */
+#home-levels{max-width:980px!important;padding:44px 20px 20px!important;gap:18px!important;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))!important;margin:0 auto}
+#home-levels::before{content:"Scegli il tuo livello";grid-column:1/-1;font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.5rem,3.4vw,2rem);color:var(--ink);margin-bottom:2px;padding-bottom:12px;background:linear-gradient(var(--gold),var(--gold)) left bottom/56px 4px no-repeat}
+#home-levels .level-card{position:relative;overflow:hidden;text-align:left!important;display:flex;flex-direction:column;align-items:flex-start;padding:22px 22px 20px!important;border:1px solid var(--line)!important;border-radius:18px!important;box-shadow:var(--shadow2)!important}
+#home-levels .level-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold);opacity:.9;transition:.22s}
+#home-levels .level-card:hover{transform:translateY(-4px)!important;box-shadow:var(--shadow3)!important;border-color:rgba(245,197,24,.7)!important}
+#home-levels .level-card:hover::before{width:8px}
+#home-levels .level-emoji{font-size:2.2rem!important;width:60px;height:60px;display:flex!important;align-items:center;justify-content:center;border-radius:16px;background:#F1F4FF;margin-bottom:14px!important}
+#home-levels .level-name{font-size:1.12rem!important;line-height:1.25;margin-bottom:8px!important}
+#home-levels .level-code{font-family:'DM Sans',sans-serif!important;font-size:.7rem!important;font-weight:700!important;letter-spacing:.08em!important;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:currentColor;position:relative;margin-bottom:10px!important}
+#home-levels .level-code{background:none;border:1.5px solid currentColor}
+#home-levels .level-desc{font-size:.88rem!important;color:#4B5563!important;flex:1}
+#home-levels .level-meta{width:100%;margin-top:6px;padding-top:12px;border-top:1px dashed #E3E7F3;font-size:.76rem!important;color:#7a8296!important;font-weight:500}
+
+/* PAGE HEADERS */
+.page-header{position:relative;padding:34px 20px 30px!important;background:linear-gradient(160deg,#0A143C,#13216a)!important}
+.page-header::after{content:"";position:absolute;left:20px;bottom:0;width:64px;height:4px;background:var(--gold);border-radius:4px 4px 0 0}
+.page-header h2{font-size:clamp(1.5rem,4vw,2rem)!important}
+.explore-search,.explore-levels,.modules-grid,.situations-list,.my-courses,.ftt-view{max-width:760px!important}
+.search-input{padding:14px 18px!important;border-radius:14px!important;border:1.5px solid #E1E6F5!important;box-shadow:var(--shadow2)}
+.search-input:focus{border-color:var(--gold)!important;box-shadow:0 0 0 4px rgba(245,197,24,.2)}
+.explore-level-section{margin-bottom:34px!important}
+.explore-level-title{font-size:1.15rem!important;font-family:'Playfair Display',serif;padding-bottom:8px;border-bottom:2px solid #E8ECF8;margin-bottom:12px!important}
+.explore-mod-row,.module-card,.sit-card,.course-item,.ftt-card{border:1px solid var(--line)!important;box-shadow:var(--shadow2)!important;border-radius:14px!important}
+.explore-mod-row{padding:13px 16px!important}
+.explore-mod-row:hover,.module-card:hover,.sit-card:hover,.course-item:hover{border-color:var(--gold)!important;transform:translateY(-2px);box-shadow:var(--shadow3)!important}
+.explore-mod-icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#F1F4FF;border-radius:12px;font-size:1.2rem!important}
+.explore-mod-name{font-size:.95rem!important}
+.module-price,.sit-price{background:rgba(245,197,24,.18);padding:3px 10px;border-radius:999px}
+.module-buy-bar{border-top:0!important;box-shadow:0 -8px 30px rgba(10,20,60,.18)!important}
+.btn{border-radius:12px}
+.cart-total{background:linear-gradient(160deg,#0A143C,#13216a)!important}
+
+/* MOBILE */
+@media(max-width:640px){
+ .hero{padding:36px 18px 34px!important;text-align:center!important}
+ .hero-inner{flex-direction:column!important;gap:20px!important;text-align:center}
+ .hero-logo{width:112px!important;height:112px!important;border-radius:26px!important}
+ .hero-text{align-items:center}
+ .hero-text>div[style*="display:flex"]{justify-content:center}
+ .hero-text .btn-gold,.hero-text .btn-outline:nth-child(2){flex:1 1 150px;justify-content:center}
+ .stats-row{grid-template-columns:repeat(3,1fr)!important;gap:16px 0!important;max-width:none;padding:16px 4px}
+ .stat:nth-child(5){grid-column:2}
+ .hero-text .btn{white-space:nowrap;padding:13px 14px}
+ .stat:nth-child(4){border-left:0}
+ .stat:nth-child(5){border-left:0}
+ #home-levels{grid-template-columns:1fr!important;padding-top:32px!important}
+}
+</style>
 </body>
 </html>
