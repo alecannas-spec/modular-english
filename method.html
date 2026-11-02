@@ -53,16 +53,17 @@
 </head>
 <body>
 <header><div class="wrap">
-  <a class="back" href="/">← Indietro</a>
+  <a class="back" href="/" id="hdr-back">← Indietro</a>
   <span class="tag">Modular English</span>
-  <h1>Il Metodo</h1>
-  <p class="sub">Imparare l'inglese come si impara la lingua madre: per situazioni reali, non per regole di grammatica.</p>
+  <h1 id="hdr-h1">Il Metodo</h1>
+  <p class="sub" id="hdr-sub">Imparare l'inglese come si impara la lingua madre: per situazioni reali, non per regole di grammatica.</p>
 </div></header>
 
 <main class="wrap">
   <div class="toggle">
     <button id="bt-it" class="on" type="button" onclick="setLang('it')">🇮🇹 Italiano</button>
     <button id="bt-en" type="button" onclick="setLang('en')">🇬🇧 English</button>
+    <button id="bt-es" type="button" onclick="setLang('es')">🇪🇸 Español</button>
   </div>
 
   <!-- ─────────────── ITALIANO ─────────────── -->
@@ -146,29 +147,67 @@
       <p>In aerospace nothing is left to chance: every element is designed, verified and checked to the highest quality standards. <b>The same rigour goes into every module of the course</b> — structured, checked and built like a system, never improvised. Precision, consistency and reliability, applied to your English.</p>
     </div>
 
-    <h2>How you learn: delivery methods</h2>
-    <div class="methods">
-      <div class="m"><div class="ico">🎥</div><h3>Video courses</h3><p>Full video courses by situation, at your own pace.</p></div>
-      <div class="m"><div class="ico">👥</div><h3>One-to-one lessons</h3><p>Individual lessons, in person and online.</p></div>
-      <div class="m"><div class="ico">🎧</div><h3>Audio lessons</h3><p>Dialogues and audio courses to listen to and repeat.</p></div>
-      <div class="m"><div class="ico">📱</div><h3>Apps</h3><p>Learn anywhere from the app, on all your devices.</p></div>
-    </div>
-    <p>Complementary ways, one method: choose how you prefer to learn, or combine them all.</p>
-
     <div class="cta"><a class="btn gold" href="/">Get started</a></div>
     <p class="foot">Modular English · Learn English the natural way. · <a href="/privacy3.html">Privacy</a></p>
+  </section>
+
+  <!-- ─────────────── ESPAÑOL ─────────────── -->
+  <section id="es" class="lang">
+    <h2>El problema</h2>
+    <p class="lead">En España, algo no funciona. A pesar de años de estudio y una amplia red de academias, muy pocas personas llegan a hablar inglés con fluidez.</p>
+    <div class="stat">
+      <div class="n"><b>23º</b><span>la posición de España en Europa por dominio del inglés</span></div>
+      <div class="n"><b>Medio</b><span>nivel de competencia según el EF English Proficiency Index</span></div>
+    </div>
+    <p class="src">Fuente: datos públicos disponibles en internet (EF English Proficiency Index).</p>
+    <p>España ocupa el <b>puesto 23 de Europa</b> en dominio del inglés: por debajo de la media europea, pese a los años que se dedican al idioma en el colegio y en las academias. El motivo no es la falta de academias ni de esfuerzo. Es el <b>método</b>. Años dedicados a reglas, tablas de verbos y excepciones gramaticales producen personas que <i>conocen</i> el inglés pero no consiguen <i>hablarlo</i>. La gramática, por sí sola, no enseña a comunicarse.</p>
+
+    <h2>Un enfoque diferente: situaciones, no gramática</h2>
+    <p>Modular English cambia el punto de partida. No empiezas por las reglas, sino por <b>situaciones reales</b>: en el aeropuerto, en un restaurante, en una reunión, en el médico, de viaje. Cada módulo es un trozo de vida real, con los diálogos y las expresiones que de verdad necesitas. Aprendes como aprende un niño su lengua materna: la gramática se asimila de forma natural, con el uso, en lugar de convertirse en un obstáculo.</p>
+
+    <h2>El método en 5 pasos</h2>
+    <p>Cada frase se aprende recorriendo cinco pasos, siempre en el mismo orden natural:</p>
+    <div class="steps">
+      <div class="step"><div class="k">1</div><div><h3>Escucha</h3><p>Escuchas la frase de una voz nativa, al ritmo adecuado para tu nivel.</p></div></div>
+      <div class="step"><div class="k">2</div><div><h3>Habla</h3><p>La repites al micrófono y recibes feedback sobre tu pronunciación.</p></div></div>
+      <div class="step"><div class="k">3</div><div><h3>Lectura</h3><p>Lees el texto y los diálogos, asociando sonido y escritura.</p></div></div>
+      <div class="step"><div class="k">4</div><div><h3>Escritura</h3><p>Escribes la frase y la verificas palabra por palabra.</p></div></div>
+      <div class="step"><div class="k">5</div><div><h3>Traducción</h3><p>Comparas con el español, a un toque de distancia, para fijar el significado.</p></div></div>
+    </div>
+
+    <h2>La investigación detrás del método</h2>
+    <p>El programa se basa en las listas de palabras de <b>Oxford University</b>: para cada nivel, del <b>A1 al C2</b>, se define el conjunto de palabras más útiles y frecuentes que conviene conocer. La investigación establece <b>cuántas y qué palabras</b> hacen falta en cada nivel — desde un núcleo de unos pocos cientos de palabras, suficiente para afirmar un dominio básico del inglés, hasta las aproximadamente 3.000 palabras que cubren la comunicación cotidiana.</p>
+    <p>Modular English sigue esta lógica: enseña primero las palabras que más importan, en las situaciones en las que realmente se usan. Aprendes lo que necesitas, en el orden en que lo necesitas.</p>
+
+    <h2>Calidad de ingeniería</h2>
+    <div class="card gold">
+      <p>Modular English nace de la mente de <b>Alex Cannas</b> — MBA por la London School of Economics and Political Science, Doctorado (PhD) en Ingeniería Aeroespacial por la Universidad de Bristol (Reino Unido) y titulación en Ingeniería Mecánica por la Universidad de Cagliari (Italia) y la Universidad de Sheffield (Reino Unido) — con más de <b>25 años de experiencia internacional en el sector aeroespacial</b>.</p>
+      <p>En el sector aeroespacial nada se deja al azar: cada elemento se diseña, se verifica y se controla con los estándares de calidad más altos. <b>El mismo rigor se aplica a cada módulo del curso</b> — estructurado, verificado y construido como un sistema, nunca improvisado. Precisión, coherencia y fiabilidad, al servicio de tu inglés.</p>
+    </div>
+
+    <div class="cta"><a class="btn gold" href="/">Empieza ahora</a></div>
+    <p class="foot">Modular English · Aprende inglés de forma natural. · <a href="/privacy3.html">Privacy</a></p>
   </section>
 </main>
 
 <script>
+  var HDR={
+    it:{back:'← Indietro', h1:'Il Metodo', sub:"Imparare l'inglese come si impara la lingua madre: per situazioni reali, non per regole di grammatica."},
+    en:{back:'← Back', h1:'The Method', sub:'Learn English the way you learn your mother tongue: through real situations, not grammar rules.'},
+    es:{back:'← Volver', h1:'El Método', sub:'Aprende inglés como se aprende la lengua materna: a través de situaciones reales, no de reglas de gramática.'}
+  };
   function setLang(l){
-    document.getElementById('it').classList.toggle('on', l==='it');
-    document.getElementById('en').classList.toggle('on', l==='en');
-    document.getElementById('bt-it').classList.toggle('on', l==='it');
-    document.getElementById('bt-en').classList.toggle('on', l==='en');
+    ['it','en','es'].forEach(function(x){
+      document.getElementById(x).classList.toggle('on', x===l);
+      document.getElementById('bt-'+x).classList.toggle('on', x===l);
+    });
+    var h=HDR[l]||HDR.it;
+    try{ document.getElementById('hdr-back').textContent=h.back;
+      document.getElementById('hdr-h1').textContent=h.h1;
+      document.getElementById('hdr-sub').textContent=h.sub; }catch(e){}
     try{ document.documentElement.lang=l; }catch(e){}
   }
-  try{ if((navigator.language||'').slice(0,2)==='en') setLang('en'); }catch(e){}
+  try{ var L=(navigator.language||'').slice(0,2); if(L==='en'||L==='es') setLang(L); }catch(e){}
 </script>
 </body>
 </html>

@@ -193,7 +193,7 @@ input,textarea{background:#0d0d0d;border:1px solid #2a2a2a;color:#e5e5e5;padding
 <body>
 
 <!-- Back to Modular English home -->
-<a href="/" id="me-home-back" style="position:fixed;top:14px;left:14px;z-index:99999;display:inline-flex;align-items:center;gap:6px;color:#fff;text-decoration:none;font:700 13px system-ui,-apple-system,sans-serif;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:99px;backdrop-filter:blur(6px);">← Indietro</a>
+<a href="/" id="me-home-back" style="position:fixed;top:14px;left:14px;z-index:99999;display:inline-flex;align-items:center;gap:6px;color:#fff;text-decoration:none;font:700 13px system-ui,-apple-system,sans-serif;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:99px;backdrop-filter:blur(6px);">← Back</a>
 
 <!-- UK Flag (shared) -->
 <div class="flag-bg" id="flagBg">
@@ -219,10 +219,10 @@ input,textarea{background:#0d0d0d;border:1px solid #2a2a2a;color:#e5e5e5;padding
   <div class="pin-wrap">
     <div class="card" id="pinCard">
       <div class="pin-title">Modular English Booking <span style="font-size:11px;opacity:0.5;">v1.0.1</span></div>
-      <div class="pin-sub">Prenota la tua lezione</div>
-      <button id="btn-prenota" onclick="goCalendar('student')" style="width:100%;padding:16px;font-size:18px;font-weight:800;background:#F5C518;color:#0a0a0a;border:none;border-radius:12px;cursor:pointer;margin-bottom:18px;">📅 Prenota</button>
+      <div class="pin-sub">Book your lesson</div>
+      <button id="btn-prenota" onclick="goCalendar('student')" style="width:100%;padding:16px;font-size:18px;font-weight:800;background:#F5C518;color:#0a0a0a;border:none;border-radius:12px;cursor:pointer;margin-bottom:18px;">📅 Book</button>
       <div id="staffPinArea" style="display:none">
-      <div class="pin-sub" style="margin-top:4px">Accesso riservato — inserisci il PIN</div>
+      <div class="pin-sub" style="margin-top:4px">Restricted access — enter the PIN</div>
       <div class="pin-dots" id="pinDots"></div>
       <div class="pin-error" id="pinError"></div>
       <div class="numpad">
@@ -241,7 +241,7 @@ input,textarea{background:#0d0d0d;border:1px solid #2a2a2a;color:#e5e5e5;padding
       </div>
       </div><!-- /staffPinArea -->
       <div class="teacher-link">
-        <button onclick="var a=document.getElementById('staffPinArea'); if(a){a.style.display='block';} this.parentNode.style.display='none';">Accesso insegnante / admin</button>
+        <button onclick="var a=document.getElementById('staffPinArea'); if(a){a.style.display='block';} this.parentNode.style.display='none';">Teacher / admin access</button>
       </div>
       <div class="teacher-link">
         <button onclick="showScreen('screen-teacherpw')">Teacher access</button>
@@ -1806,7 +1806,7 @@ document.getElementById('flagBg').style.display='block';
 // ---- Admin pass-through from the Modular English main site ----
 // Stay on the access page; if the visitor already unlocked admin on
 // okmodularenglish.com (me_token cookie carries admin:true), show a one-tap
-// "Dashboard admin" button so no PIN/password is needed.
+// "Admin dashboard" button so no PIN/password is needed.
 (function(){
   function getCk(n){ try{ var m=document.cookie.match(new RegExp('(?:^|;\\s*)'+n+'=([^;]+)')); return m?decodeURIComponent(m[1]):''; }catch(e){ return ''; } }
   function decodeTok(t){ try{ return JSON.parse(atob(String(t).split('.')[0])); }catch(e){ return null; } }
@@ -1817,7 +1817,7 @@ document.getElementById('flagBg').style.display='block';
       if(host && !document.getElementById('btn-admin-dash')){
         var a=document.createElement('button');
         a.id='btn-admin-dash';
-        a.textContent='⚙️ Dashboard admin';
+        a.textContent='⚙️ Admin dashboard';
         a.style.cssText='width:100%;padding:13px;font-size:15px;font-weight:700;background:#1c1c1c;color:#F5C518;border:1px solid #F5C518;border-radius:12px;cursor:pointer;margin-bottom:18px;';
         a.onclick=function(){ isTeacherLoggedIn=true; calendarMode='teacher'; showScreen('screen-admin'); };
         host.insertAdjacentElement('afterend', a);
