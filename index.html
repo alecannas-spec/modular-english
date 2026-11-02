@@ -2494,8 +2494,34 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
   window.refreshJoinBtn = function(){
     var btn=document.getElementById('me-join-btn'); if(!btn) return;
     btn.disabled=false;
-    if(memberActive()){ btn.textContent='✓ Membership active'; btn.classList.remove('btn-gold'); btn.classList.add('btn-outline'); }
+    var active=memberActive();
+    if(active){ btn.textContent='✓ Membership active'; btn.classList.remove('btn-gold'); btn.classList.add('btn-outline'); }
     else { btn.textContent='👑 Join for €12.99 a month'; btn.classList.add('btn-gold'); btn.classList.remove('btn-outline'); }
+    // A subtle "Cancel membership" link, shown only to active members.
+    var link=document.getElementById('me-cancel-link');
+    if(active){
+      if(!link){ link=document.createElement('a'); link.id='me-cancel-link';
+        link.href='javascript:void(0)'; link.textContent='Cancel membership';
+        link.style.cssText='flex-basis:100%;margin-top:4px;font:600 .8rem system-ui;color:inherit;opacity:.8;text-decoration:underline;cursor:pointer';
+        link.onclick=function(){ window.meCancel(); };
+        btn.parentNode && btn.parentNode.appendChild(link); }
+      link.style.display='';
+    } else if(link){ link.style.display='none'; }
+  };
+
+  window.meCancel = async function(){
+    var t=tok(); if(!t) return;
+    if(!confirm('Cancel your monthly membership? You keep full access until the end of the period you have already paid for.')) return;
+    var r, d;
+    try{ r=await fetch(WK+'/subscribe-cancel',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}}); }
+    catch(e){ meSay('No connection to the server. Please try again.'); return; }
+    try{ d=await r.json(); }catch(e){ d=null; }
+    if(d && d.ok){ if(d.token) storeToken(d.token);
+      var until=d.until?new Date(d.until):null;
+      meSay('Renewal cancelled.'+(until?(' Your access continues until '+until.toLocaleDateString()+'.'):''));
+      window.refreshJoinBtn(); return;
+    }
+    meSay('Could not cancel here ('+((d&&d.error)||('http '+(r&&r.status)))+'). You can also cancel from your PayPal account → Automatic payments.');
   };
 
   // Always-visible feedback: toast if available, otherwise a plain alert so the
