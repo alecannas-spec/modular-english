@@ -2371,10 +2371,12 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
         var n=norm(el.textContent);
         var isEs = esSet[n] && !itSet[n];               // Spanish text (not also an Italian line)
         var flag = isEs ? '🇪🇸' : '🇮🇹';
-        if(/🇮🇹|🇪🇸/.test(el.innerHTML)) el.innerHTML=el.innerHTML.replace(/🇮🇹|🇪🇸/g,flag);
+        // Assign only when the value actually changes, so a MutationObserver
+        // re-running postFixBox never ping-pongs on identical content.
+        var nh=el.innerHTML.replace(/🇮🇹|🇪🇸/g,flag); if(nh!==el.innerHTML) el.innerHTML=nh;
         var card=el.closest('.line-card')||el.parentElement;
         var btn=card&&card.querySelector('.line-btn.translate');
-        if(btn && /🇮🇹|🇪🇸/.test(btn.innerHTML)) btn.innerHTML=btn.innerHTML.replace(/🇮🇹|🇪🇸/g,flag);
+        if(btn){ var bh=btn.innerHTML.replace(/🇮🇹|🇪🇸/g,flag); if(bh!==btn.innerHTML) btn.innerHTML=bh; }
       });
     }catch(e){}
   }
@@ -2401,9 +2403,56 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
     window.lineTranslate=function(){ var r=orig.apply(this,arguments); setTimeout(reFix,0); return r; };
     return true;
   }
+  // The Listen / Repeat / Write buttons reset their own labels back to Italian
+  // on a timer after they're used. Watch each dialogue container and re-apply
+  // the English labels (and flags) whenever its contents change. Disconnect
+  // while we edit so our own edits never retrigger the observer.
+  function watchBox(box){
+    if(!box || box.__meObserved || typeof MutationObserver==='undefined') return;
+    box.__meObserved=true;
+    var obs=new MutationObserver(function(){
+      obs.disconnect();
+      try{ postFixBox(box); }catch(e){}
+      try{ obs.observe(box,{childList:true,subtree:true,characterData:true}); }catch(e){}
+    });
+    try{ obs.observe(box,{childList:true,subtree:true,characterData:true}); }catch(e){}
+  }
+  function watchAll(){ watchBox(document.getElementById('diag-lines')); watchBox(document.getElementById('ftt-content')); }
+  // ── Reliable Listen (text-to-speech) ───────────────────────────────────────
+  // The original lineListen only speaks if the browser already enumerated its
+  // voices; on mobile Safari the voice list is empty on the first tap, so it
+  // waits for 'voiceschanged' and then speaks OUTSIDE the tap — which iOS
+  // blocks, so nothing is heard. This version speaks synchronously inside the
+  // tap (voices optional), which works across browsers. Requires the browser's
+  // text-to-speech, so it does nothing when the page is opened as a local file
+  // with speech disabled — it needs the live site.
+  function warmVoices(){ try{ var s=window.speechSynthesis; if(!s) return; s.getVoices(); if(!s.__meWarmed){ s.__meWarmed=1; try{ s.onvoiceschanged=function(){ try{ s.getVoices(); }catch(e){} }; }catch(e){} } }catch(e){} }
+  function meSpeak(text){
+    try{
+      var s=window.speechSynthesis; if(!s||!text) return;
+      s.cancel();
+      var u=new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g,'').replace(/&[a-z]+;/gi,'').trim());
+      u.lang='en-GB'; u.rate=0.9;
+      try{ var vs=s.getVoices()||[]; var v=vs.filter(function(x){return x.lang==='en-GB';})[0]||vs.filter(function(x){return (x.lang||'').indexOf('en-GB')===0;})[0]||vs.filter(function(x){return (x.lang||'').indexOf('en')===0;})[0]; if(v) u.voice=v; }catch(e){}
+      s.speak(u);
+    }catch(e){}
+  }
+  function overrideListen(){
+    if(typeof window.lineListen!=='function') return false;   // not defined yet → keep retrying
+    if(window.lineListen.__me) return true;                   // already overridden
+    var f=function(text, btn){
+      meSpeak(text);
+      try{ if(btn){ btn.innerHTML='🔊 …'; setTimeout(function(){ btn.innerHTML='🔊 Listen'; },1500); } }catch(e){}
+    };
+    f.__me=1; window.lineListen=f; return true;
+  }
+  warmVoices();
+  window.addEventListener('pointerdown', warmVoices, {once:true});
   window.__meApplyLang=applyLangAll;
-  var d=wrapDialogue(), f=wrapFTT(), lt=wrapLT();
-  if(!d||!f||!lt){ var tries=0, iv=setInterval(function(){ if(!d) d=wrapDialogue(); if(!f) f=wrapFTT(); if(!lt) lt=wrapLT(); if((d&&f&&lt)||++tries>40) clearInterval(iv); },150); }
+  var d=wrapDialogue(), f=wrapFTT(), lt=wrapLT(), ol=overrideListen();
+  if(!d||!f||!lt||!ol){ var tries=0, iv=setInterval(function(){ if(!d) d=wrapDialogue(); if(!f) f=wrapFTT(); if(!lt) lt=wrapLT(); if(!ol) ol=overrideListen(); if((d&&f&&lt&&ol)||++tries>40) clearInterval(iv); },150); }
+  // Attach observers now and keep retrying until both containers exist.
+  watchAll(); var wtries=0, wiv=setInterval(function(){ watchAll(); if(++wtries>60) clearInterval(wiv); },300);
 })();
 </script>
 </body>
