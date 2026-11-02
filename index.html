@@ -1891,13 +1891,13 @@ window.adminPinGo=adminPinGo;
     var j=null; try{ j=await r.json(); }catch(e){} return { status:r.status, j:j||{} };
   }
   var ERR = {
-    name:'Inserisci nome e cognome.', email:'Email non valida.', weakpass:'La password deve avere almeno 8 caratteri.',
-    exists:'Esiste già un account con questa email. Accedi o recupera la password.', toomany:'Troppi tentativi, riprova tra poco.',
-    'email-send':'Invio email non riuscito. Riprova tra poco.', nopending:'Nessuna registrazione in sospeso. Ricomincia.',
-    expired:'Codice scaduto. Richiedine uno nuovo.', badcode:'Codice errato.', nouser:'Nessun account con questa email.',
-    badpass:'Password errata.', locked:'Troppi tentativi. Riprova tra 15 minuti.', input:'Compila tutti i campi.', noauth:'Sessione scaduta, accedi di nuovo.'
+    name:'Enter your first and last name.', email:'Invalid email.', weakpass:'Password must be at least 8 characters.',
+    exists:'An account with this email already exists. Sign in or reset your password.', toomany:'Too many attempts, please try again shortly.',
+    'email-send':'Could not send the email. Please try again shortly.', nopending:'No pending registration. Please start again.',
+    expired:'Code expired. Request a new one.', badcode:'Wrong code.', nouser:'No account with this email.',
+    badpass:'Wrong password.', locked:'Too many attempts. Try again in 15 minutes.', input:'Fill in all fields.', noauth:'Session expired, please sign in again.'
   };
-  function em(e){ return ERR[e] || 'Errore. Riprova.'; }
+  function em(e){ return ERR[e] || 'Error. Please try again.'; }
 
   // ---------- styles ----------
   var css = document.createElement('style');
@@ -1966,49 +1966,49 @@ window.adminPinGo=adminPinGo;
   function msg(t, kind){ var m=document.getElementById('meacc-msg'); if(!m) return; m.textContent=t; m.className='meacc-msg '+(kind||'err'); }
   function head(title, sub){
     var x = gateMode ? '' : '<button class="meacc-x" onclick="document.getElementById(\'meacc-ov\').classList.remove(\'on\')">×</button>';
-    var gear = gateMode ? '<button id="meacc-gear" title="Accesso amministratore">⚙</button>' : '';
+    var gear = gateMode ? '<button id="meacc-gear" title="Administrator access">⚙</button>' : '';
     var brand = gateMode ? '<div class="meacc-brand" style="user-select:none">Modular English</div>' : '';
     return x + gear + brand + '<div class="meacc-h">'+title+'</div><div class="meacc-sub">'+sub+'</div><div id="meacc-msg" class="meacc-msg"></div>';
   }
-  function busy(b){ var el=document.getElementById('meacc-go'); if(el){ el.disabled=b; el.textContent=b?'Attendi…':el.getAttribute('data-l'); } }
+  function busy(b){ var el=document.getElementById('meacc-go'); if(el){ el.disabled=b; el.textContent=b?'Please wait…':el.getAttribute('data-l'); } }
   // Hidden admin entry: the small ⚙ gear in the top-right corner of the box.
   function wireBrand(){ var g=document.getElementById('meacc-gear'); if(g) g.onclick=viewAdmin; }
 
   function render(){ getAcc() ? viewAccount() : viewLogin(); }
 
   function viewLogin(){
-    card.innerHTML = head('Accedi', gateMode ? 'Per accedere ai contenuti serve un account. Accedi o creane uno.' : 'Accedi al tuo account per ritrovare i tuoi acquisti su qualsiasi dispositivo.')
+    card.innerHTML = head('Sign in', gateMode ? 'You need an account to access the content. Sign in or create one.' : 'Sign in to your account to find your purchases on any device.')
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Accedi">Accedi</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-toreg">Crea un account</button>'
-      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>';
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Sign in">Sign in</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-toreg">Create an account</button>'
+      + '<button class="meacc-link" id="meacc-tofg">Forgot password?</button></div>';
     document.getElementById('meacc-toreg').onclick=viewRegister;
     document.getElementById('meacc-tofg').onclick=viewForgot;
     wireBrand();
     document.getElementById('meacc-go').onclick=async function(){
       var email=val('meacc-email'), pw=val('meacc-pw');
-      if(!email||!pw){ msg('Inserisci email e password.'); return; }
+      if(!email||!pw){ msg('Enter your email and password.'); return; }
       busy(true); var r=await api('/login',{email:email,password:pw}); busy(false);
-      if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email); done('Accesso eseguito.'); }
+      if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email); done('Signed in.'); }
       else msg(em(r.j.error));
     };
   }
 
   function viewRegister(){
-    card.innerHTML = head('Crea un account','Con un account i tuoi acquisti restano salvati e non si perdono se cancelli i cookie.')
-      + '<div class="meacc-two"><input class="meacc-f" id="meacc-first" placeholder="Nome" autocomplete="given-name">'
-      + '<input class="meacc-f" id="meacc-last" placeholder="Cognome" autocomplete="family-name"></div>'
+    card.innerHTML = head('Create an account','With an account your purchases are saved and won\'t be lost if you clear cookies.')
+      + '<div class="meacc-two"><input class="meacc-f" id="meacc-first" placeholder="First name" autocomplete="given-name">'
+      + '<input class="meacc-f" id="meacc-last" placeholder="Last name" autocomplete="family-name"></div>'
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
-      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password (min 8 caratteri)" autocomplete="new-password">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Continua">Continua</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>';
+      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password (min 8 characters)" autocomplete="new-password">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Continue">Continue</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">I already have an account</button></div>';
     document.getElementById('meacc-tolog').onclick=viewLogin;
     wireBrand();
     document.getElementById('meacc-go').onclick=async function(){
       var first=val('meacc-first'), last=val('meacc-last'), email=val('meacc-email'), pw=val('meacc-pw');
-      if(!first||!last){ msg('Inserisci nome e cognome.'); return; }
-      if(!email||!pw){ msg('Compila tutti i campi.'); return; }
+      if(!first||!last){ msg('Enter your first and last name.'); return; }
+      if(!email||!pw){ msg('Fill in all fields.'); return; }
       var name = first+' '+last;
       busy(true); var r=await api('/register',{name:name,email:email,password:pw}); busy(false);
       if(r.status===200 && r.j.ok){ viewVerify(email,'register'); }
@@ -2017,69 +2017,69 @@ window.adminPinGo=adminPinGo;
   }
 
   function viewVerify(email, flow){
-    card.innerHTML = head('Verifica la tua email','Abbiamo inviato un codice a 6 cifre a <b>'+esc(email)+'</b>. Inseriscilo qui sotto.')
-      + '<input class="meacc-f" id="meacc-code" inputmode="numeric" maxlength="6" placeholder="Codice a 6 cifre">'
-      + (flow==='reset' ? '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Nuova password (min 8)" autocomplete="new-password">' : '')
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Conferma">Conferma</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-resend">Invia di nuovo il codice</button></div>';
+    card.innerHTML = head('Verify your email','We sent a 6-digit code to <b>'+esc(email)+'</b>. Enter it below.')
+      + '<input class="meacc-f" id="meacc-code" inputmode="numeric" maxlength="6" placeholder="6-digit code">'
+      + (flow==='reset' ? '<input class="meacc-f" id="meacc-pw" type="password" placeholder="New password (min 8)" autocomplete="new-password">' : '')
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Confirm">Confirm</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-resend">Resend the code</button></div>';
     document.getElementById('meacc-resend').onclick=async function(){
       var p = flow==='reset' ? '/forgot' : '/register/resend';
-      await api(p,{email:email}); msg('Codice inviato di nuovo.','ok');
+      await api(p,{email:email}); msg('Code sent again.','ok');
     };
     document.getElementById('meacc-go').onclick=async function(){
-      var code=val('meacc-code'); if(!/^\d{6}$/.test(code)){ msg('Inserisci il codice a 6 cifre.'); return; }
+      var code=val('meacc-code'); if(!/^\d{6}$/.test(code)){ msg('Enter the 6-digit code.'); return; }
       busy(true); var r;
-      if(flow==='reset'){ var pw=val('meacc-pw'); if(!pw){ busy(false); msg('Inserisci la nuova password.'); return; }
+      if(flow==='reset'){ var pw=val('meacc-pw'); if(!pw){ busy(false); msg('Enter the new password.'); return; }
         r=await api('/reset',{email:email,code:code,password:pw}); }
       else { r=await api('/register-verify',{email:email,code:code}); }
       busy(false);
       if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email);
-        done((r.j.purchased&&r.j.purchased.length)? 'Account pronto — acquisti ripristinati!' : 'Account creato.'); }
+        done((r.j.purchased&&r.j.purchased.length)? 'Account ready — purchases restored!' : 'Account created.'); }
       else msg(em(r.j.error));
     };
   }
 
   function viewForgot(){
-    card.innerHTML = head('Recupera la password','Inserisci la tua email: ti invieremo un codice per impostare una nuova password.')
+    card.innerHTML = head('Reset your password','Enter your email: we\'ll send you a code to set a new password.')
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Invia codice">Invia codice</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Torna all\'accesso</button></div>';
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Send code">Send code</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Back to sign in</button></div>';
     document.getElementById('meacc-tolog').onclick=viewLogin;
     document.getElementById('meacc-go').onclick=async function(){
-      var email=val('meacc-email'); if(!email){ msg('Inserisci la tua email.'); return; }
+      var email=val('meacc-email'); if(!email){ msg('Enter your email.'); return; }
       busy(true); await api('/forgot',{email:email}); busy(false);
-      viewVerify(email,'reset'); msg('Se esiste un account, riceverai un codice.','ok');
+      viewVerify(email,'reset'); msg('If an account exists, you\'ll receive a code.','ok');
     };
   }
 
   // Admin PIN — explores every dialogue/function without an account.
   function viewAdmin(){
-    card.innerHTML = head('Accesso amministratore','Inserisci il PIN amministratore per esplorare tutti i contenuti senza account.')
-      + '<input class="meacc-f" id="meacc-pin" type="password" inputmode="numeric" placeholder="PIN amministratore" autocomplete="off">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Entra">Entra</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">← Indietro</button></div>';
+    card.innerHTML = head('Administrator access','Enter the administrator PIN to explore all content without an account.')
+      + '<input class="meacc-f" id="meacc-pin" type="password" inputmode="numeric" placeholder="Administrator PIN" autocomplete="off">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Enter">Enter</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">← Back</button></div>';
     document.getElementById('meacc-back').onclick=viewLogin;
     document.getElementById('meacc-go').onclick=async function(){
-      var pin=val('meacc-pin'); if(!pin){ msg('Inserisci il PIN.'); return; }
+      var pin=val('meacc-pin'); if(!pin){ msg('Enter the PIN.'); return; }
       busy(true); var r=await api('/admin',{pin:pin}); busy(false);
       if(r.status===200 && r.j.ok && r.j.token){
         try{ localStorage.setItem(LS.tok, r.j.token); }catch(e){}
         try{ document.cookie='me_token='+r.j.token+';path=/;max-age=86400'; }catch(e){}
         try{ window._adminUnlocked=true; }catch(e){}
-        msg('Accesso amministratore eseguito.','ok'); setTimeout(function(){ location.reload(); }, 700);
-      } else msg('PIN non valido.');
+        msg('Administrator access granted.','ok'); setTimeout(function(){ location.reload(); }, 700);
+      } else msg('Invalid PIN.');
     };
   }
 
   async function viewAccount(){
     var a=getAcc()||{};
-    card.innerHTML = head('Il tuo account','')
+    card.innerHTML = head('Your account','')
       + '<div style="font:700 16px system-ui">'+esc(a.name||'')+'</div>'
       + '<div class="meacc-sub" style="margin:2px 0 10px">'+esc(a.email||'')+'</div>'
-      + '<div id="meacc-owned" class="meacc-sub">Caricamento acquisti…</div>'
-      + '<button class="meacc-btnp" id="meacc-logout" style="margin-top:14px">Esci</button>'
+      + '<div id="meacc-owned" class="meacc-sub">Loading purchases…</div>'
+      + '<button class="meacc-btnp" id="meacc-logout" style="margin-top:14px">Sign out</button>'
       + '<div class="meacc-row"><button class="meacc-link" id="meacc-priv">Privacy</button>'
-      + '<button class="meacc-link" id="meacc-del" style="color:#b02a2a">Elimina account</button></div>';
+      + '<button class="meacc-link" id="meacc-del" style="color:#b02a2a">Delete account</button></div>';
     document.getElementById('meacc-priv').onclick=function(){ location.href='/privacy3.html'; };
     document.getElementById('meacc-logout').onclick=function(){ clearSession(); refreshBtn(); location.reload(); };
     document.getElementById('meacc-del').onclick=function(){ viewDelete(a.email); };
@@ -2089,23 +2089,23 @@ window.adminPinGo=adminPinGo;
       if(j && j.ok){ if(j.token){ setSession(j.token, j.name, j.email); }
         var owned=document.getElementById('meacc-owned');
         if(owned){ var n=(j.purchased||[]).length;
-          owned.innerHTML = n ? ('<b>'+n+'</b> element'+(n===1?'o':'i')+' sbloccat'+(n===1?'o':'i')+':<div style="margin-top:6px">'
+          owned.innerHTML = n ? ('<b>'+n+'</b> item'+(n===1?'':'s')+' unlocked:<div style="margin-top:6px">'
             + j.purchased.map(function(id){return '<span class="meacc-pill">'+esc(id)+'</span>';}).join('') + '</div>')
-            : 'Nessun acquisto ancora associato a questo account.'; }
-      } else if (j && j.error==='noauth'){ clearSession(); refreshBtn(); viewLogin(); msg('Sessione scaduta, accedi di nuovo.'); }
-    }catch(e){ var o=document.getElementById('meacc-owned'); if(o) o.textContent='Impossibile aggiornare ora.'; }
+            : 'No purchases linked to this account yet.'; }
+      } else if (j && j.error==='noauth'){ clearSession(); refreshBtn(); viewLogin(); msg('Session expired, please sign in again.'); }
+    }catch(e){ var o=document.getElementById('meacc-owned'); if(o) o.textContent='Unable to refresh right now.'; }
   }
 
   function viewDelete(email){
-    card.innerHTML = head('Elimina account','Questa operazione è <b>irreversibile</b>. I tuoi dati personali verranno cancellati. Conferma con la password.')
+    card.innerHTML = head('Delete account','This action is <b>irreversible</b>. Your personal data will be deleted. Confirm with your password.')
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Elimina definitivamente" style="background:#b02a2a">Elimina definitivamente</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">Annulla</button></div>';
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Delete permanently" style="background:#b02a2a">Delete permanently</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">Cancel</button></div>';
     document.getElementById('meacc-back').onclick=viewAccount;
     document.getElementById('meacc-go').onclick=async function(){
-      var pw=val('meacc-pw'); if(!pw){ msg('Inserisci la password.'); return; }
+      var pw=val('meacc-pw'); if(!pw){ msg('Enter your password.'); return; }
       busy(true); var r=await api('/account/delete',{email:email,password:pw}); busy(false);
-      if(r.status===200 && r.j.ok){ clearSession(); refreshBtn(); msg('Account eliminato.','ok'); setTimeout(function(){ location.reload(); }, 1200); }
+      if(r.status===200 && r.j.ok){ clearSession(); refreshBtn(); msg('Account deleted.','ok'); setTimeout(function(){ location.reload(); }, 1200); }
       else msg(em(r.j.error));
     };
   }
@@ -2116,7 +2116,7 @@ window.adminPinGo=adminPinGo;
   function openGate(){
     gateMode = true;
     ov.classList.add('gate');
-    getAcc() ? viewAccount() : viewRegister();   // new visitors land on registration (Nome, Cognome, Email, Password)
+    getAcc() ? viewAccount() : viewRegister();   // new visitors land on registration (First name, Last name, Email, Password)
     ov.classList.add('on'); refreshBtn(); fitTitle();
   }
   function maybeGate(){ try{
@@ -2299,54 +2299,91 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
    translation simply stay in Italian. */
 (function(){
   function lang(){ try{ return localStorage.getItem('me_lang')==='es'?'es':'it'; }catch(e){ return 'it'; } }
-  function applyLang(){
+  // Swap the displayed translation field across ALL loaded content (dialogue
+  // view + free trial). Untranslated lines fall back to Italian.
+  function applyLangAll(){
     try{
-      var sit = (typeof currentSituation!=='undefined') ? currentSituation : (window.currentSituation||null);
-      if(sit && sit.dialogues){
-        var es = lang()==='es';
-        sit.dialogues.forEach(function(d){ (d.lines||[]).forEach(function(ln){
-          if(ln._it===undefined) ln._it = ln.italian;        // backup once
-          ln.italian = (es && ln.spanish) ? ln.spanish : ln._it;
-        }); });
-      }
+      var LV=(typeof LEVELS!=='undefined')?LEVELS:(window.LEVELS||null);
+      if(!LV) return;
+      var es=lang()==='es';
+      LV.forEach(function(lev){ (lev.modules||[]).forEach(function(m){ (m.situations||[]).forEach(function(s){ (s.dialogues||[]).forEach(function(d){ (d.lines||[]).forEach(function(ln){
+        if(ln._it===undefined) ln._it=ln.italian;      // backup once
+        ln.italian=(es && ln.spanish)?ln.spanish:ln._it;
+      }); }); }); }); });
     }catch(e){}
   }
-  function ensureToggle(){
-    var host=document.getElementById('diag-header'); if(!host) return;
-    var t=document.getElementById('me-lang-toggle');
-    if(!t){
-      t=document.createElement('div'); t.id='me-lang-toggle';
-      t.style.cssText='display:flex;gap:6px;align-items:center;justify-content:flex-end;margin-top:10px';
-      t.innerHTML='<span style="font-size:11px;color:var(--muted)">Traduzione / Traducción:</span>'
-        +'<button type="button" data-l="it" class="me-lang-b">🇮🇹 IT</button>'
-        +'<button type="button" data-l="es" class="me-lang-b">🇪🇸 ES</button>';
-      host.appendChild(t);
-      t.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
-        try{ localStorage.setItem('me_lang', b.dataset.l); }catch(e){}
-        if(typeof renderDialogue==='function') renderDialogue();
-      });
-    }
+  function buildToggle(id, rerender){
+    var t=document.createElement('div'); t.id=id; t.className='me-lang-toggle';
+    t.style.cssText='display:flex;gap:6px;align-items:center;justify-content:flex-end;margin:10px 0';
+    t.innerHTML='<span style="font-size:11px;color:var(--muted)">Traduzione / Traducción:</span>'
+      +'<button type="button" data-l="it" class="me-lang-b">🇮🇹 IT</button>'
+      +'<button type="button" data-l="es" class="me-lang-b">🇪🇸 ES</button>';
+    t.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
+      try{ localStorage.setItem('me_lang', b.dataset.l); }catch(e){}
+      if(typeof rerender==='function') rerender();
+    });
+    return t;
+  }
+  function paintToggle(t){
     var cur=lang();
     [].forEach.call(t.querySelectorAll('.me-lang-b'),function(b){
       var on=b.dataset.l===cur;
       b.style.cssText='font:600 12px system-ui;padding:5px 11px;border-radius:8px;cursor:pointer;border:1px solid '+(on?'#1B5FFF':'rgba(0,0,0,.18)')+';background:'+(on?'#1B5FFF':'#fff')+';color:'+(on?'#fff':'#333');
     });
   }
-  function fixFlags(){
-    if(lang()!=='es') return;
-    var box=document.getElementById('diag-lines'); if(!box) return;
-    box.querySelectorAll('.line-it, .line-btn.translate').forEach(function(el){
-      if(el.innerHTML.indexOf('🇮🇹')>=0) el.innerHTML=el.innerHTML.replace(/🇮🇹/g,'🇪🇸');
-    });
+  function toggleInto(hostId, beforeId, id, rerender){
+    var host=document.getElementById(hostId); if(!host) return;
+    var t=document.getElementById(id);
+    if(!t){ t=buildToggle(id, rerender); var before=beforeId&&document.getElementById(beforeId);
+      if(before) host.insertBefore(t, before); else host.appendChild(t); }
+    paintToggle(t);
   }
-  function wrap(){
-    var orig=window.renderDialogue;
-    if(typeof orig!=='function'){ return false; }
-    window.renderDialogue=function(){ applyLang(); var r=orig.apply(this,arguments); try{ensureToggle();}catch(e){} try{fixFlags();}catch(e){} return r; };
-    window.__meApplyLang=applyLang;
+  function postFixBox(box){
+    if(!box) return;
+    // Action buttons ALWAYS in English (keep the emoji, swap the word)
+    var MAP={'Ascolta':'Listen','Ripeti':'Repeat','Scrivi':'Write','Traduci':'Translate','Nascondi':'Hide'};
+    box.querySelectorAll('.line-btn').forEach(function(btn){
+      var h=btn.innerHTML, h0=h;
+      Object.keys(MAP).forEach(function(k){ if(h.indexOf(k)>=0) h=h.replace(new RegExp(k,'g'),MAP[k]); });
+      if(h!==h0) btn.innerHTML=h;
+    });
+    // Write-exercise placeholder in English too
+    box.querySelectorAll('textarea[placeholder]').forEach(function(ta){
+      if(ta.placeholder.indexOf('Scrivi la frase')>=0) ta.placeholder='Write the sentence in English...';
+    });
+    // When ES is active, show the Spanish flag on the translation line + Translate button
+    if(lang()==='es'){
+      box.querySelectorAll('.line-it, .line-btn.translate').forEach(function(el){
+        if(el.innerHTML.indexOf('🇮🇹')>=0) el.innerHTML=el.innerHTML.replace(/🇮🇹/g,'🇪🇸');
+      });
+    }
+  }
+  function wrapDialogue(){
+    var orig=window.renderDialogue; if(typeof orig!=='function') return false;
+    window.renderDialogue=function(){ applyLangAll(); var r=orig.apply(this,arguments);
+      try{ toggleInto('diag-header', null, 'me-lang-toggle', window.renderDialogue); }catch(e){}
+      try{ postFixBox(document.getElementById('diag-lines')); }catch(e){}
+      return r; };
     return true;
   }
-  if(!wrap()){ var tries=0, iv=setInterval(function(){ if(wrap()||++tries>40) clearInterval(iv); },150); }
+  function wrapFTT(){
+    var orig=window.renderFTT; if(typeof orig!=='function') return false;
+    window.renderFTT=function(){ applyLangAll(); var r=orig.apply(this,arguments);
+      try{ toggleInto('view-ftt', 'ftt-content', 'me-lang-toggle-ftt', window.renderFTT); }catch(e){}
+      try{ postFixBox(document.getElementById('ftt-content')); }catch(e){}
+      return r; };
+    return true;
+  }
+  // Re-apply English labels after the in-line Translate/Hide toggle (set on click)
+  function reFix(){ try{ postFixBox(document.getElementById('diag-lines')); }catch(e){} try{ postFixBox(document.getElementById('ftt-content')); }catch(e){} }
+  function wrapLT(){
+    var orig=window.lineTranslate; if(typeof orig!=='function') return false;
+    window.lineTranslate=function(){ var r=orig.apply(this,arguments); setTimeout(reFix,0); return r; };
+    return true;
+  }
+  window.__meApplyLang=applyLangAll;
+  var d=wrapDialogue(), f=wrapFTT(), lt=wrapLT();
+  if(!d||!f||!lt){ var tries=0, iv=setInterval(function(){ if(!d) d=wrapDialogue(); if(!f) f=wrapFTT(); if(!lt) lt=wrapLT(); if((d&&f&&lt)||++tries>40) clearInterval(iv); },150); }
 })();
 </script>
 </body>
