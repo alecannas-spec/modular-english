@@ -435,7 +435,8 @@ html,body{height:100%;overflow:hidden}
           ▶ How to Buy
         </a>
         <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-          <button class="btn btn-gold" onclick="showView('explore')">Explore Modules →</button>
+          <button class="btn btn-gold" id="me-join-btn" onclick="meJoin()">👑 Join for €12.99 a month</button>
+          <button class="btn btn-outline" onclick="showView('explore')">Explore Modules →</button>
           <button class="btn btn-outline" onclick="showView('ftt')">✨ Try for Free</button>
           <button class="btn btn-outline" onclick="openIntroModal()">📖 Disclaimer</button>
           <button class="btn btn-outline" onclick="openGrammarModal()">📖 Grammar</button>
@@ -2454,6 +2455,113 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
   if(!d||!f||!lt||!ol){ var tries=0, iv=setInterval(function(){ if(!d) d=wrapDialogue(); if(!f) f=wrapFTT(); if(!lt) lt=wrapLT(); if(!ol) ol=overrideListen(); if((d&&f&&lt&&ol)||++tries>40) clearInterval(iv); },150); }
   // Attach observers now and keep retrying until both containers exist.
   watchAll(); var wtries=0, wiv=setInterval(function(){ watchAll(); if(++wtries>60) clearInterval(wiv); },300);
+})();
+</script>
+<script>
+/* ── Monthly membership (€12.99) ──────────────────────────────────────────────
+   Join button on the home page. The member pays via PayPal (card or PayPal
+   balance) on a recurring monthly plan tied to their account; an active member
+   unlocks every CEFR course (A1–C2) and every CD course. Access is enforced by
+   the Worker (token carries member:true) — this script only drives the UI and
+   keeps the session token in sync. */
+(function(){
+  var WK = window.__ME_WK || 'https://modular-english.ale-cannas.workers.dev';
+  function tok(){ try{ if(typeof window.__meGetEntry==='function'){ var t=window.__meGetEntry(); if(t) return t; } }catch(e){}
+                  try{ return localStorage.getItem('me_entry')||''; }catch(e){ return ''; } }
+  function decode(t){ try{ return JSON.parse(atob(String(t).split('.')[0])); }catch(e){ return null; } }
+  function isMemberLevel(id){ return /^(a1|a2|b1|b2|c1|c2)-m\d+$/.test(id) || /^cd-/.test(id); }
+  function memberActive(){ var p=decode(tok()); return !!(p && p.member && (!p.memberUntil || Date.now()<p.memberUntil)); }
+  window.__meMemberActive = memberActive;
+
+  function setCookieTok(t){ try{ if(typeof setCookie==='function') setCookie('me_token',t,365); else document.cookie='me_token='+t+';path=/;max-age=31536000'; }catch(e){} }
+  function storeToken(t){ // keep account session + content auth + the openSituation cookie gate in sync
+    try{ localStorage.setItem('me_entry', t); }catch(e){}
+    setCookieTok(t);
+    try{ if(typeof saveAccessToken==='function') saveAccessToken({accessToken:t}); }catch(e){}
+  }
+
+  // Members: make covered modules read as "owned" so tiles open instead of prompting to buy.
+  (function wrapOwned(){
+    var _ip = window.isPurchased;
+    window.isPurchased = function(id){
+      try{ if(memberActive() && isMemberLevel(id)) return true; }catch(e){}
+      return (typeof _ip==='function') ? _ip.apply(this, arguments) : false;
+    };
+  })();
+
+  window.refreshJoinBtn = function(){
+    var btn=document.getElementById('me-join-btn'); if(!btn) return;
+    btn.disabled=false;
+    if(memberActive()){ btn.textContent='✓ Membership active'; btn.classList.remove('btn-gold'); btn.classList.add('btn-outline'); }
+    else { btn.textContent='👑 Join for €12.99 a month'; btn.classList.add('btn-gold'); btn.classList.remove('btn-outline'); }
+  };
+
+  window.meJoin = async function(){
+    var t = tok(), p = decode(t);
+    if(!t || !(p && p.acct)){                      // needs an account first
+      try{ if(typeof showToast==='function') showToast('Create an account or sign in, then tap Join.'); }catch(e){}
+      try{ if(typeof window.__meOpenAccount==='function') window.__meOpenAccount(); }catch(e){}
+      return;
+    }
+    if(memberActive()){ try{ showToast('Your membership is already active.'); }catch(e){} return; }
+    var btn=document.getElementById('me-join-btn');
+    try{
+      if(btn){ btn.disabled=true; btn.textContent='…'; }
+      var r = await fetch(WK+'/subscribe-create', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t} });
+      var d = await r.json();
+      if(d && d.ok && d.url){ window.location.href = d.url; return; }      // → PayPal approval
+      throw new Error((d&&d.error)||'error');
+    }catch(e){
+      try{ showToast('Could not start checkout. Please try again.'); }catch(_){}
+      window.refreshJoinBtn();
+    }
+  };
+
+  // Returning from PayPal: ?provider=paypal_sub&subscription_id=...
+  async function handleReturn(){
+    try{
+      var q = new URLSearchParams(location.search);
+      if(q.get('provider')!=='paypal_sub') return false;
+      var cleaned = location.pathname;
+      if(q.get('cancel')){ history.replaceState({},'',cleaned); try{ showToast('Checkout cancelled.'); }catch(e){} return true; }
+      var subId = q.get('subscription_id') || q.get('ba_token') || '';
+      var t = tok();
+      if(subId && t){
+        var r = await fetch(WK+'/subscribe-activate', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}, body:JSON.stringify({subscriptionId:subId}) });
+        var d = await r.json().catch(function(){return{};});
+        history.replaceState({},'',cleaned);
+        if(d && d.ok && d.token){ storeToken(d.token);
+          try{ showToast('🎉 Membership active — all courses unlocked!'); }catch(e){}
+          window.refreshJoinBtn();
+          try{ if(typeof renderHome==='function') renderHome(); }catch(e){}
+        } else {
+          try{ showToast('Payment received — activating. Please reload in a moment.'); }catch(e){}
+        }
+        return true;
+      }
+      history.replaceState({},'',cleaned);
+    }catch(e){}
+    return false;
+  }
+
+  // On load: keep the cookie gate in sync and, for members, re-verify monthly renewals.
+  async function refreshOnLoad(){
+    try{
+      var t=tok(), p=decode(t);
+      if(t && p && p.acct){
+        setCookieTok(t);
+        if(p.member){
+          var r = await fetch(WK+'/subscribe-status', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t} });
+          var d = await r.json().catch(function(){return{};});
+          if(d && d.ok && d.token){ storeToken(d.token); }
+        }
+      }
+    }catch(e){}
+    window.refreshJoinBtn();
+  }
+
+  function start(){ handleReturn().then(function(handled){ if(!handled) refreshOnLoad(); else window.refreshJoinBtn(); }); }
+  if(document.readyState!=='loading') start(); else document.addEventListener('DOMContentLoaded', start);
 })();
 </script>
 </body>
