@@ -437,6 +437,8 @@ html,body{height:100%;overflow:hidden}
         <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
           <button class="btn btn-gold" id="me-join-btn" onclick="meJoin()">👑 Join for €12.99 a month</button>
           <button class="btn btn-outline" onclick="showView('explore')">Explore Modules →</button>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
           <button class="btn btn-outline" onclick="showView('ftt')">✨ Try for Free</button>
           <button class="btn btn-outline" onclick="openIntroModal()">📖 Disclaimer</button>
           <button class="btn btn-outline" onclick="openGrammarModal()">📖 Grammar</button>
@@ -2227,7 +2229,7 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
 
 /* LEVELS */
 #home-levels{max-width:980px!important;padding:44px 20px 20px!important;gap:18px!important;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))!important;margin:0 auto}
-#home-levels::before{content:"Scegli il tuo livello";grid-column:1/-1;font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.5rem,3.4vw,2rem);color:var(--ink);margin-bottom:2px;padding-bottom:12px;background:linear-gradient(var(--gold),var(--gold)) left bottom/56px 4px no-repeat}
+#home-levels::before{content:"Choose your Level";grid-column:1/-1;font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.5rem,3.4vw,2rem);color:var(--ink);margin-bottom:2px;padding-bottom:12px;background:linear-gradient(var(--gold),var(--gold)) left bottom/56px 4px no-repeat}
 #home-levels .level-card{position:relative;overflow:hidden;text-align:left!important;display:flex;flex-direction:column;align-items:flex-start;padding:22px 22px 20px!important;border:1px solid var(--line)!important;border-radius:18px!important;box-shadow:var(--shadow2)!important}
 #home-levels .level-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold);opacity:.9;transition:.22s}
 #home-levels .level-card:hover{transform:translateY(-4px)!important;box-shadow:var(--shadow3)!important;border-color:rgba(245,197,24,.7)!important}
@@ -2496,25 +2498,33 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
     else { btn.textContent='👑 Join for €12.99 a month'; btn.classList.add('btn-gold'); btn.classList.remove('btn-outline'); }
   };
 
+  // Always-visible feedback: toast if available, otherwise a plain alert so the
+  // button is never silent.
+  function meSay(msg){ try{ if(typeof showToast==='function'){ showToast(msg); return; } }catch(e){} try{ alert(msg); }catch(e){} }
+
   window.meJoin = async function(){
     var t = tok(), p = decode(t);
     if(!t || !(p && p.acct)){                      // needs an account first
-      try{ if(typeof showToast==='function') showToast('Create an account or sign in, then tap Join.'); }catch(e){}
+      meSay('Create an account or sign in, then tap Join.');
       try{ if(typeof window.__meOpenAccount==='function') window.__meOpenAccount(); }catch(e){}
       return;
     }
-    if(memberActive()){ try{ showToast('Your membership is already active.'); }catch(e){} return; }
+    if(memberActive()){ meSay('Your membership is already active.'); return; }
     var btn=document.getElementById('me-join-btn');
+    if(btn){ btn.disabled=true; btn.textContent='…'; }
+    var r, d;
     try{
-      if(btn){ btn.disabled=true; btn.textContent='…'; }
-      var r = await fetch(WK+'/subscribe-create', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t} });
-      var d = await r.json();
-      if(d && d.ok && d.url){ window.location.href = d.url; return; }      // → PayPal approval
-      throw new Error((d&&d.error)||'error');
-    }catch(e){
-      try{ showToast('Could not start checkout. Please try again.'); }catch(_){}
-      window.refreshJoinBtn();
-    }
+      r = await fetch(WK+'/subscribe-create', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t} });
+    }catch(e){ window.refreshJoinBtn(); meSay('No connection to the server. Check your internet and try again.'); return; }
+    try{ d = await r.json(); }catch(e){ d = null; }
+    if(d && d.ok && d.url){ window.location.href = d.url; return; }   // → PayPal approval page
+    window.refreshJoinBtn();
+    var err = (d && d.error) || ('http '+(r&&r.status));
+    if(err==='noplan')      meSay('Membership is not set up yet: the PayPal plan is missing. (Set MEMBER_PLAN_ID on the Worker.)');
+    else if(err==='noauth') { meSay('Please sign in again, then tap Join.'); try{ window.__meOpenAccount&&window.__meOpenAccount(); }catch(e){} }
+    else if(r && (r.status===404 || r.status===405)) meSay('Membership isn’t live yet — the updated server still needs to be deployed.');
+    else meSay('Could not start checkout ('+err+'). Please try again.');
+    try{ console.log('meJoin failed:', r&&r.status, d); }catch(e){}
   };
 
   // Returning from PayPal: ?provider=paypal_sub&subscription_id=...
