@@ -2345,7 +2345,8 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
   function postFixBox(box){
     if(!box) return;
     // Action buttons ALWAYS in English (keep the emoji, swap the word)
-    var MAP={'Ascolta':'Listen','Ripeti':'Repeat','Scrivi':'Write','Traduci':'Translate','Nascondi':'Hide'};
+    // 'Chiudi' is what the Write button switches to while its box is open — keep it reading "Write".
+    var MAP={'Ascolta':'Listen','Ripeti':'Repeat','Scrivi':'Write','Chiudi':'Write','Traduci':'Translate','Nascondi':'Hide'};
     box.querySelectorAll('.line-btn').forEach(function(btn){
       var h=btn.innerHTML, h0=h;
       Object.keys(MAP).forEach(function(k){ if(h.indexOf(k)>=0) h=h.replace(new RegExp(k,'g'),MAP[k]); });
