@@ -2307,8 +2307,12 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
       if(!LV) return;
       var es=lang()==='es';
       LV.forEach(function(lev){ (lev.modules||[]).forEach(function(m){ (m.situations||[]).forEach(function(s){ (s.dialogues||[]).forEach(function(d){ (d.lines||[]).forEach(function(ln){
-        if(ln._it===undefined) ln._it=ln.italian;      // backup once
-        ln.italian=(es && ln.spanish)?ln.spanish:ln._it;
+        if(ln._it===undefined) ln._it=ln.italian;      // backup original Italian once
+        // Always populate .italian with the best available translation so the
+        // per-line Translate button renders even for lines that never had an
+        // Italian version (many C1/C2 lines). ES prefers Spanish; IT prefers
+        // Italian but falls back to Spanish when no Italian exists.
+        ln.italian = es ? (ln.spanish || ln._it) : (ln._it || ln.spanish);
       }); }); }); }); });
     }catch(e){}
   }
@@ -2351,12 +2355,28 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
     box.querySelectorAll('textarea[placeholder]').forEach(function(ta){
       if(ta.placeholder.indexOf('Scrivi la frase')>=0) ta.placeholder='Write the sentence in English...';
     });
-    // When ES is active, show the Spanish flag on the translation line + Translate button
-    if(lang()==='es'){
-      box.querySelectorAll('.line-it, .line-btn.translate').forEach(function(el){
-        if(el.innerHTML.indexOf('🇮🇹')>=0) el.innerHTML=el.innerHTML.replace(/🇮🇹/g,'🇪🇸');
+    // Flag each shown translation per line. Lines with no original Italian
+    // fall back to Spanish (even in IT mode), so those must read 🇪🇸; in ES mode
+    // every shown translation is Spanish. Decide from the text itself so the
+    // flag is always right regardless of which lines had Italian.
+    try{
+      var LV=(typeof LEVELS!=='undefined')?LEVELS:(window.LEVELS||null);
+      var norm=function(s){ return String(s||'').replace(/[🇮🇹🇪🇸]/g,'').replace(/\s+/g,' ').trim().toLowerCase(); };
+      var itSet=Object.create(null), esSet=Object.create(null);
+      (LV||[]).forEach(function(lev){ (lev.modules||[]).forEach(function(m){ (m.situations||[]).forEach(function(s){ (s.dialogues||[]).forEach(function(d){ (d.lines||[]).forEach(function(ln){
+        if(ln._it) itSet[norm(ln._it)]=1;
+        if(ln.spanish) esSet[norm(ln.spanish)]=1;
+      }); }); }); }); });
+      box.querySelectorAll('.line-it').forEach(function(el){
+        var n=norm(el.textContent);
+        var isEs = esSet[n] && !itSet[n];               // Spanish text (not also an Italian line)
+        var flag = isEs ? '🇪🇸' : '🇮🇹';
+        if(/🇮🇹|🇪🇸/.test(el.innerHTML)) el.innerHTML=el.innerHTML.replace(/🇮🇹|🇪🇸/g,flag);
+        var card=el.closest('.line-card')||el.parentElement;
+        var btn=card&&card.querySelector('.line-btn.translate');
+        if(btn && /🇮🇹|🇪🇸/.test(btn.innerHTML)) btn.innerHTML=btn.innerHTML.replace(/🇮🇹|🇪🇸/g,flag);
       });
-    }
+    }catch(e){}
   }
   function wrapDialogue(){
     var orig=window.renderDialogue; if(typeof orig!=='function') return false;
