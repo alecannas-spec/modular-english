@@ -406,15 +406,15 @@ html,body{height:100%;overflow:hidden}
 
 
 <nav>
-  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.4</div>Modular<span>English</span></div>
+  <div class="nav-brand" onclick="showView('home')"><div style="font-size:.55rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:0;font-family:'DM Sans',sans-serif;margin-bottom:1px">v1.1.5</div>Modular<span>English</span></div>
   <div class="nav-links">
     <button class="nav-link active" onclick="showView('home')" id="nav-home">🏠 <span>Home</span></button>
-    <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Explore</span></button>
-    <button class="nav-link" onclick="showView('ftt')" id="nav-ftt">✨ <span>Free</span></button>
-    <button class="nav-link" onclick="showView('mycourses')" id="nav-mycourses">📚 <span>My</span></button>
+    <button class="nav-link" onclick="showView('explore')" id="nav-explore">🔍 <span>Esplora</span></button>
+    <button class="nav-link" onclick="showView('ftt')" id="nav-ftt">✨ <span>Gratis</span></button>
+    <button class="nav-link" onclick="showView('mycourses')" id="nav-mycourses">📚 <span>I miei corsi</span></button>
     <button class="nav-link" onclick="window.location.href='https://www.okmodularenglish.com/test'" id="nav-test">🧪 <span>Test</span></button>
-    <button class="nav-link" onclick="window.location.href='mailto:support@gilo-international.com?subject=Richiesta%20di%20supporto%20Modular%20English'" id="nav-support">✉️ <span>Support</span></button>
-    <button class="nav-link" onclick="showView('cart')" id="nav-cart"><span class="nav-ico" aria-hidden="true">🛒</span><span>Cart</span><span class="cart-badge" id="cart-count" style="display:none">0</span></button>
+    <button class="nav-link" onclick="window.location.href='mailto:support@gilo-international.com?subject=Richiesta%20di%20supporto%20Modular%20English'" id="nav-support">✉️ <span>Supporto</span></button>
+    <button class="nav-link" onclick="showView('cart')" id="nav-cart"><span class="nav-ico" aria-hidden="true">🛒</span><span>Carrello</span><span class="cart-badge" id="cart-count" style="display:none">0</span></button>
   </div>
 </nav>
 
@@ -428,26 +428,26 @@ html,body{height:100%;overflow:hidden}
       </div>
       <div class="hero-text">
         <h1 class="hero-brand">Modular English</h1>
-        <p class="hero-sub1">Learn English the Natural Way</p>
+        <p class="hero-sub1">Impara l'inglese in modo naturale</p>
         <p class="hero-sub2">Speak More · Worry Less</p>
         <a href="https://youtube.com/shorts/T8uFkGLAd84" target="_blank" rel="noopener"
           style="display:inline-block;margin-top:14px;background:#FF0000;color:white;font-weight:700;font-size:1rem;padding:12px 24px;border-radius:12px;text-decoration:none;box-shadow:0 4px 15px rgba(255,0,0,.4);letter-spacing:.3px">
-          ▶ How to Buy
+          ▶ Come acquistare
         </a>
         <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-          <button class="btn btn-gold" id="me-join-btn" onclick="meJoin()">👑 Join for €12.99 a month</button>
-          <button class="btn btn-outline" onclick="showView('explore')">Explore Modules →</button>
+          <button class="btn btn-gold" id="me-join-btn" onclick="meJoin()">👑 Abbonati a €25,99 al mese</button>
+          <button class="btn btn-outline" onclick="showView('explore')">Esplora i moduli →</button>
         </div>
         <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
-          <button class="btn btn-outline" onclick="showView('ftt')">✨ Try for Free</button>
-          <button class="btn btn-outline" onclick="openGrammarModal()">📖 Grammar</button>
+          <button class="btn btn-outline" onclick="showView('ftt')">✨ Prova gratis</button>
+          <button class="btn btn-outline" onclick="openGrammarModal()">📖 Grammatica</button>
         </div>
         <div class="stats-row">
-          <div class="stat"><div class="stat-num" id="stat-modules">73</div><div class="stat-label">Modules</div></div>
-          <div class="stat"><div class="stat-num" id="stat-situations">441</div><div class="stat-label">Situations</div></div>
-          <div class="stat"><div class="stat-num" id="stat-words">54,253</div><div class="stat-label">Words</div></div>
-          <div class="stat"><div class="stat-num">6</div><div class="stat-label">CEFR Levels</div></div>
-          <div class="stat"><div class="stat-num">25</div><div class="stat-label">Yrs Exp.</div></div>
+          <div class="stat"><div class="stat-num" id="stat-modules">73</div><div class="stat-label">Moduli</div></div>
+          <div class="stat"><div class="stat-num" id="stat-situations">441</div><div class="stat-label">Situazioni</div></div>
+          <div class="stat"><div class="stat-num" id="stat-words">54,253</div><div class="stat-label">Parole</div></div>
+          <div class="stat"><div class="stat-num">6</div><div class="stat-label">Livelli CEFR</div></div>
+          <div class="stat"><div class="stat-num">25</div><div class="stat-label">Anni esp.</div></div>
         </div>
       </div>
     </div>
@@ -1112,7 +1112,7 @@ console.log('✅ Customer Design — per-situation sales active');
 <script>
 /* v1.0.9 — cart hardening + build check (additive, safe; does not alter working paths) */
 (function(){
-  try{ console.log('\u2705 Modular English build v1.1.4'); }catch(e){}
+  try{ console.log('\u2705 Modular English build v1.1.5'); }catch(e){}
   function levelCodeFor(item, level){
     if(level && level.code) return level.code;
     try{
@@ -1149,7 +1149,7 @@ console.log('✅ Customer Design — per-situation sales active');
 })();
 </script>
 <script>
-/* v1.1.4 — inline add-to-cart button for A1..C2 (always reachable; mirrors CD/VC) */
+/* v1.1.5 — inline add-to-cart button for A1..C2 (always reachable; mirrors CD/VC) */
 (function(){
   function curLevel(){ try{ return (typeof currentLevel!=='undefined')?currentLevel:null; }catch(e){ return null; } }
   function curModule(){ try{ return (typeof currentModule!=='undefined')?currentModule:null; }catch(e){ return null; } }
@@ -1893,13 +1893,13 @@ window.adminPinGo=adminPinGo;
     var j=null; try{ j=await r.json(); }catch(e){} return { status:r.status, j:j||{} };
   }
   var ERR = {
-    name:'Enter your first and last name.', email:'Invalid email.', weakpass:'Password must be at least 8 characters.',
-    exists:'An account with this email already exists. Sign in or reset your password.', toomany:'Too many attempts, please try again shortly.',
-    'email-send':'Could not send the email. Please try again shortly.', nopending:'No pending registration. Please start again.',
-    expired:'Code expired. Request a new one.', badcode:'Wrong code.', nouser:'No account with this email.',
-    badpass:'Wrong password.', locked:'Too many attempts. Try again in 15 minutes.', input:'Fill in all fields.', noauth:'Session expired, please sign in again.'
+    name:'Inserisci nome e cognome.', email:'Email non valida.', weakpass:'La password deve avere almeno 8 caratteri.',
+    exists:'Esiste già un account con questa email. Accedi o reimposta la password.', toomany:'Troppi tentativi, riprova tra poco.',
+    'email-send':'Impossibile inviare l\'email. Riprova tra poco.', nopending:'Nessuna registrazione in sospeso. Ricomincia.',
+    expired:'Codice scaduto. Richiedine uno nuovo.', badcode:'Codice errato.', nouser:'Nessun account con questa email.',
+    badpass:'Password errata.', locked:'Troppi tentativi. Riprova tra 15 minuti.', input:'Compila tutti i campi.', noauth:'Sessione scaduta, accedi di nuovo.'
   };
-  function em(e){ return ERR[e] || 'Error. Please try again.'; }
+  function em(e){ return ERR[e] || 'Errore. Riprova.'; }
 
   // ---------- styles ----------
   var css = document.createElement('style');
@@ -1908,11 +1908,11 @@ window.adminPinGo=adminPinGo;
   + '#meacc-btn:hover{background:#0c2a66}'
   + '#meacc-ov{position:fixed;inset:0;z-index:2147483600;background:rgba(6,12,30,.55);display:none;align-items:center;justify-content:center;padding:16px}'
   + '#meacc-ov.on{display:flex}'
-  + '#meacc-ov.gate{background:#0a1430}'
+  + '#meacc-ov.gate{background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2060%2030%27%20preserveAspectRatio%3D%27none%27%3E%3CclipPath%20id%3D%27t%27%3E%3Cpath%20d%3D%27M30%2C15%20h30%20v15%20z%20v15%20h-30%20z%20h-30%20v-15%20z%20v-15%20h30%20z%27%2F%3E%3C%2FclipPath%3E%3Crect%20width%3D%2760%27%20height%3D%2730%27%20fill%3D%27%23012169%27%2F%3E%3Cpath%20d%3D%27M0%2C0%20L60%2C30%20M60%2C0%20L0%2C30%27%20stroke%3D%27%23fff%27%20stroke-width%3D%276%27%2F%3E%3Cpath%20d%3D%27M0%2C0%20L60%2C30%20M60%2C0%20L0%2C30%27%20clip-path%3D%27url%28%23t%29%27%20stroke%3D%27%23C8102E%27%20stroke-width%3D%274%27%2F%3E%3Cpath%20d%3D%27M30%2C0%20v30%20M0%2C15%20h60%27%20stroke%3D%27%23fff%27%20stroke-width%3D%2710%27%2F%3E%3Cpath%20d%3D%27M30%2C0%20v30%20M0%2C15%20h60%27%20stroke%3D%27%23C8102E%27%20stroke-width%3D%276%27%2F%3E%3C%2Fsvg%3E") 0 0/50% 100% no-repeat,url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%203%202%27%20preserveAspectRatio%3D%27none%27%3E%3Crect%20width%3D%271%27%20height%3D%272%27%20x%3D%270%27%20fill%3D%27%23009246%27%2F%3E%3Crect%20width%3D%271%27%20height%3D%272%27%20x%3D%271%27%20fill%3D%27%23ffffff%27%2F%3E%3Crect%20width%3D%271%27%20height%3D%272%27%20x%3D%272%27%20fill%3D%27%23CE2B37%27%2F%3E%3C%2Fsvg%3E") 100% 0/50% 100% no-repeat}'
   + 'html.meacc-gated{overflow:hidden}'
   + 'html.meacc-gated body>*:not(#meacc-ov){display:none !important}'
   + '#meacc-ov{flex-direction:column}'
-  + '#meacc-title{display:none;color:#fff;font-weight:800;white-space:nowrap;text-align:center;line-height:1.05;letter-spacing:.3px;margin:0 0 20px;text-shadow:0 2px 10px rgba(0,0,0,.45)}'
+  + '#meacc-title{display:none;color:#fff;font-weight:800;white-space:nowrap;text-align:center;line-height:1.05;letter-spacing:.3px;margin:0 0 22px;text-shadow:0 2px 12px rgba(0,0,0,.6);background:rgba(10,20,48,.5);padding:10px 24px;border-radius:16px}'
   + '#meacc-card{position:relative;background:#fff;color:#0a1f4a;border-radius:16px;max-width:430px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);padding:22px}'
   + '#meacc-gear{position:absolute;top:12px;right:14px;font-size:17px;line-height:1;opacity:.3;cursor:pointer;user-select:none;background:0;border:0;padding:4px}'
   + '#meacc-gear:hover{opacity:.75}'
@@ -1940,7 +1940,7 @@ window.adminPinGo=adminPinGo;
 
   var btn = document.createElement('button'); btn.id='meacc-btn';
   var ov = document.createElement('div'); ov.id='meacc-ov';
-  var title = document.createElement('div'); title.id='meacc-title'; title.textContent='Learn English the Natural Way';
+  var title = document.createElement('div'); title.id='meacc-title'; title.textContent="Impara l'inglese in modo naturale";
   var card = document.createElement('div'); card.id='meacc-card';
   ov.appendChild(title); ov.appendChild(card);
   document.body.appendChild(btn); document.body.appendChild(ov);
@@ -1972,45 +1972,45 @@ window.adminPinGo=adminPinGo;
     var brand = gateMode ? '<div class="meacc-brand" style="user-select:none">Modular English</div>' : '';
     return x + gear + brand + '<div class="meacc-h">'+title+'</div><div class="meacc-sub">'+sub+'</div><div id="meacc-msg" class="meacc-msg"></div>';
   }
-  function busy(b){ var el=document.getElementById('meacc-go'); if(el){ el.disabled=b; el.textContent=b?'Please wait…':el.getAttribute('data-l'); } }
+  function busy(b){ var el=document.getElementById('meacc-go'); if(el){ el.disabled=b; el.textContent=b?'Attendere…':el.getAttribute('data-l'); } }
   // Hidden admin entry: the small ⚙ gear in the top-right corner of the box.
   function wireBrand(){ var g=document.getElementById('meacc-gear'); if(g) g.onclick=viewAdmin; }
 
   function render(){ getAcc() ? viewAccount() : viewLogin(); }
 
   function viewLogin(){
-    card.innerHTML = head('Sign in', gateMode ? 'You need an account to access the content. Sign in or create one.' : 'Sign in to your account to find your purchases on any device.')
+    card.innerHTML = head('Accedi', gateMode ? 'Ti serve un account per accedere ai contenuti. Accedi o creane uno.' : 'Accedi al tuo account per ritrovare i tuoi acquisti su qualsiasi dispositivo.')
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Sign in">Sign in</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-toreg">Create an account</button>'
-      + '<button class="meacc-link" id="meacc-tofg">Forgot password?</button></div>';
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Accedi">Accedi</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-toreg">Crea un account</button>'
+      + '<button class="meacc-link" id="meacc-tofg">Password dimenticata?</button></div>';
     document.getElementById('meacc-toreg').onclick=viewRegister;
     document.getElementById('meacc-tofg').onclick=viewForgot;
     wireBrand();
     document.getElementById('meacc-go').onclick=async function(){
       var email=val('meacc-email'), pw=val('meacc-pw');
-      if(!email||!pw){ msg('Enter your email and password.'); return; }
+      if(!email||!pw){ msg('Inserisci email e password.'); return; }
       busy(true); var r=await api('/login',{email:email,password:pw}); busy(false);
-      if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email); done('Signed in.'); }
+      if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email); done('Accesso effettuato.'); }
       else msg(em(r.j.error));
     };
   }
 
   function viewRegister(){
-    card.innerHTML = head('Create an account','With an account your purchases are saved and won\'t be lost if you clear cookies.')
-      + '<div class="meacc-two"><input class="meacc-f" id="meacc-first" placeholder="First name" autocomplete="given-name">'
-      + '<input class="meacc-f" id="meacc-last" placeholder="Last name" autocomplete="family-name"></div>'
+    card.innerHTML = head('Crea un account','Con un account i tuoi acquisti vengono salvati e non andranno persi se cancelli i cookie.')
+      + '<div class="meacc-two"><input class="meacc-f" id="meacc-first" placeholder="Nome" autocomplete="given-name">'
+      + '<input class="meacc-f" id="meacc-last" placeholder="Cognome" autocomplete="family-name"></div>'
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
-      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password (min 8 characters)" autocomplete="new-password">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Continue">Continue</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">I already have an account</button></div>';
+      + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password (min 8 caratteri)" autocomplete="new-password">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Continua">Continua</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Ho già un account</button></div>';
     document.getElementById('meacc-tolog').onclick=viewLogin;
     wireBrand();
     document.getElementById('meacc-go').onclick=async function(){
       var first=val('meacc-first'), last=val('meacc-last'), email=val('meacc-email'), pw=val('meacc-pw');
-      if(!first||!last){ msg('Enter your first and last name.'); return; }
-      if(!email||!pw){ msg('Fill in all fields.'); return; }
+      if(!first||!last){ msg('Inserisci nome e cognome.'); return; }
+      if(!email||!pw){ msg('Compila tutti i campi.'); return; }
       var name = first+' '+last;
       busy(true); var r=await api('/register',{name:name,email:email,password:pw}); busy(false);
       if(r.status===200 && r.j.ok){ viewVerify(email,'register'); }
@@ -2019,69 +2019,69 @@ window.adminPinGo=adminPinGo;
   }
 
   function viewVerify(email, flow){
-    card.innerHTML = head('Verify your email','We sent a 6-digit code to <b>'+esc(email)+'</b>. Enter it below.')
-      + '<input class="meacc-f" id="meacc-code" inputmode="numeric" maxlength="6" placeholder="6-digit code">'
-      + (flow==='reset' ? '<input class="meacc-f" id="meacc-pw" type="password" placeholder="New password (min 8)" autocomplete="new-password">' : '')
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Confirm">Confirm</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-resend">Resend the code</button></div>';
+    card.innerHTML = head('Verifica la tua email','Abbiamo inviato un codice di 6 cifre a <b>'+esc(email)+'</b>. Inseriscilo qui sotto.')
+      + '<input class="meacc-f" id="meacc-code" inputmode="numeric" maxlength="6" placeholder="Codice di 6 cifre">'
+      + (flow==='reset' ? '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Nuova password (min 8)" autocomplete="new-password">' : '')
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Conferma">Conferma</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-resend">Invia di nuovo il codice</button></div>';
     document.getElementById('meacc-resend').onclick=async function(){
       var p = flow==='reset' ? '/forgot' : '/register/resend';
-      await api(p,{email:email}); msg('Code sent again.','ok');
+      await api(p,{email:email}); msg('Codice inviato di nuovo.','ok');
     };
     document.getElementById('meacc-go').onclick=async function(){
-      var code=val('meacc-code'); if(!/^\d{6}$/.test(code)){ msg('Enter the 6-digit code.'); return; }
+      var code=val('meacc-code'); if(!/^\d{6}$/.test(code)){ msg('Inserisci il codice di 6 cifre.'); return; }
       busy(true); var r;
-      if(flow==='reset'){ var pw=val('meacc-pw'); if(!pw){ busy(false); msg('Enter the new password.'); return; }
+      if(flow==='reset'){ var pw=val('meacc-pw'); if(!pw){ busy(false); msg('Inserisci la nuova password.'); return; }
         r=await api('/reset',{email:email,code:code,password:pw}); }
       else { r=await api('/register-verify',{email:email,code:code}); }
       busy(false);
       if(r.status===200 && r.j.ok){ setSession(r.j.token, r.j.name, r.j.email);
-        done((r.j.purchased&&r.j.purchased.length)? 'Account ready — purchases restored!' : 'Account created.'); }
+        done((r.j.purchased&&r.j.purchased.length)? 'Account pronto — acquisti ripristinati!' : 'Account creato.'); }
       else msg(em(r.j.error));
     };
   }
 
   function viewForgot(){
-    card.innerHTML = head('Reset your password','Enter your email: we\'ll send you a code to set a new password.')
+    card.innerHTML = head('Reimposta la password','Inserisci la tua email: ti invieremo un codice per impostare una nuova password.')
       + '<input class="meacc-f" id="meacc-email" type="email" placeholder="Email" autocomplete="email">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Send code">Send code</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Back to sign in</button></div>';
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Invia codice">Invia codice</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-tolog">Torna all\'accesso</button></div>';
     document.getElementById('meacc-tolog').onclick=viewLogin;
     document.getElementById('meacc-go').onclick=async function(){
-      var email=val('meacc-email'); if(!email){ msg('Enter your email.'); return; }
+      var email=val('meacc-email'); if(!email){ msg('Inserisci la tua email.'); return; }
       busy(true); await api('/forgot',{email:email}); busy(false);
-      viewVerify(email,'reset'); msg('If an account exists, you\'ll receive a code.','ok');
+      viewVerify(email,'reset'); msg('Se esiste un account, riceverai un codice.','ok');
     };
   }
 
   // Admin PIN — explores every dialogue/function without an account.
   function viewAdmin(){
-    card.innerHTML = head('Administrator access','Enter the administrator PIN to explore all content without an account.')
-      + '<input class="meacc-f" id="meacc-pin" type="password" inputmode="numeric" placeholder="Administrator PIN" autocomplete="off">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Enter">Enter</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">← Back</button></div>';
+    card.innerHTML = head('Accesso amministratore','Inserisci il PIN amministratore per esplorare tutti i contenuti senza un account.')
+      + '<input class="meacc-f" id="meacc-pin" type="password" inputmode="numeric" placeholder="PIN amministratore" autocomplete="off">'
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Entra">Entra</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">← Indietro</button></div>';
     document.getElementById('meacc-back').onclick=viewLogin;
     document.getElementById('meacc-go').onclick=async function(){
-      var pin=val('meacc-pin'); if(!pin){ msg('Enter the PIN.'); return; }
+      var pin=val('meacc-pin'); if(!pin){ msg('Inserisci il PIN.'); return; }
       busy(true); var r=await api('/admin',{pin:pin}); busy(false);
       if(r.status===200 && r.j.ok && r.j.token){
         try{ localStorage.setItem(LS.tok, r.j.token); }catch(e){}
         try{ document.cookie='me_token='+r.j.token+';path=/;max-age=86400'; }catch(e){}
         try{ window._adminUnlocked=true; }catch(e){}
-        msg('Administrator access granted.','ok'); setTimeout(function(){ location.reload(); }, 700);
-      } else msg('Invalid PIN.');
+        msg('Accesso amministratore consentito.','ok'); setTimeout(function(){ location.reload(); }, 700);
+      } else msg('PIN non valido.');
     };
   }
 
   async function viewAccount(){
     var a=getAcc()||{};
-    card.innerHTML = head('Your account','')
+    card.innerHTML = head('Il tuo account','')
       + '<div style="font:700 16px system-ui">'+esc(a.name||'')+'</div>'
       + '<div class="meacc-sub" style="margin:2px 0 10px">'+esc(a.email||'')+'</div>'
-      + '<div id="meacc-owned" class="meacc-sub">Loading purchases…</div>'
-      + '<button class="meacc-btnp" id="meacc-logout" style="margin-top:14px">Sign out</button>'
+      + '<div id="meacc-owned" class="meacc-sub">Caricamento acquisti…</div>'
+      + '<button class="meacc-btnp" id="meacc-logout" style="margin-top:14px">Esci</button>'
       + '<div class="meacc-row"><button class="meacc-link" id="meacc-priv">Privacy</button>'
-      + '<button class="meacc-link" id="meacc-del" style="color:#b02a2a">Delete account</button></div>';
+      + '<button class="meacc-link" id="meacc-del" style="color:#b02a2a">Elimina account</button></div>';
     document.getElementById('meacc-priv').onclick=function(){ location.href='/privacy3.html'; };
     document.getElementById('meacc-logout').onclick=function(){ clearSession(); refreshBtn(); location.reload(); };
     document.getElementById('meacc-del').onclick=function(){ viewDelete(a.email); };
@@ -2091,23 +2091,23 @@ window.adminPinGo=adminPinGo;
       if(j && j.ok){ if(j.token){ setSession(j.token, j.name, j.email); }
         var owned=document.getElementById('meacc-owned');
         if(owned){ var n=(j.purchased||[]).length;
-          owned.innerHTML = n ? ('<b>'+n+'</b> item'+(n===1?'':'s')+' unlocked:<div style="margin-top:6px">'
+          owned.innerHTML = n ? ('<b>'+n+'</b> '+(n===1?'elemento sbloccato':'elementi sbloccati')+':<div style="margin-top:6px">'
             + j.purchased.map(function(id){return '<span class="meacc-pill">'+esc(id)+'</span>';}).join('') + '</div>')
-            : 'No purchases linked to this account yet.'; }
-      } else if (j && j.error==='noauth'){ clearSession(); refreshBtn(); viewLogin(); msg('Session expired, please sign in again.'); }
-    }catch(e){ var o=document.getElementById('meacc-owned'); if(o) o.textContent='Unable to refresh right now.'; }
+            : 'Nessun acquisto collegato a questo account.'; }
+      } else if (j && j.error==='noauth'){ clearSession(); refreshBtn(); viewLogin(); msg('Sessione scaduta, accedi di nuovo.'); }
+    }catch(e){ var o=document.getElementById('meacc-owned'); if(o) o.textContent='Impossibile aggiornare in questo momento.'; }
   }
 
   function viewDelete(email){
-    card.innerHTML = head('Delete account','This action is <b>irreversible</b>. Your personal data will be deleted. Confirm with your password.')
+    card.innerHTML = head('Elimina account','Questa azione è <b>irreversibile</b>. I tuoi dati personali verranno eliminati. Conferma con la password.')
       + '<input class="meacc-f" id="meacc-pw" type="password" placeholder="Password" autocomplete="current-password">'
-      + '<button class="meacc-btnp" id="meacc-go" data-l="Delete permanently" style="background:#b02a2a">Delete permanently</button>'
-      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">Cancel</button></div>';
+      + '<button class="meacc-btnp" id="meacc-go" data-l="Elimina definitivamente" style="background:#b02a2a">Elimina definitivamente</button>'
+      + '<div class="meacc-row"><button class="meacc-link" id="meacc-back">Annulla</button></div>';
     document.getElementById('meacc-back').onclick=viewAccount;
     document.getElementById('meacc-go').onclick=async function(){
       var pw=val('meacc-pw'); if(!pw){ msg('Enter your password.'); return; }
       busy(true); var r=await api('/account/delete',{email:email,password:pw}); busy(false);
-      if(r.status===200 && r.j.ok){ clearSession(); refreshBtn(); msg('Account deleted.','ok'); setTimeout(function(){ location.reload(); }, 1200); }
+      if(r.status===200 && r.j.ok){ clearSession(); refreshBtn(); msg('Account eliminato.','ok'); setTimeout(function(){ location.reload(); }, 1200); }
       else msg(em(r.j.error));
     };
   }
@@ -2149,16 +2149,16 @@ window.adminPinGo=adminPinGo;
     function openAcct(){ if(window.__meOpenAccount) window.__meOpenAccount(); }
     var items=[
       navItem('nav-test','🧪','Test'),
-      navItem('nav-ftt','✨','Free'),
+      navItem('nav-ftt','✨','Gratis'),
       { emoji:'💬', label:'Forum', act:function(){ location.href='/forum.html'; } },
       { emoji:'📱', label:'Apps', act:function(){ location.href='/apps.html'; } },
-      navItem('nav-support','✉️','Support'),
-      navItem('nav-mycourses','📚','My Courses')
+      navItem('nav-support','✉️','Supporto'),
+      navItem('nav-mycourses','📚','I miei corsi')
     ];
     function mkBtn(id,emoji,label,fn){ var x=document.createElement('button'); x.className='nav-link'; x.id=id; x.type='button';
       x.innerHTML='<span class="nav-ico" aria-hidden="true">'+emoji+'</span> <span>'+label+'</span>'; x.onclick=fn; return x; }
-    var methodBtn=mkBtn('nav-method','📖','Method',function(){ location.href='/method.html'; });
-    var bookBtn=mkBtn('nav-booking','📅','Booking',function(){ location.href='/booking.html'; });
+    var methodBtn=mkBtn('nav-method','📖','Metodo',function(){ location.href='/method.html'; });
+    var bookBtn=mkBtn('nav-booking','📅','Prenota',function(){ location.href='/booking.html'; });
     var acctBtn=mkBtn('nav-account','👤','Account',openAcct);
     var cartBtn=document.getElementById('nav-cart');
     var exploreBtn=document.getElementById('nav-explore'); if(exploreBtn) exploreBtn.style.display='';
@@ -2228,7 +2228,7 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
 
 /* LEVELS */
 #home-levels{max-width:980px!important;padding:44px 20px 20px!important;gap:18px!important;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))!important;margin:0 auto}
-#home-levels::before{content:"Choose your Level";grid-column:1/-1;font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.5rem,3.4vw,2rem);color:var(--ink);margin-bottom:2px;padding-bottom:12px;background:linear-gradient(var(--gold),var(--gold)) left bottom/56px 4px no-repeat}
+#home-levels::before{content:"Scegli il tuo livello";grid-column:1/-1;font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.5rem,3.4vw,2rem);color:var(--ink);margin-bottom:2px;padding-bottom:12px;background:linear-gradient(var(--gold),var(--gold)) left bottom/56px 4px no-repeat}
 #home-levels .level-card{position:relative;overflow:hidden;text-align:left!important;display:flex;flex-direction:column;align-items:flex-start;padding:22px 22px 20px!important;border:1px solid var(--line)!important;border-radius:18px!important;box-shadow:var(--shadow2)!important}
 #home-levels .level-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold);opacity:.9;transition:.22s}
 #home-levels .level-card:hover{transform:translateY(-4px)!important;box-shadow:var(--shadow3)!important;border-color:rgba(245,197,24,.7)!important}
@@ -2459,7 +2459,7 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
 })();
 </script>
 <script>
-/* ── Monthly membership (€12.99) ──────────────────────────────────────────────
+/* ── Monthly membership (€25.99) ──────────────────────────────────────────────
    Join button on the home page. The member pays via PayPal (card or PayPal
    balance) on a recurring monthly plan tied to their account; an active member
    unlocks every CEFR course (A1–C2) and every CD course. Access is enforced by
@@ -2494,13 +2494,13 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
     var btn=document.getElementById('me-join-btn'); if(!btn) return;
     btn.disabled=false;
     var active=memberActive();
-    if(active){ btn.textContent='✓ Membership active'; btn.classList.remove('btn-gold'); btn.classList.add('btn-outline'); }
-    else { btn.textContent='👑 Join for €12.99 a month'; btn.classList.add('btn-gold'); btn.classList.remove('btn-outline'); }
+    if(active){ btn.textContent='✓ Abbonamento attivo'; btn.classList.remove('btn-gold'); btn.classList.add('btn-outline'); }
+    else { btn.textContent='👑 Abbonati a €25,99 al mese'; btn.classList.add('btn-gold'); btn.classList.remove('btn-outline'); }
     // A subtle "Cancel membership" link, shown only to active members.
     var link=document.getElementById('me-cancel-link');
     if(active){
       if(!link){ link=document.createElement('a'); link.id='me-cancel-link';
-        link.href='javascript:void(0)'; link.textContent='Cancel membership';
+        link.href='javascript:void(0)'; link.textContent='Annulla abbonamento';
         link.style.cssText='flex-basis:100%;margin-top:4px;font:600 .8rem system-ui;color:inherit;opacity:.8;text-decoration:underline;cursor:pointer';
         link.onclick=function(){ window.meCancel(); };
         btn.parentNode && btn.parentNode.appendChild(link); }
@@ -2530,25 +2530,25 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
   window.meJoin = async function(){
     var t = tok(), p = decode(t);
     if(!t || !(p && p.acct)){                      // needs an account first
-      meSay('Create an account or sign in, then tap Join.');
+      meSay('Crea un account o accedi, poi tocca Abbonati.');
       try{ if(typeof window.__meOpenAccount==='function') window.__meOpenAccount(); }catch(e){}
       return;
     }
-    if(memberActive()){ meSay('Your membership is already active.'); return; }
+    if(memberActive()){ meSay('Il tuo abbonamento è già attivo.'); return; }
     var btn=document.getElementById('me-join-btn');
     if(btn){ btn.disabled=true; btn.textContent='…'; }
     var r, d;
     try{
       r = await fetch(WK+'/subscribe-create', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t} });
-    }catch(e){ window.refreshJoinBtn(); meSay('No connection to the server. Check your internet and try again.'); return; }
+    }catch(e){ window.refreshJoinBtn(); meSay('Nessuna connessione al server. Controlla la connessione e riprova.'); return; }
     try{ d = await r.json(); }catch(e){ d = null; }
     if(d && d.ok && d.url){ window.location.href = d.url; return; }   // → PayPal approval page
     window.refreshJoinBtn();
     var err = (d && d.error) || ('http '+(r&&r.status));
-    if(err==='noplan')      meSay('Membership is not set up yet: the PayPal plan is missing. (Set MEMBER_PLAN_ID on the Worker.)');
-    else if(err==='noauth') { meSay('Please sign in again, then tap Join.'); try{ window.__meOpenAccount&&window.__meOpenAccount(); }catch(e){} }
-    else if(r && (r.status===404 || r.status===405)) meSay('Membership isn’t live yet — the updated server still needs to be deployed.');
-    else meSay('Could not start checkout ('+err+'). Please try again.');
+    if(err==='noplan')      meSay('Abbonamento non ancora configurato: manca il piano PayPal. (Imposta MEMBER_PLAN_ID sul Worker.)');
+    else if(err==='noauth') { meSay('Accedi di nuovo, poi tocca Abbonati.'); try{ window.__meOpenAccount&&window.__meOpenAccount(); }catch(e){} }
+    else if(r && (r.status===404 || r.status===405)) meSay('Abbonamento non ancora attivo — il server aggiornato deve ancora essere pubblicato.');
+    else meSay('Impossibile avviare il pagamento ('+err+'). Riprova.');
     try{ console.log('meJoin failed:', r&&r.status, d); }catch(e){}
   };
 
@@ -2566,7 +2566,7 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
         var d = await r.json().catch(function(){return{};});
         history.replaceState({},'',cleaned);
         if(d && d.ok && d.token){ storeToken(d.token);
-          try{ showToast('🎉 Membership active — all courses unlocked!'); }catch(e){}
+          try{ showToast('🎉 Abbonamento attivo — tutti i corsi sbloccati!'); }catch(e){}
           window.refreshJoinBtn();
           try{ if(typeof renderHome==='function') renderHome(); }catch(e){}
         } else {
