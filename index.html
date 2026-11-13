@@ -435,7 +435,7 @@ html,body{height:100%;overflow:hidden}
           ▶ Come acquistare
         </a>
         <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-          <button class="btn btn-gold" id="me-join-btn" onclick="meJoin()">👑 Abbonati a €50,99 al mese</button>
+          <button class="btn btn-gold" id="me-join-btn" onclick="meCheckout('m')">👑 Abbonati a €50,99 al mese</button>
           <button class="btn btn-outline" onclick="showView('explore')">Esplora i moduli →</button>
         </div>
         <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
@@ -461,12 +461,6 @@ html,body{height:100%;overflow:hidden}
       <span>✓ Tutti i <b>corsi CD</b> (settori professionali)</span>
       <span>✓ Aggiornamenti e nuovi contenuti inclusi</span>
     </div>
-    <div style="max-width:470px;margin:0 auto 6px;display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap">
-      <input id="me-promo-input" type="text" placeholder="Hai un codice promo?" autocomplete="off"
-        style="flex:1;min-width:150px;padding:11px 14px;border:2px solid #d8dee6;border-radius:12px;font-size:1rem;text-transform:uppercase;color:#15181c">
-      <button class="btn btn-outline" id="me-promo-btn" type="button" onclick="mePromoApply()" style="padding:11px 22px">Applica</button>
-    </div>
-    <div id="me-promo-msg" style="text-align:center;font-weight:700;font-size:.92rem;margin:4px 0 16px;min-height:1.2em"></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:14px">
       <div style="position:relative;background:#fff;border:2px solid #e6ebf0;border-radius:16px;padding:22px 16px;text-align:center;box-shadow:0 8px 24px rgba(20,40,20,.06)">
         <div style="font-weight:800;font-size:1.05rem;color:#15181c">1 mese</div>
@@ -474,7 +468,7 @@ html,body{height:100%;overflow:hidden}
         <div id="pm-m" style="color:#5c6672;font-size:.85rem;min-height:1.2em">€50,99 / mese</div>
         <div style="color:#8a95a3;font-size:.74rem;margin-top:2px">🔄 Rinnovo automatico ogni mese</div>
         <div style="min-height:1.2em"></div>
-        <button class="btn btn-outline me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meJoin('m')">Scegli</button>
+        <button class="btn btn-outline me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meCheckout('m')">Scegli</button>
       </div>
       <div style="position:relative;background:#fff;border:2px solid #e6ebf0;border-radius:16px;padding:22px 16px;text-align:center;box-shadow:0 8px 24px rgba(20,40,20,.06)">
         <div style="position:absolute;top:-12px;right:14px;background:#39b816;color:#fff;font-weight:800;font-size:.78rem;padding:4px 12px;border-radius:20px">Sconto 10%</div>
@@ -483,7 +477,7 @@ html,body{height:100%;overflow:hidden}
         <div id="pm-q" style="color:#5c6672;font-size:.85rem;min-height:1.2em">≈ €46,00 / mese</div>
         <div style="color:#8a95a3;font-size:.74rem;margin-top:2px">🔄 Rinnovo automatico ogni 3 mesi</div>
         <div style="min-height:1.2em"><del style="color:#9aa6b2;font-size:.82rem">€152,97</del></div>
-        <button class="btn btn-gold me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meJoin('q')">Scegli</button>
+        <button class="btn btn-gold me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meCheckout('q')">Scegli</button>
       </div>
       <div style="position:relative;background:#fff;border:2px solid #e6ebf0;border-radius:16px;padding:22px 16px;text-align:center;box-shadow:0 8px 24px rgba(20,40,20,.06)">
         <div style="position:absolute;top:-12px;right:14px;background:#39b816;color:#fff;font-weight:800;font-size:.78rem;padding:4px 12px;border-radius:20px">Sconto 20%</div>
@@ -492,7 +486,7 @@ html,body{height:100%;overflow:hidden}
         <div id="pm-s" style="color:#5c6672;font-size:.85rem;min-height:1.2em">≈ €40,83 / mese</div>
         <div style="color:#8a95a3;font-size:.74rem;margin-top:2px">🔄 Rinnovo automatico ogni 6 mesi</div>
         <div style="min-height:1.2em"><del style="color:#9aa6b2;font-size:.82rem">€305,94</del></div>
-        <button class="btn btn-gold me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meJoin('s')">Scegli</button>
+        <button class="btn btn-gold me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meCheckout('s')">Scegli</button>
       </div>
       <div style="position:relative;background:#fff;border:2.5px solid #39b816;border-radius:16px;padding:22px 16px;text-align:center;box-shadow:0 12px 30px rgba(57,184,22,.18)">
         <div style="position:absolute;top:-12px;right:14px;background:#39b816;color:#fff;font-weight:800;font-size:.78rem;padding:4px 12px;border-radius:20px">Sconto 35%</div>
@@ -502,7 +496,7 @@ html,body{height:100%;overflow:hidden}
         <div id="pm-y" style="color:#5c6672;font-size:.85rem;min-height:1.2em">≈ €33,33 / mese</div>
         <div style="color:#8a95a3;font-size:.74rem;margin-top:2px">🔄 Rinnovo automatico ogni 12 mesi</div>
         <div style="min-height:1.2em"><del style="color:#9aa6b2;font-size:.82rem">€611,88</del></div>
-        <button class="btn btn-gold me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meJoin('y')">Scegli</button>
+        <button class="btn btn-gold me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meCheckout('y')">Scegli</button>
       </div>
     </div>
     <p style="text-align:center;color:#5c6672;font-size:.82rem;margin-top:12px">🔄 <b>Gli abbonamenti si rinnovano automaticamente</b> alla scadenza, se non annullati · Disdici quando vuoi dall'app o da PayPal · Pagamento sicuro con PayPal o carta</p>
@@ -2583,33 +2577,75 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
   // button is never silent.
   function meSay(msg){ try{ if(typeof showToast==='function'){ showToast(msg); return; } }catch(e){} try{ alert(msg); }catch(e){} }
 
-  window.__mePromo = null;
-  window.mePromoApply = async function(){
-    var inp=document.getElementById('me-promo-input'), msg=document.getElementById('me-promo-msg');
-    if(!inp||!msg) return;
-    var code=(inp.value||'').trim();
-    if(!code){ msg.style.color='#b02a2a'; msg.textContent='Inserisci un codice.'; return; }
-    var btn=document.getElementById('me-promo-btn'); if(btn) btn.disabled=true;
-    var r,d; try{ r=await fetch(WK+'/promo-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code})}); d=await r.json(); }catch(e){ d=null; }
-    if(btn) btn.disabled=false;
-    if(d && d.ok){ var pc=d.percent||50; window.__mePromo={code:code, percent:pc}; mePromoPrices(pc);
-      msg.style.color='#1f6b16'; msg.textContent='\u2713 Codice applicato: \u2212'+pc+'% sull\'abbonamento';
-      inp.disabled=true; if(btn){ btn.textContent='\u2713 Applicato'; btn.disabled=true; }
-    } else { window.__mePromo=null; msg.style.color='#b02a2a'; msg.textContent='Codice non valido.'; }
-  };
-  function mePromoPrices(p){
-    var base={m:50.99,q:137.99,s:244.99,y:399.99}, months={m:1,q:3,s:6,y:12};
-    function disc(b){ var c=Math.round(b*100); return Math.round(c*(100-p)/100)/100; }
-    function eur(x){ return '\u20ac'+x.toFixed(2).replace('.',','); }
-    ['m','q','s','y'].forEach(function(k){
-      var pe=document.getElementById('price-'+k), pm=document.getElementById('pm-'+k);
-      if(pe){ pe.innerHTML='<span style="text-decoration:line-through;color:#9aa6b2;font-size:1.15rem;font-weight:700">'+eur(base[k])+'</span> '+eur(disc(base[k])); }
-      if(pm){ pm.textContent='\u2248 '+eur(disc(base[k])/months[k])+' / mese'; }
-    });
+  var ME_PLANS = { m:{name:'1 mese', price:50.99, months:1, renew:'Rinnovo automatico ogni mese'},
+                   q:{name:'3 mesi', price:137.99, months:3, renew:'Rinnovo automatico ogni 3 mesi'},
+                   s:{name:'6 mesi', price:244.99, months:6, renew:'Rinnovo automatico ogni 6 mesi'},
+                   y:{name:'12 mesi', price:399.99, months:12, renew:'Rinnovo automatico ogni 12 mesi'} };
+  function eurFmt(x){ return '€'+x.toFixed(2).replace('.',','); }
+  window.__meCartPlan = null;
+  function meUpdateCartBadge(){
+    try{ var el=document.getElementById('cart-count'); if(!el) return;
+      var base=(typeof cart!=='undefined' && cart && cart.length)?cart.length:0;
+      var tot=base+(window.__meCartPlan?1:0);
+      if(tot>0){ el.textContent=tot; el.style.display=''; }
+    }catch(e){}
   }
+  window.meCheckout = function(planKey){
+    var k=(['m','q','s','y'].indexOf(planKey)>=0?planKey:'m');
+    window.__meCartPlan={ plan:k, percent:0, code:'' };
+    try{ if(typeof showToast==='function') showToast('👑 Abbonamento aggiunto al carrello'); }catch(e){}
+    try{ if(typeof showView==='function') showView('cart'); }catch(e){}
+    meUpdateCartBadge();
+    setTimeout(meDecorateCart,40);
+  };
+  window.meCartRemove = function(){ window.__meCartPlan=null; try{ if(typeof renderCart==='function') renderCart(); }catch(e){} meDecorateCart(); meUpdateCartBadge(); };
+  function meDecorateCart(){
+    var host=document.getElementById('cart-items'); if(!host) return;
+    var ex=document.getElementById('me-cart-block');
+    var sel=window.__meCartPlan;
+    if(!sel){ if(ex && ex.parentNode) ex.parentNode.removeChild(ex); return; }
+    var pl=ME_PLANS[sel.plan]; if(!pl) return;
+    var emp=host.querySelector('.cart-empty'); if(emp) emp.style.display='none';
+    var disc=sel.percent>0 ? Math.round(Math.round(pl.price*100)*(100-sel.percent)/100)/100 : pl.price;
+    var priceHtml=sel.percent>0
+      ? '<span style="text-decoration:line-through;color:#9aa6b2;font-size:1.05rem;font-weight:700">'+eurFmt(pl.price)+'</span> <b style="color:#1f6b16;font-size:1.5rem">'+eurFmt(disc)+'</b>'
+      : '<b style="color:#1f6b16;font-size:1.5rem">'+eurFmt(pl.price)+'</b>';
+    var html='<div id="me-cart-block" style="border:2px solid #39b816;border-radius:14px;padding:16px;margin:0 0 14px;background:#fff">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
+      +'<div><div style="font-weight:800;color:#15181c;font-size:1.05rem">👑 Abbonamento '+pl.name+'</div>'
+      +'<div style="font-size:.8rem;color:#5c6672;margin-top:3px">🔄 '+pl.renew+' · tutti i corsi A1–C2 + CD</div></div>'
+      +'<button type="button" onclick="meCartRemove()" title="Rimuovi" style="background:none;border:none;font-size:1.2rem;color:#9aa6b2;cursor:pointer;line-height:1">✕</button></div>'
+      +'<div style="margin-top:10px">'+priceHtml+'</div>'
+      +'<div style="display:flex;gap:8px;margin-top:12px">'
+      +'<input id="me-cart-promo" type="text" placeholder="Codice promo" autocomplete="off" value="'+(sel.code||'')+'" style="flex:1;padding:10px 12px;border:2px solid #d8dee6;border-radius:10px;text-transform:uppercase;color:#15181c">'
+      +'<button class="btn btn-outline" type="button" onclick="meCartPromo()" style="padding:10px 16px">Applica</button></div>'
+      +'<div id="me-cart-promo-msg" style="font-weight:700;font-size:.82rem;margin-top:6px;min-height:1em"></div>'
+      +'<button class="btn btn-gold" type="button" onclick="meCartPay(this)" style="width:100%;margin-top:12px;padding:13px;font-size:1.02rem">Abbonati con PayPal o carta</button>'
+      +'<div style="text-align:center;color:#8a95a3;font-size:.72rem;margin-top:8px">Rinnovo automatico · disdici quando vuoi</div></div>';
+    if(ex){ ex.outerHTML=html; } else { host.insertAdjacentHTML('afterbegin', html); }
+    if(sel.percent>0){ var m=document.getElementById('me-cart-promo-msg'); if(m){ m.style.color='#1f6b16'; m.textContent='✓ Codice applicato: −'+sel.percent+'%'; } }
+  }
+  window.meCartPromo = async function(){
+    var inp=document.getElementById('me-cart-promo'); if(!inp||!window.__meCartPlan) return;
+    var code=(inp.value||'').trim();
+    var msg=document.getElementById('me-cart-promo-msg');
+    if(!code){ if(msg){ msg.style.color='#b02a2a'; msg.textContent='Inserisci un codice.'; } return; }
+    var r,d; try{ r=await fetch(WK+'/promo-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code})}); d=await r.json(); }catch(e){ d=null; }
+    if(d && d.ok){ window.__meCartPlan.percent=d.percent||50; window.__meCartPlan.code=code; meDecorateCart(); }
+    else { window.__meCartPlan.percent=0; window.__meCartPlan.code=''; meDecorateCart(); var m2=document.getElementById('me-cart-promo-msg'); if(m2){ m2.style.color='#b02a2a'; m2.textContent='Codice non valido.'; } }
+  };
+  window.meCartPay = async function(btn){
+    if(!window.__meCartPlan) return;
+    if(btn){ btn.disabled=true; btn.textContent='…'; }
+    await window.meJoin(window.__meCartPlan.plan, window.__meCartPlan.code);
+    if(btn){ btn.disabled=false; btn.textContent='Abbonati con PayPal o carta'; }
+  };
+  try{ var _sv=window.showView; if(typeof _sv==='function' && !_sv.__meWrap){ window.showView=function(v){ var r=_sv.apply(this,arguments); if(v==='cart') setTimeout(meDecorateCart,30); return r; }; window.showView.__meWrap=1; } }catch(e){}
+  try{ var _nc=document.getElementById('nav-cart'); if(_nc) _nc.addEventListener('click', function(){ setTimeout(meDecorateCart,60); }); }catch(e){}
   function mePlanBtns(dis){ try{ var a=document.querySelectorAll('.me-plan-btn'); for(var i=0;i<a.length;i++){ a[i].disabled=dis; } }catch(e){} }
-  window.meJoin = async function(planKey){
+  window.meJoin = async function(planKey, code){
     planKey = (['m','q','s','y'].indexOf(planKey)>=0) ? planKey : 'm';
+    code = code || '';
     var t = tok(), p = decode(t);
     if(!t || !(p && p.acct)){                      // needs an account first
       meSay('Crea un account o accedi, poi tocca Abbonati.');
@@ -2622,7 +2658,7 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
     mePlanBtns(true);
     var r, d;
     try{
-      r = await fetch(WK+'/subscribe-create', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}, body: JSON.stringify({ plan: planKey, code: (window.__mePromo && window.__mePromo.code) || '' }) });
+      r = await fetch(WK+'/subscribe-create', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}, body: JSON.stringify({ plan: planKey, code: code }) });
     }catch(e){ window.refreshJoinBtn(); mePlanBtns(false); meSay('Nessuna connessione al server. Controlla la connessione e riprova.'); return; }
     try{ d = await r.json(); }catch(e){ d = null; }
     if(d && d.ok && d.url){ window.location.href = d.url; return; }   // → PayPal approval page
