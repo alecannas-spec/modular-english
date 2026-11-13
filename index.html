@@ -435,12 +435,22 @@ html,body{height:100%;overflow:hidden}
           ▶ Come acquistare
         </a>
         <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-          <button class="btn btn-gold" id="me-join-btn" onclick="meJoin()">👑 Abbonati a €25,99 al mese</button>
+          <button class="btn btn-gold" id="me-join-btn" onclick="meJoin()">👑 Abbonati a €50,99 al mese</button>
           <button class="btn btn-outline" onclick="showView('explore')">Esplora i moduli →</button>
         </div>
         <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
           <button class="btn btn-outline" onclick="showView('ftt')">✨ Prova gratis</button>
           <button class="btn btn-outline" onclick="openGrammarModal()">📖 Grammatica</button>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
+          <a href="https://apps.apple.com/app/id6816156213" target="_blank" rel="noopener" aria-label="Scarica su App Store"
+            style="display:inline-flex;align-items:center;gap:11px;background:#000;color:#fff;border-radius:13px;padding:10px 20px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.28)">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+            <span style="display:flex;flex-direction:column;line-height:1.08;text-align:left">
+              <span style="font-size:.62rem;letter-spacing:.4px;opacity:.92">Scarica su</span>
+              <span style="font-size:1.1rem;font-weight:600;margin-top:1px;font-family:-apple-system,system-ui,sans-serif">App Store</span>
+            </span>
+          </a>
         </div>
         <div class="stats-row">
           <div class="stat"><div class="stat-num" id="stat-modules">73</div><div class="stat-label">Moduli</div></div>
@@ -452,6 +462,55 @@ html,body{height:100%;overflow:hidden}
       </div>
     </div>
   </div>
+  <section id="membership-pricing" style="max-width:1000px;margin:26px auto 4px;padding:0 20px">
+    <div style="text-align:center">
+      <h2 style="font-size:1.55rem;font-weight:800;color:#15181c;margin:0">👑 Membership — un abbonamento, tutti i corsi</h2>
+    </div>
+    <div style="background:#eaf7e6;border:1.5px solid #39b816;border-radius:14px;padding:14px 18px;margin:14px 0 22px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:center;font-weight:600;color:#1f6b16;font-size:.95rem">
+      <span>✓ Tutti i corsi di inglese generale <b>A1 → C2</b></span>
+      <span>✓ Tutti i <b>corsi CD</b> (settori professionali)</span>
+      <span>✓ Aggiornamenti e nuovi contenuti inclusi</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:14px">
+      <div style="position:relative;background:#fff;border:2px solid #e6ebf0;border-radius:16px;padding:22px 16px;text-align:center;box-shadow:0 8px 24px rgba(20,40,20,.06)">
+        <div style="font-weight:800;font-size:1.05rem;color:#15181c">1 mese</div>
+        <div style="font-size:2rem;font-weight:800;color:#1f6b16;margin:8px 0 0">€50,99</div>
+        <div style="color:#5c6672;font-size:.85rem;min-height:1.2em">€50,99 / mese</div>
+        <div style="color:#8a95a3;font-size:.74rem;margin-top:2px">🔄 Rinnovo automatico ogni mese</div>
+        <div style="min-height:1.2em"></div>
+        <button class="btn btn-outline me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meJoin('m')">Scegli</button>
+      </div>
+      <div style="position:relative;background:#fff;border:2px solid #e6ebf0;border-radius:16px;padding:22px 16px;text-align:center;box-shadow:0 8px 24px rgba(20,40,20,.06)">
+        <div style="position:absolute;top:-12px;right:14px;background:#39b816;color:#fff;font-weight:800;font-size:.78rem;padding:4px 12px;border-radius:20px">Sconto 10%</div>
+        <div style="font-weight:800;font-size:1.05rem;color:#15181c">3 mesi</div>
+        <div style="font-size:2rem;font-weight:800;color:#1f6b16;margin:8px 0 0">€137,99</div>
+        <div style="color:#5c6672;font-size:.85rem;min-height:1.2em">≈ €46,00 / mese</div>
+        <div style="color:#8a95a3;font-size:.74rem;margin-top:2px">🔄 Rinnovo automatico ogni 3 mesi</div>
+        <div style="min-height:1.2em"><del style="color:#9aa6b2;font-size:.82rem">€152,97</del></div>
+        <button class="btn btn-gold me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meJoin('q')">Scegli</button>
+      </div>
+      <div style="position:relative;background:#fff;border:2px solid #e6ebf0;border-radius:16px;padding:22px 16px;text-align:center;box-shadow:0 8px 24px rgba(20,40,20,.06)">
+        <div style="position:absolute;top:-12px;right:14px;background:#39b816;color:#fff;font-weight:800;font-size:.78rem;padding:4px 12px;border-radius:20px">Sconto 20%</div>
+        <div style="font-weight:800;font-size:1.05rem;color:#15181c">6 mesi</div>
+        <div style="font-size:2rem;font-weight:800;color:#1f6b16;margin:8px 0 0">€244,99</div>
+        <div style="color:#5c6672;font-size:.85rem;min-height:1.2em">≈ €40,83 / mese</div>
+        <div style="color:#8a95a3;font-size:.74rem;margin-top:2px">🔄 Rinnovo automatico ogni 6 mesi</div>
+        <div style="min-height:1.2em"><del style="color:#9aa6b2;font-size:.82rem">€305,94</del></div>
+        <button class="btn btn-gold me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meJoin('s')">Scegli</button>
+      </div>
+      <div style="position:relative;background:#fff;border:2.5px solid #39b816;border-radius:16px;padding:22px 16px;text-align:center;box-shadow:0 12px 30px rgba(57,184,22,.18)">
+        <div style="position:absolute;top:-12px;right:14px;background:#39b816;color:#fff;font-weight:800;font-size:.78rem;padding:4px 12px;border-radius:20px">Sconto 35%</div>
+        <div style="font-weight:800;font-size:1.05rem;color:#15181c;margin-top:2px">12 mesi</div>
+        <div style="font-weight:800;font-size:.72rem;letter-spacing:.04em;color:#1f6b16">⭐ MIGLIOR PREZZO</div>
+        <div style="font-size:2rem;font-weight:800;color:#1f6b16;margin:8px 0 0">€399,99</div>
+        <div style="color:#5c6672;font-size:.85rem;min-height:1.2em">≈ €33,33 / mese</div>
+        <div style="color:#8a95a3;font-size:.74rem;margin-top:2px">🔄 Rinnovo automatico ogni 12 mesi</div>
+        <div style="min-height:1.2em"><del style="color:#9aa6b2;font-size:.82rem">€611,88</del></div>
+        <button class="btn btn-gold me-plan-btn" data-label="Scegli" style="width:100%;margin-top:14px" onclick="meJoin('y')">Scegli</button>
+      </div>
+    </div>
+    <p style="text-align:center;color:#5c6672;font-size:.82rem;margin-top:12px">🔄 <b>Gli abbonamenti si rinnovano automaticamente</b> alla scadenza, se non annullati · Disdici quando vuoi dall'app o da PayPal · Pagamento sicuro con PayPal o carta</p>
+  </section>
   <div id="chrome-banner" style="margin:12px 20px 0;padding:10px 14px;background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:10px;font-size:.8rem;color:#92400E;display:flex;align-items:center;gap:10px;justify-content:space-between">
     <span>🎤 Per usare il microfono apri in <a href="https://www.google.com/chrome/" target="_blank" style="color:#92400E;font-weight:700;text-decoration:underline">Chrome →</a></span>
     <button onclick="document.getElementById('chrome-banner').style.display='none'" style="background:none;border:none;font-size:1rem;cursor:pointer;color:#92400E;padding:0;line-height:1">✕</button>
@@ -2459,7 +2518,7 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
 })();
 </script>
 <script>
-/* ── Monthly membership (€25.99) ──────────────────────────────────────────────
+/* ── Monthly membership (€50.99) ──────────────────────────────────────────────
    Join button on the home page. The member pays via PayPal (card or PayPal
    balance) on a recurring monthly plan tied to their account; an active member
    unlocks every CEFR course (A1–C2) and every CD course. Access is enforced by
@@ -2495,7 +2554,7 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
     btn.disabled=false;
     var active=memberActive();
     if(active){ btn.textContent='✓ Abbonamento attivo'; btn.classList.remove('btn-gold'); btn.classList.add('btn-outline'); }
-    else { btn.textContent='👑 Abbonati a €25,99 al mese'; btn.classList.add('btn-gold'); btn.classList.remove('btn-outline'); }
+    else { btn.textContent='👑 Abbonati a €50,99 al mese'; btn.classList.add('btn-gold'); btn.classList.remove('btn-outline'); }
     // A subtle "Cancel membership" link, shown only to active members.
     var link=document.getElementById('me-cancel-link');
     if(active){
@@ -2506,6 +2565,7 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
         btn.parentNode && btn.parentNode.appendChild(link); }
       link.style.display='';
     } else if(link){ link.style.display='none'; }
+    try{ var pbs=document.querySelectorAll('.me-plan-btn'); for(var i=0;i<pbs.length;i++){ if(active){ pbs[i].disabled=true; pbs[i].textContent='✓ Attiva'; } else { pbs[i].disabled=false; pbs[i].textContent=pbs[i].getAttribute('data-label')||'Scegli'; } } }catch(e){}
   };
 
   window.meCancel = async function(){
@@ -2527,7 +2587,9 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
   // button is never silent.
   function meSay(msg){ try{ if(typeof showToast==='function'){ showToast(msg); return; } }catch(e){} try{ alert(msg); }catch(e){} }
 
-  window.meJoin = async function(){
+  function mePlanBtns(dis){ try{ var a=document.querySelectorAll('.me-plan-btn'); for(var i=0;i<a.length;i++){ a[i].disabled=dis; } }catch(e){} }
+  window.meJoin = async function(planKey){
+    planKey = (['m','q','s','y'].indexOf(planKey)>=0) ? planKey : 'm';
     var t = tok(), p = decode(t);
     if(!t || !(p && p.acct)){                      // needs an account first
       meSay('Crea un account o accedi, poi tocca Abbonati.');
@@ -2537,13 +2599,14 @@ nav{background:rgba(10,20,60,.92)!important;-webkit-backdrop-filter:blur(14px);b
     if(memberActive()){ meSay('Il tuo abbonamento è già attivo.'); return; }
     var btn=document.getElementById('me-join-btn');
     if(btn){ btn.disabled=true; btn.textContent='…'; }
+    mePlanBtns(true);
     var r, d;
     try{
-      r = await fetch(WK+'/subscribe-create', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t} });
-    }catch(e){ window.refreshJoinBtn(); meSay('Nessuna connessione al server. Controlla la connessione e riprova.'); return; }
+      r = await fetch(WK+'/subscribe-create', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+t}, body: JSON.stringify({ plan: planKey }) });
+    }catch(e){ window.refreshJoinBtn(); mePlanBtns(false); meSay('Nessuna connessione al server. Controlla la connessione e riprova.'); return; }
     try{ d = await r.json(); }catch(e){ d = null; }
     if(d && d.ok && d.url){ window.location.href = d.url; return; }   // → PayPal approval page
-    window.refreshJoinBtn();
+    window.refreshJoinBtn(); mePlanBtns(false);
     var err = (d && d.error) || ('http '+(r&&r.status));
     if(err==='noplan')      meSay('Abbonamento non ancora configurato: manca il piano PayPal. (Imposta MEMBER_PLAN_ID sul Worker.)');
     else if(err==='noauth') { meSay('Accedi di nuovo, poi tocca Abbonati.'); try{ window.__meOpenAccount&&window.__meOpenAccount(); }catch(e){} }
