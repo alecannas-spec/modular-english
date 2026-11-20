@@ -232,6 +232,16 @@ function uniRipeti(btn){
   function pid(l,t){ return 'uni-'+l+'-'+t; }
   function allId(l){ return 'uni-'+l+'-all'; }
   function eur(n){ return '€'+Number(n).toFixed(2); }
+  var UNIDISC = 0;
+  try{ UNIDISC = parseFloat(localStorage.getItem('uni_disc')||'0')||0; }catch(e){}
+  function saveDisc(){ try{ localStorage.setItem('uni_disc', String(UNIDISC)); }catch(e){} }
+  function dp(p){ return UNIDISC>0 ? +(Number(p)*(1-UNIDISC)).toFixed(2) : +Number(p).toFixed(2); }
+  function repriceCart(){
+    try{ var c=getCart(); var ch=false;
+      c.forEach(function(x){ var m=x.id&&x.id.match(/^uni-(A1|A2|B1|B2)-(all|mod|map|test|key)$/); if(m){ var base=(m[2]==='all')?levelTotal(m[1]):priceOf(m[1],m[2]); var np=dp(base); if(x.price!==np){ x.price=np; ch=true; } } });
+      if(ch) setCart(c);
+    }catch(e){}
+  }
 
   function getTok(){ try{ return localStorage.getItem('me_entry') || sessionStorage.getItem('me_entry') || ''; }catch(e){ return ''; } }
   function purchased(){
@@ -279,10 +289,12 @@ function uniRipeti(btn){
 
   function buyBtn(id,label,price,gold){
     var inC=inCart(id), owned=ownedId(id);
-    var txt = owned ? '✓ Acquistato' : (inC ? '✓ Nel carrello' : (label+' · '+eur(price)));
+    var dprice=dp(price);
+    var plbl=(UNIDISC>0 && dprice<price) ? ('<s style="opacity:.55">'+eur(price)+'</s> '+eur(dprice)) : eur(dprice);
+    var txt = owned ? '✓ Acquistato' : (inC ? '✓ Nel carrello' : (label+' · '+plbl));
     var extra = owned ? 'opacity:.6;cursor:default' : 'cursor:pointer';
     var bg = gold ? 'background:var(--gold);color:var(--navy)' : 'background:var(--navy);color:#fff';
-    return '<button '+(owned?'disabled ':'')+'onclick="__uniAdd(\''+id+'\',\''+label.replace(/'/g,"\\'")+'\','+price+')" style="font:700 14px system-ui;'+bg+';border:0;border-radius:10px;padding:10px 16px;margin:6px 8px 0 0;'+extra+'">'+txt+'</button>';
+    return '<button '+(owned?'disabled ':'')+'onclick="__uniAdd(\''+id+'\',\''+label.replace(/'/g,"\\'")+'\','+dprice+')" style="font:700 14px system-ui;'+bg+';border:0;border-radius:10px;padding:10px 16px;margin:6px 8px 0 0;'+extra+'">'+txt+'</button>';
   }
   function paywall(l,t){
     var p=priceOf(l,t), tot=levelTotal(l);
@@ -335,7 +347,39 @@ function uniRipeti(btn){
   }
   render = newRender;   // override the page's renderer
 
+  function mountUniCode(){
+    var wrap=document.querySelector('header .wrap'); if(!wrap || document.getElementById('uni-code-box')) return;
+    var d=document.createElement('div'); d.id='uni-code-box';
+    d.style.cssText='margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center';
+    d.innerHTML='<input id="uni-code-in" placeholder="Codice University" autocomplete="off" style="padding:9px 12px;border:1px solid #cbd5e1;border-radius:10px;text-transform:uppercase;min-width:150px;font:600 14px system-ui">'
+      +'<button id="uni-code-btn" type="button" style="padding:9px 18px;border:0;border-radius:10px;background:var(--gold);color:var(--navy);font:800 13px system-ui;cursor:pointer">Applica</button>'
+      +'<span id="uni-code-msg" style="font:700 13px system-ui;color:#fff"></span>';
+    wrap.appendChild(d);
+    document.getElementById('uni-code-btn').onclick=applyUniCode;
+    if(UNIDISC>0){ var m=document.getElementById('uni-code-msg'); if(m){ m.style.color='#eafbe9'; m.textContent='✓ Sconto −'+Math.round(UNIDISC*100)+'% attivo'; } }
+  }
+  async function applyUniCode(){
+    var inp=document.getElementById('uni-code-in'), msg=document.getElementById('uni-code-msg');
+    var code=(inp.value||'').trim(); if(!code){ msg.style.color='#ffd7d7'; msg.textContent='Inserisci un codice.'; return; }
+    var btn=document.getElementById('uni-code-btn'); if(btn) btn.disabled=true;
+    var r,d; try{ r=await fetch(WK+'/uni-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code})}); d=await r.json(); }catch(e){ d=null; }
+    if(btn) btn.disabled=false;
+    if(d && d.free){
+      var t=getTok();
+      if(!t){ msg.style.color='#ffd7d7'; msg.textContent='Accedi prima con il tuo account.'; try{ if(window.__meOpenAccount) window.__meOpenAccount(); }catch(e){} return; }
+      msg.style.color='#eafbe9'; msg.textContent='Attivazione…';
+      var rr,dd; try{ rr=await fetch(WK+'/redeem-uni',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({code:code})}); dd=await rr.json(); }catch(e){ dd=null; }
+      if(dd && dd.ok && dd.token){ try{ localStorage.setItem('me_entry', dd.token); }catch(e){} UNIDISC=0; saveDisc(); try{ render(); }catch(e){} msg.style.color='#eafbe9'; msg.textContent='✓ University sbloccata gratis!'; }
+      else { msg.style.color='#ffd7d7'; msg.textContent='Attivazione non riuscita.'; }
+    } else if(d && d.percent){
+      UNIDISC=d.percent/100; saveDisc(); repriceCart(); try{ render(); }catch(e){}
+      msg.style.color='#eafbe9'; msg.textContent='✓ Sconto −'+d.percent+'% applicato';
+    } else {
+      msg.style.color='#ffd7d7'; msg.textContent='Codice non valido.';
+    }
+  }
   mountCartBtn();
+  mountUniCode();
   render();
 })();
 </script>
